@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,64 +14,97 @@
         * {
             font-family: 'Poppins', sans-serif;
         }
-        
+
         body {
             background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
             min-height: 100vh;
         }
-        
+
         .glass-card {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
         }
-        
+
         .help-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        
+
         .faq-item.active .faq-answer {
             max-height: 500px;
             padding: 20px;
         }
-        
+
         .faq-item.active .faq-toggle {
             transform: rotate(45deg);
         }
-        
+
         .help-card {
             transition: all 0.3s ease;
         }
-        
+
         .help-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             border-color: #667eea;
         }
-        
-        input, textarea, select {
+
+        input,
+        textarea,
+        select {
             background-color: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
         }
-        
-        input:focus, textarea:focus, select:focus {
+
+        input:focus,
+        textarea:focus,
+        select:focus {
             border-color: #667eea;
             background-color: rgba(255, 255, 255, 0.08);
         }
-        
+
         .search-input {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
+
         .search-input:focus {
             background: rgba(0, 0, 0, 0.5);
             border-color: #667eea;
         }
+
+        /* =============== DROPDOWN FIXES =============== */
+        select,
+        option {
+            background-color: #1f2937 !important;
+            color: white !important;
+        }
+
+        /* For disabled dropdowns */
+        select:disabled {
+            background-color: rgba(31, 41, 55, 0.5) !important;
+            color: #6b7280 !important;
+        }
+
+        /* For focused dropdown */
+        select:focus {
+            border-color: #667eea !important;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+        }
+
+        /* Ensure options have proper background */
+        option:checked {
+            background: #374151 !important;
+        }
+
+        option:hover {
+            background: #4b5563 !important;
+        }
     </style>
 </head>
+
 <body class="text-gray-100">
     <!-- Navigation Bar -->
     <nav class="bg-gray-900 border-b border-gray-800 py-4">
@@ -111,9 +145,9 @@
         <div class="glass-card p-6 mb-8">
             <div class="relative">
                 <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="text" id="searchHelp" 
-                       class="w-full pl-12 pr-4 py-4 search-input rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                       placeholder="Search for help topics, guides, or troubleshooting...">
+                <input type="text" id="searchHelp"
+                    class="w-full pl-12 pr-4 py-4 search-input rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Search for help topics, guides, or troubleshooting...">
             </div>
         </div>
 
@@ -134,7 +168,7 @@
                         </div>
                         <p class="text-gray-300">Learn how to set up your energy monitoring system and get started with basic features.</p>
                     </div>
-                    
+
                     <div class="help-card glass-card p-6 cursor-pointer" onclick="showFAQ('troubleshooting')">
                         <div class="flex items-center mb-4">
                             <div class="w-12 h-12 bg-red-900/30 rounded-lg flex items-center justify-center mr-4">
@@ -147,7 +181,7 @@
                         </div>
                         <p class="text-gray-300">Find solutions to common problems and technical issues with your system.</p>
                     </div>
-                    
+
                     <div class="help-card glass-card p-6 cursor-pointer" onclick="showFAQ('billing')">
                         <div class="flex items-center mb-4">
                             <div class="w-12 h-12 bg-green-900/30 rounded-lg flex items-center justify-center mr-4">
@@ -160,7 +194,7 @@
                         </div>
                         <p class="text-gray-300">Information about pricing, billing cycles, and subscription plans.</p>
                     </div>
-                    
+
                     <div class="help-card glass-card p-6 cursor-pointer" onclick="showFAQ('api')">
                         <div class="flex items-center mb-4">
                             <div class="w-12 h-12 bg-purple-900/30 rounded-lg flex items-center justify-center mr-4">
@@ -186,7 +220,7 @@
                             View All FAQs →
                         </button>
                     </div>
-                    
+
                     <div class="faq-list space-y-4" id="faqList">
                         <!-- FAQ items will be loaded here -->
                     </div>
@@ -198,27 +232,27 @@
                         <i class="fas fa-headset mr-3 text-green-400"></i>
                         Contact Support
                     </h2>
-                    
+
                     <form id="supportForm">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Your Name</label>
-                                <input type="text" id="supportName" 
-                                       class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                       placeholder="Enter your name" required>
+                                <input type="text" id="supportName"
+                                    class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="Enter your name" required>
                             </div>
-                            
+
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
-                                <input type="email" id="supportEmail" 
-                                       class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                       placeholder="Enter your email" required>
+                                <input type="email" id="supportEmail"
+                                    class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="Enter your email" required>
                             </div>
-                            
+
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Issue Category</label>
-                                <select id="supportCategory" 
-                                        class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                                <select id="supportCategory"
+                                    class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
                                     <option value="">Select category</option>
                                     <option value="technical">Technical Issue</option>
                                     <option value="billing">Billing & Payment</option>
@@ -227,32 +261,32 @@
                                     <option value="other">Other</option>
                                 </select>
                             </div>
-                            
+
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Priority</label>
-                                <select id="supportPriority" 
-                                        class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <select id="supportPriority"
+                                    class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                     <option value="low">Low</option>
                                     <option value="medium" selected>Medium</option>
                                     <option value="high">High</option>
                                     <option value="urgent">Urgent</option>
                                 </select>
                             </div>
-                            
+
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Subject</label>
-                                <input type="text" id="supportSubject" 
-                                       class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                       placeholder="Brief description of your issue" required>
+                                <input type="text" id="supportSubject"
+                                    class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="Brief description of your issue" required>
                             </div>
-                            
+
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Message</label>
                                 <textarea id="supportMessage" rows="4"
-                                          class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                                          placeholder="Describe your issue in detail..." required></textarea>
+                                    class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                                    placeholder="Describe your issue in detail..." required></textarea>
                             </div>
-                            
+
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Attachments (Optional)</label>
                                 <div class="border-2 border-dashed border-gray-700 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
@@ -260,22 +294,22 @@
                                     <p class="text-gray-400 mb-2">Drag & drop files here or click to browse</p>
                                     <p class="text-xs text-gray-500">Maximum file size: 10MB each</p>
                                     <input type="file" id="supportAttachment" class="hidden" multiple>
-                                    <button type="button" onclick="document.getElementById('supportAttachment').click()" 
-                                            class="mt-2 px-4 py-2 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-800 text-sm">
+                                    <button type="button" onclick="document.getElementById('supportAttachment').click()"
+                                        class="mt-2 px-4 py-2 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-800 text-sm">
                                         <i class="fas fa-plus mr-1"></i> Add Files
                                     </button>
                                 </div>
                                 <div id="fileList" class="mt-2 space-y-2"></div>
                             </div>
                         </div>
-                        
+
                         <div class="flex justify-end space-x-4 mt-8">
-                            <button type="reset" 
-                                    class="px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-800 font-medium">
+                            <button type="reset"
+                                class="px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-800 font-medium">
                                 Clear Form
                             </button>
-                            <button type="submit" 
-                                    class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium">
+                            <button type="submit"
+                                class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium">
                                 <i class="fas fa-paper-plane mr-2"></i> Send Message
                             </button>
                         </div>
@@ -298,7 +332,7 @@
                                 <p class="text-sm text-gray-400">support@energymonitor.com</p>
                             </div>
                         </div>
-                        
+
                         <div class="flex items-center p-3 bg-gray-800/50 rounded-lg">
                             <div class="w-10 h-10 bg-green-900/30 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-phone text-green-400"></i>
@@ -309,7 +343,7 @@
                                 <p class="text-xs text-gray-500">Mon-Fri: 9AM-6PM (MYT)</p>
                             </div>
                         </div>
-                        
+
                         <div class="flex items-center p-3 bg-gray-800/50 rounded-lg">
                             <div class="w-10 h-10 bg-purple-900/30 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-comments text-purple-400"></i>
@@ -338,7 +372,7 @@
                                 <p class="text-sm text-gray-400">Complete user manual</p>
                             </div>
                         </a>
-                        
+
                         <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors">
                             <div class="w-8 h-8 bg-green-900/30 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-video text-green-400"></i>
@@ -348,7 +382,7 @@
                                 <p class="text-sm text-gray-400">Step-by-step guides</p>
                             </div>
                         </a>
-                        
+
                         <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors">
                             <div class="w-8 h-8 bg-purple-900/30 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-code text-purple-400"></i>
@@ -358,7 +392,7 @@
                                 <p class="text-sm text-gray-400">Developer resources</p>
                             </div>
                         </a>
-                        
+
                         <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors">
                             <div class="w-8 h-8 bg-red-900/30 rounded-lg flex items-center justify-center mr-3">
                                 <i class="fas fa-download text-red-400"></i>
@@ -381,21 +415,21 @@
                                 <i class="fas fa-circle text-xs mr-1"></i> Operational
                             </span>
                         </div>
-                        
+
                         <div class="flex items-center justify-between">
                             <span class="text-gray-300">Database</span>
                             <span class="flex items-center text-green-400">
                                 <i class="fas fa-circle text-xs mr-1"></i> Normal
                             </span>
                         </div>
-                        
+
                         <div class="flex items-center justify-between">
                             <span class="text-gray-300">Monitoring System</span>
                             <span class="flex items-center text-green-400">
                                 <i class="fas fa-circle text-xs mr-1"></i> Online
                             </span>
                         </div>
-                        
+
                         <div class="flex items-center justify-between">
                             <span class="text-gray-300">Support Response</span>
                             <span class="flex items-center text-yellow-400">
@@ -403,7 +437,7 @@
                             </span>
                         </div>
                     </div>
-                    
+
                     <div class="mt-4 pt-4 border-t border-gray-700">
                         <p class="text-sm text-gray-400">Last updated: Just now</p>
                         <button onclick="checkSystemStatus()" class="mt-2 text-sm text-blue-400 hover:text-blue-300">
@@ -441,8 +475,7 @@
     <script>
         // FAQ data
         const faqData = {
-            'getting-started': [
-                {
+            'getting-started': [{
                     question: 'How do I set up my energy monitoring system?',
                     answer: '1. Connect your monitoring devices to power sources. 2. Install the Energy Monitor app. 3. Follow the in-app setup wizard. 4. Connect devices to your network. 5. Configure monitoring parameters.'
                 },
@@ -455,8 +488,7 @@
                     answer: 'Go to Dashboard → Add Node → Select device type → Follow pairing instructions → Configure settings.'
                 }
             ],
-            'troubleshooting': [
-                {
+            'troubleshooting': [{
                     question: 'My device is not connecting to the system',
                     answer: '1. Check power and network connections. 2. Restart the device. 3. Ensure firmware is updated. 4. Check network firewall settings. 5. Contact support if issue persists.'
                 },
@@ -469,8 +501,7 @@
                     answer: '1. Calibrate your monitoring devices. 2. Check wiring connections. 3. Verify configuration settings. 4. Update device firmware. 5. Contact technical support.'
                 }
             ],
-            'billing': [
-                {
+            'billing': [{
                     question: 'How do I upgrade my subscription plan?',
                     answer: 'Go to Settings → Billing → Upgrade Plan → Select new plan → Confirm payment → Changes take effect immediately.'
                 },
@@ -483,8 +514,7 @@
                     answer: 'Settings → Billing → Payment Methods → Add/Update card → Save changes.'
                 }
             ],
-            'api': [
-                {
+            'api': [{
                     question: 'How do I get API access?',
                     answer: '1. Go to Settings → API Keys. 2. Generate a new API key. 3. Use the key in your requests. 4. Refer to API documentation for endpoints.'
                 },
@@ -504,22 +534,22 @@
             // Check authentication
             const token = localStorage.getItem("jwt");
             const user = JSON.parse(localStorage.getItem("user") || "{}");
-            
+
             if (!token || !user) {
                 window.location.href = "/auth/login.php";
                 return;
             }
-            
+
             // Auto-fill user info
             autoFillUserInfo();
-            
+
             // Load default FAQs
             loadFAQs('getting-started');
-            
+
             // Setup event listeners
             setupHelpListeners();
         });
-        
+
         function autoFillUserInfo() {
             try {
                 const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -529,13 +559,13 @@
                 console.error('Error loading user data:', error);
             }
         }
-        
+
         function loadFAQs(category) {
             const faqList = document.getElementById('faqList');
             const faqs = faqData[category] || faqData['getting-started'];
-            
+
             faqList.innerHTML = '';
-            
+
             faqs.forEach((faq, index) => {
                 const faqItem = document.createElement('div');
                 faqItem.className = 'faq-item bg-gray-800/50 rounded-lg overflow-hidden';
@@ -553,12 +583,12 @@
                 faqList.appendChild(faqItem);
             });
         }
-        
+
         function toggleFAQ(index, element) {
             const faqItem = element.closest('.faq-item');
             const answer = faqItem.querySelector('.faq-answer');
             const toggleIcon = faqItem.querySelector('.faq-toggle');
-            
+
             // Close other FAQs
             document.querySelectorAll('.faq-item').forEach(item => {
                 if (item !== faqItem && item.classList.contains('active')) {
@@ -568,7 +598,7 @@
                     item.querySelector('.faq-toggle').className = 'fas fa-plus faq-toggle text-gray-400';
                 }
             });
-            
+
             // Toggle current FAQ
             if (faqItem.classList.contains('active')) {
                 faqItem.classList.remove('active');
@@ -582,16 +612,16 @@
                 toggleIcon.className = 'fas fa-plus faq-toggle text-gray-400 rotate-45';
             }
         }
-        
+
         function showFAQ(category) {
             loadFAQs(category);
-            
+
             // Scroll to FAQ section
             document.getElementById('faqList').scrollIntoView({
                 behavior: 'smooth',
                 block: 'start'
             });
-            
+
             // Show notification
             const categoryNames = {
                 'getting-started': 'Getting Started',
@@ -599,7 +629,7 @@
                 'billing': 'Billing & Plans',
                 'api': 'API & Integration'
             };
-            
+
             Swal.fire({
                 icon: 'info',
                 title: categoryNames[category] || 'FAQs',
@@ -608,17 +638,17 @@
                 showConfirmButton: false
             });
         }
-        
+
         function showAllFAQs() {
             // Combine all FAQs
             const allFAQs = [];
             Object.values(faqData).forEach(category => {
                 allFAQs.push(...category);
             });
-            
+
             const faqList = document.getElementById('faqList');
             faqList.innerHTML = '';
-            
+
             allFAQs.forEach((faq, index) => {
                 const faqItem = document.createElement('div');
                 faqItem.className = 'faq-item bg-gray-800/50 rounded-lg overflow-hidden';
@@ -635,7 +665,7 @@
                 `;
                 faqList.appendChild(faqItem);
             });
-            
+
             Swal.fire({
                 icon: 'success',
                 title: 'All FAQs Loaded',
@@ -644,32 +674,32 @@
                 showConfirmButton: false
             });
         }
-        
+
         function setupHelpListeners() {
             // Search functionality
             document.getElementById('searchHelp').addEventListener('input', function(e) {
                 const searchTerm = e.target.value.toLowerCase();
-                
+
                 if (searchTerm.length < 2) {
                     loadFAQs('getting-started');
                     return;
                 }
-                
+
                 // Search across all FAQs
                 const allFAQs = [];
                 Object.values(faqData).forEach(category => {
                     allFAQs.push(...category);
                 });
-                
-                const filteredFAQs = allFAQs.filter(faq => 
-                    faq.question.toLowerCase().includes(searchTerm) || 
+
+                const filteredFAQs = allFAQs.filter(faq =>
+                    faq.question.toLowerCase().includes(searchTerm) ||
                     faq.answer.toLowerCase().includes(searchTerm)
                 );
-                
+
                 if (filteredFAQs.length > 0) {
                     const faqList = document.getElementById('faqList');
                     faqList.innerHTML = '';
-                    
+
                     filteredFAQs.forEach((faq, index) => {
                         const faqItem = document.createElement('div');
                         faqItem.className = 'faq-item bg-gray-800/50 rounded-lg overflow-hidden';
@@ -697,18 +727,18 @@
                     `;
                 }
             });
-            
+
             // Support form submission
             document.getElementById('supportForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 submitSupportRequest();
             });
-            
+
             // File attachment handling
             document.getElementById('supportAttachment').addEventListener('change', function(e) {
                 const fileList = document.getElementById('fileList');
                 fileList.innerHTML = '';
-                
+
                 Array.from(e.target.files).forEach((file, index) => {
                     if (file.size > 10 * 1024 * 1024) {
                         Swal.fire({
@@ -718,7 +748,7 @@
                         });
                         return;
                     }
-                    
+
                     const fileItem = document.createElement('div');
                     fileItem.className = 'flex items-center justify-between p-2 bg-gray-800/50 rounded';
                     fileItem.innerHTML = `
@@ -734,21 +764,21 @@
                 });
             });
         }
-        
+
         function removeFile(index) {
             const dt = new DataTransfer();
             const input = document.getElementById('supportAttachment');
             const files = Array.from(input.files);
-            
+
             files.splice(index, 1);
             files.forEach(file => dt.items.add(file));
             input.files = dt.files;
-            
+
             // Refresh file list display
             const event = new Event('change');
             input.dispatchEvent(event);
         }
-        
+
         function startLiveChat() {
             Swal.fire({
                 title: 'Live Chat Support',
@@ -794,15 +824,15 @@
                 width: 500
             });
         }
-        
+
         function sendChatMessage() {
             const messageInput = document.getElementById('chatMessage');
             const message = messageInput.value.trim();
-            
+
             if (!message) return;
-            
+
             const chatMessages = document.querySelector('.chat-messages');
-            
+
             // Add user message
             const userMessage = document.createElement('div');
             userMessage.className = 'flex justify-end';
@@ -813,13 +843,13 @@
                 </div>
             `;
             chatMessages.appendChild(userMessage);
-            
+
             // Clear input
             messageInput.value = '';
-            
+
             // Scroll to bottom
             chatMessages.scrollTop = chatMessages.scrollHeight;
-            
+
             // Simulate agent response
             setTimeout(() => {
                 const agentMessage = document.createElement('div');
@@ -834,7 +864,7 @@
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }, 1000);
         }
-        
+
         function checkSystemStatus() {
             Swal.fire({
                 title: 'Checking System Status...',
@@ -842,7 +872,7 @@
                 showConfirmButton: false,
                 didOpen: () => {
                     Swal.showLoading();
-                    
+
                     setTimeout(() => {
                         Swal.fire({
                             icon: 'success',
@@ -855,7 +885,7 @@
                 }
             });
         }
-        
+
         function submitSupportRequest() {
             const formData = {
                 name: document.getElementById('supportName').value,
@@ -867,17 +897,17 @@
                 attachments: document.getElementById('supportAttachment').files.length,
                 timestamp: new Date().toISOString()
             };
-            
+
             // Generate ticket ID
             const ticketId = 'TKT-' + Date.now().toString().slice(-8);
-            
+
             Swal.fire({
                 title: 'Submitting Support Request...',
                 allowOutsideClick: false,
                 showConfirmButton: false,
                 didOpen: () => {
                     Swal.showLoading();
-                    
+
                     setTimeout(() => {
                         // Store in localStorage (simulated)
                         const supportTickets = JSON.parse(localStorage.getItem('supportTickets') || '[]');
@@ -887,7 +917,7 @@
                             status: 'open'
                         });
                         localStorage.setItem('supportTickets', JSON.stringify(supportTickets));
-                        
+
                         Swal.fire({
                             icon: 'success',
                             title: 'Support Request Submitted!',
@@ -915,4 +945,5 @@
         }
     </script>
 </body>
+
 </html>

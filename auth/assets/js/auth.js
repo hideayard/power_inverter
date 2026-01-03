@@ -2,6 +2,69 @@
 const API_BASE = window.location.origin; // Your domain
 const PROXY_ENDPOINT = "/proxy.php"; // Your proxy file
 
+// Add this function to your auth.js if not exists
+async function requireAuth(role = null) {
+  try {
+    const token = localStorage.getItem("jwt");
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    console.log("requireAuth: Checking token and user...");
+
+    if (!token || !user) {
+      console.log("requireAuth: No token or user found");
+      clearSession();
+      return false;
+    }
+
+    // Check token expiration
+    if (isExpired(token)) {
+      console.log("requireAuth: Token expired, attempting refresh...");
+      const ok = await refreshToken();
+      if (!ok) {
+        console.log("requireAuth: Token refresh failed");
+        clearSession();
+        return false;
+      }
+      console.log("requireAuth: Token refreshed successfully");
+    }
+
+    // Check role if specified
+    if (role && user.user_tipe !== role) {
+      console.log(
+        `requireAuth: Role mismatch. Required: ${role}, User has: ${user.user_tipe}`
+      );
+      Swal.fire({
+        icon: "error",
+        title: "Access Denied",
+        text: "You do not have permission to access this page.",
+      });
+      return false;
+    }
+
+    console.log("requireAuth: User authenticated successfully");
+    return true;
+  } catch (error) {
+    console.error("requireAuth error:", error);
+    clearSession();
+    return false;
+  }
+}
+
+// Also add this function to check login state
+function isLoggedIn() {
+  try {
+    const token = localStorage.getItem("jwt");
+    const user = localStorage.getItem("user");
+
+    if (!token || !user) return false;
+
+    // Quick check without validation
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /* ========= SESSION MANAGEMENT ========= */
 function saveSession(token, user) {
   localStorage.setItem("jwt", token);
@@ -145,6 +208,10 @@ function checkAuth() {
   const token = localStorage.getItem("jwt");
   const user = localStorage.getItem("user");
 
+  console.log("checkAuth: Checking token and user...");
+  console.log("Token:", token);
+  console.log("User:", user);
+  
   if (!token || !user) {
     return false;
   }
@@ -158,6 +225,7 @@ function checkAuth() {
 
     // If more than 24 hours, require re-login
     if (hoursDiff > 24) {
+      console.log("Token expired, clear session...");
       clearSession();
       return false;
     }
@@ -168,6 +236,8 @@ function checkAuth() {
 
 /* ========= INITIALIZE ========= */
 document.addEventListener("DOMContentLoaded", function () {
+  console.log("DOMContentLoaded");
+
   // Check if user is already logged in
   if (checkAuth() && !window.location.pathname.includes("login")) {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -186,6 +256,24 @@ function initLoginUI() {
 
   console.log("Initializing login UI...");
 
+  // ============ ADD THIS CODE ============
+  // Check if already logged in
+  if (isLoggedIn()) {
+    console.log("User already logged in, checking token...");
+
+    // Check token expiration
+    if (isExpired(localStorage.getItem("jwt"))) {
+      refreshToken().then((ok) => {
+        if (ok) {
+          redirectLoggedInUser();
+        }
+      });
+    } else {
+      redirectLoggedInUser();
+    }
+  }
+  // ============ END ADDED CODE ============
+
   // Password toggle
   const togglePasswordBtn = document.getElementById("togglePassword");
   if (togglePasswordBtn) {
@@ -203,6 +291,34 @@ function initLoginUI() {
         }
       }
     });
+  }
+
+  // Add this helper function
+  function redirectLoggedInUser() {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const userType = user.user_tipe || "";
+    let redirectUrl = "/dashboard-inverter.php";
+
+    if (userType === "ADMIN") {
+      redirectUrl = "/admin/dashboard.php";
+    } else if (userType === "USER") {
+      redirectUrl = "/user/dashboard.php";
+    }
+
+    console.log("Auto-redirecting logged-in user to:", redirectUrl);
+
+    // Show message before redirect
+    Swal.fire({
+      icon: "info",
+      title: "Already Logged In",
+      text: `Redirecting to dashboard...`,
+      timer: 1500,
+      showConfirmButton: false,
+    });
+
+    setTimeout(() => {
+      window.location.href = redirectUrl;
+    }, 1500);
   }
 
   // Form submission

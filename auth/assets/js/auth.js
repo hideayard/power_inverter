@@ -94,18 +94,18 @@ async function login(credentials) {
     // ✅ Redirect based on user type
     setTimeout(() => {
       const userType = data.user?.user_tipe;
-      let redirectUrl = "dashboard-inverter.php";
+      let redirectUrl = "../dashboard-inverter.php";
 
       // Custom redirect logic
       switch (userType) {
         case "admin":
-          redirectUrl = "dashboard-inverter.php"; //'admin-dashboard.html';
+          redirectUrl = "../dashboard-inverter.php"; //'admin-dashboard.html';
           break;
         case "user":
-          redirectUrl = "dashboard-inverter.php"; //user-dashboard.html';
+          redirectUrl = "../dashboard-inverter.php"; //user-dashboard.html';
           break;
         default:
-          redirectUrl = "dashboard-inverter.php"; //'dashboard.html';
+          redirectUrl = "../dashboard-inverter.php"; //'dashboard.html';
       }
 
       console.log("Redirecting to:", redirectUrl);

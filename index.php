@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Power Inverter</title>
-  <script src="/auth/assets/js/auth.js"></script>
+  <title>Pasar Malam Hijau</title>
 </head>
 <body>
   <div id="loading" style="
@@ -28,14 +27,14 @@
   <script>
   (async () => {
     try {
-      console.log('Power Inverter: Checking authentication...');
+      console.log('App Loader: Checking authentication...');
       
-      // First, check localStorage directly without waiting for auth.js
+      // Simple check without auth.js dependencies
       const token = localStorage.getItem("jwt");
       const userStr = localStorage.getItem("user");
       
       if (!token || !userStr) {
-        console.log('No token or user in localStorage, redirecting to login');
+        console.log('No token or user found, redirecting to login');
         location.replace("/auth/login.php");
         return;
       }
@@ -44,76 +43,91 @@
       try {
         user = JSON.parse(userStr);
       } catch (e) {
-        console.log('Invalid user data in localStorage');
+        console.log('Invalid user data');
         localStorage.clear();
         location.replace("/auth/login.php");
         return;
       }
       
-      console.log('Found user in localStorage:', user.username);
+      console.log('User found:', user.username);
+      console.log('User type:', user.user_tipe);
       
-      // Check if auth.js is loaded
-      if (typeof isExpired === 'undefined') {
-        console.log('Auth.js not loaded yet, waiting...');
-        // If auth.js fails to load, still try to proceed
-        setTimeout(() => {
-          redirectUser(user);
-        }, 1000);
-        return;
-      }
-      
-      // Check token expiration
-      if (isExpired(token)) {
-        console.log('Token expired, attempting refresh...');
+      // Check token expiration (basic check without auth.js)
+      // You can store token expiration time in localStorage during login
+      const tokenExpires = localStorage.getItem("jwt_expires");
+      if (tokenExpires) {
+        const expiresAt = parseInt(tokenExpires);
+        const now = Date.now();
         
-        if (typeof refreshToken !== 'undefined') {
-          const ok = await refreshToken();
-          if (!ok) {
-            console.log('Token refresh failed');
-            if (typeof clearSession !== 'undefined') {
-              clearSession();
-            } else {
+        if (now > expiresAt) {
+          console.log('Token expired (based on stored timestamp)');
+          
+          // Try to load auth.js for refresh
+          try {
+            const script = document.createElement('script');
+            script.src = '/auth/assets/js/auth.js';
+            script.onload = async () => {
+              if (typeof refreshToken !== 'undefined') {
+                const ok = await refreshToken();
+                if (!ok) {
+                  localStorage.clear();
+                  location.replace("/auth/login.php");
+                  return;
+                }
+                redirectUser();
+              } else {
+                localStorage.clear();
+                location.replace("/auth/login.php");
+              }
+            };
+            script.onerror = () => {
+              console.log('Failed to load auth.js');
               localStorage.clear();
-            }
+              location.replace("/auth/login.php");
+            };
+            document.head.appendChild(script);
+            return;
+          } catch (error) {
+            console.error('Error loading auth.js:', error);
+            localStorage.clear();
             location.replace("/auth/login.php");
             return;
           }
-          console.log('Token refreshed successfully');
-          
-          // Get updated user data after refresh
-          const updatedUserStr = localStorage.getItem("user");
-          if (updatedUserStr) {
-            try {
-              user = JSON.parse(updatedUserStr);
-            } catch (e) {
-              console.error('Failed to parse updated user data');
-            }
-          }
-        } else {
-          console.log('refreshToken function not available');
         }
       }
       
-      // Redirect user based on role
-      redirectUser(user);
+      // Redirect immediately if token seems valid
+      redirectUser();
       
     } catch (error) {
       console.error('Auth check error:', error);
       location.replace("/auth/login.php");
     }
     
-    function redirectUser(user) {
-      let redirectUrl = '/dashboard-inverter.php'; // Default
+    function redirectUser() {
+      const userStr = localStorage.getItem("user");
+      if (!userStr) {
+        location.replace("/auth/login.php");
+        return;
+      }
+      
+      let user;
+      try {
+        user = JSON.parse(userStr);
+      } catch {
+        location.replace("/auth/login.php");
+        return;
+      }
+      
+      let redirectUrl = '/dashboard-inverter.php';
       
       if (user.user_tipe === "ADMIN") {
-        redirectUrl = '/dashboard-inverter.php'; ///'admin/dashboard.php';
+        redirectUrl = '/dashboard-inverter.php';// '/admin/dashboard.php';
       } else if (user.user_tipe === "USER") {
-        redirectUrl = '/dashboard-inverter.php'; //'/user/dashboard.php';
+        redirectUrl = '/dashboard-inverter.php';// '/user/dashboard.php';
       }
       
       console.log('Redirecting to:', redirectUrl);
-      
-      // Small delay for UX
       setTimeout(() => {
         location.replace(redirectUrl);
       }, 300);

@@ -2,42 +2,77 @@
 const API_BASE = window.location.origin; // Your domain
 const PROXY_ENDPOINT = "/proxy.php"; // Your proxy file
 
-// Add this function to your auth.js if not exists
+// FIXED requireAuth - Only clears session when absolutely necessary
 async function requireAuth(role = null) {
   try {
     const token = localStorage.getItem("jwt");
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = localStorage.getItem("user");
 
     console.log("requireAuth: Checking token and user...");
 
+    // Basic check - if no token/user, redirect to login
     if (!token || !user) {
       console.log("requireAuth: No token or user found");
-      clearSession();
+      // Don't call clearSession here - just return false
+      // Let the caller decide what to do
       return false;
     }
 
-    // Check token expiration
-    if (isExpired(token)) {
-      console.log("requireAuth: Token expired, attempting refresh...");
-      const ok = await refreshToken();
-      if (!ok) {
-        console.log("requireAuth: Token refresh failed");
-        clearSession();
-        return false;
+    // Parse user data
+    let userObj;
+    try {
+      userObj = JSON.parse(user);
+    } catch (e) {
+      console.error("requireAuth: Failed to parse user data");
+      return false;
+    }
+
+    // Check token expiration using isExpired function
+    if (typeof isExpired === "function") {
+      if (isExpired(token)) {
+        console.log("requireAuth: Token expired, attempting refresh...");
+
+        if (typeof refreshToken === "function") {
+          const ok = await refreshToken();
+          if (!ok) {
+            console.log("requireAuth: Token refresh failed");
+            // Only clear session if refresh fails
+            clearSession();
+            return false;
+          }
+          console.log("requireAuth: Token refreshed successfully");
+
+          // Update user object after refresh
+          const updatedUser = localStorage.getItem("user");
+          if (updatedUser) {
+            try {
+              userObj = JSON.parse(updatedUser);
+            } catch (e) {
+              console.error("requireAuth: Failed to parse updated user data");
+            }
+          }
+        } else {
+          console.log("requireAuth: refreshToken function not available");
+          // Don't clear session just because we can't refresh
+          // The token might still be valid
+          return true;
+        }
+      } else {
+        console.log("requireAuth: Token is valid (not expired)");
       }
-      console.log("requireAuth: Token refreshed successfully");
+    } else {
+      console.log(
+        "requireAuth: isExpired function not available, skipping expiration check"
+      );
     }
 
     // Check role if specified
-    if (role && user.user_tipe !== role) {
+    if (role && userObj.user_tipe !== role) {
       console.log(
-        `requireAuth: Role mismatch. Required: ${role}, User has: ${user.user_tipe}`
+        `requireAuth: Role mismatch. Required: ${role}, User has: ${userObj.user_tipe}`
       );
-      Swal.fire({
-        icon: "error",
-        title: "Access Denied",
-        text: "You do not have permission to access this page.",
-      });
+      // Don't clear session for role mismatch - just return false
+      // User might want to navigate to a different page
       return false;
     }
 
@@ -45,7 +80,8 @@ async function requireAuth(role = null) {
     return true;
   } catch (error) {
     console.error("requireAuth error:", error);
-    clearSession();
+    // Don't clear session on unexpected errors
+    // Could be network issues, etc.
     return false;
   }
 }
@@ -71,6 +107,10 @@ function saveSession(token, user) {
   localStorage.setItem("user", JSON.stringify(user));
   localStorage.setItem("lastLogin", new Date().toISOString());
 
+  // Store expiration time (24 hours from now)
+  const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
+  localStorage.setItem("jwt_expires", expiresAt.toString());
+
   // Also set as cookie for compatibility
   document.cookie = `jwt=${token}; path=/; max-age=${
     7 * 24 * 60 * 60
@@ -78,19 +118,39 @@ function saveSession(token, user) {
   document.cookie = `user_id=${user.id}; path=/; max-age=${
     7 * 24 * 60 * 60
   }; SameSite=Lax`;
+
+  console.log(
+    "Session saved, expires at:",
+    new Date(expiresAt).toLocaleString()
+  );
 }
 
+// FIXED clearSession - Only redirects if called from login page
 function clearSession() {
+  console.log("clearSession: Clearing user session...");
+
+  // Remove localStorage items
   localStorage.removeItem("jwt");
   localStorage.removeItem("user");
   localStorage.removeItem("lastLogin");
-  localStorage.removeItem("rememberedUser");
+  localStorage.removeItem("jwt_expires");
+
+  // Keep remembered user (optional)
+  // localStorage.removeItem("rememberedUser");
 
   // Clear cookies
   document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   document.cookie = "user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
-  window.location.href = "login.php";
+  console.log("clearSession: Session cleared");
+
+  // Only redirect if we're not already on the login page
+  if (!window.location.pathname.includes("login")) {
+    console.log("clearSession: Redirecting to login page");
+    setTimeout(() => {
+      window.location.href = "/auth/login.php";
+    }, 500);
+  }
 }
 
 /* ========= LOGIN FUNCTION (USING PROXY) ========= */
@@ -209,29 +269,41 @@ function checkAuth() {
   const user = localStorage.getItem("user");
 
   console.log("checkAuth: Checking token and user...");
-  console.log("Token:", token);
-  console.log("User:", user);
-  
+  console.log("Token exists:", !!token);
+  console.log("User exists:", !!user);
+
   if (!token || !user) {
+    console.log("checkAuth: Missing token or user data");
     return false;
   }
 
-  // Optional: Check token expiration
-  const lastLogin = localStorage.getItem("lastLogin");
-  if (lastLogin) {
-    const loginTime = new Date(lastLogin);
-    const now = new Date();
-    const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+  try {
+    const userObj = JSON.parse(user);
+    console.log("checkAuth: User parsed successfully:", userObj.username);
 
-    // If more than 24 hours, require re-login
-    if (hoursDiff > 24) {
-      console.log("Token expired, clear session...");
-      clearSession();
-      return false;
+    // Check expiration using stored timestamp (if available)
+    const expiresAt = localStorage.getItem("jwt_expires");
+    if (expiresAt) {
+      const expirationTime = parseInt(expiresAt);
+      const now = Date.now();
+
+      if (now > expirationTime) {
+        console.log("checkAuth: Token expired based on stored timestamp");
+        // Don't clear here - let requireAuth handle refresh
+        return false;
+      } else {
+        console.log("checkAuth: Token is valid (not expired)");
+        return true;
+      }
     }
-  }
 
-  return true;
+    // If no expiration timestamp, return true (let requireAuth handle JWT parsing)
+    console.log("checkAuth: No expiration timestamp, assuming valid");
+    return true;
+  } catch (error) {
+    console.error("checkAuth: Error parsing user data:", error);
+    return false;
+  }
 }
 
 /* ========= INITIALIZE ========= */
@@ -249,6 +321,7 @@ document.addEventListener("DOMContentLoaded", function () {
   initLoginUI();
 });
 
+// FIXED initLoginUI - Only redirects if token is valid
 function initLoginUI() {
   // Only run on login page
   const loginForm = document.getElementById("loginForm");
@@ -256,23 +329,48 @@ function initLoginUI() {
 
   console.log("Initializing login UI...");
 
-  // ============ ADD THIS CODE ============
   // Check if already logged in
   if (isLoggedIn()) {
     console.log("User already logged in, checking token...");
 
-    // Check token expiration
-    if (isExpired(localStorage.getItem("jwt"))) {
-      refreshToken().then((ok) => {
-        if (ok) {
-          redirectLoggedInUser();
+    // First check with simple validation
+    const token = localStorage.getItem("jwt");
+    const userStr = localStorage.getItem("user");
+
+    if (token && userStr) {
+      try {
+        const user = JSON.parse(userStr);
+
+        // Check expiration using timestamp first (less aggressive)
+        const expiresAt = localStorage.getItem("jwt_expires");
+        let shouldRedirect = false;
+
+        if (expiresAt) {
+          const expirationTime = parseInt(expiresAt);
+          const now = Date.now();
+
+          if (now <= expirationTime) {
+            console.log("Token not expired, redirecting...");
+            shouldRedirect = true;
+          } else if (typeof isExpired === "function" && !isExpired(token)) {
+            // Double-check with JWT parsing
+            console.log("Token still valid (JWT check), redirecting...");
+            shouldRedirect = true;
+          }
+        } else {
+          // No expiration stored, be cautious
+          console.log("No expiration timestamp, proceeding cautiously");
         }
-      });
-    } else {
-      redirectLoggedInUser();
+
+        if (shouldRedirect) {
+          redirectLoggedInUser();
+          return; // Stop further initialization
+        }
+      } catch (e) {
+        console.error("Error checking logged in status:", e);
+      }
     }
   }
-  // ============ END ADDED CODE ============
 
   // Password toggle
   const togglePasswordBtn = document.getElementById("togglePassword");
@@ -295,30 +393,34 @@ function initLoginUI() {
 
   // Add this helper function
   function redirectLoggedInUser() {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const userType = user.user_tipe || "";
-    let redirectUrl = "/dashboard-inverter.php";
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const userType = user.user_tipe || "";
+      let redirectUrl = "/dashboard-inverter.php";
 
-    if (userType === "ADMIN") {
-      redirectUrl = "/admin/dashboard.php";
-    } else if (userType === "USER") {
-      redirectUrl = "/user/dashboard.php";
+      if (userType.toUpperCase() === "ADMIN") {
+        redirectUrl = "/dashboard-inverter.php"; // "/admin/dashboard.php";
+      } else if (userType.toUpperCase() === "USER") {
+        redirectUrl = "/dashboard-inverter.php"; // "/user/dashboard.php";
+      }
+
+      console.log("Auto-redirecting logged-in user to:", redirectUrl);
+
+      // Show message before redirect
+      Swal.fire({
+        icon: "info",
+        title: "Already Logged In",
+        text: `Redirecting to dashboard...`,
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
+      setTimeout(() => {
+        window.location.href = redirectUrl;
+      }, 1500);
+    } catch (error) {
+      console.error("Error in redirectLoggedInUser:", error);
     }
-
-    console.log("Auto-redirecting logged-in user to:", redirectUrl);
-
-    // Show message before redirect
-    Swal.fire({
-      icon: "info",
-      title: "Already Logged In",
-      text: `Redirecting to dashboard...`,
-      timer: 1500,
-      showConfirmButton: false,
-    });
-
-    setTimeout(() => {
-      window.location.href = redirectUrl;
-    }, 1500);
   }
 
   // Form submission

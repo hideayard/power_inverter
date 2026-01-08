@@ -104,6 +104,7 @@ function isLoggedIn() {
 /* ========= SESSION MANAGEMENT ========= */
 function saveSession(token, user) {
   localStorage.setItem("jwt", token);
+  localStorage.setItem("authToken", token);
   localStorage.setItem("user", JSON.stringify(user));
   localStorage.setItem("lastLogin", new Date().toISOString());
 
@@ -160,21 +161,19 @@ async function login(credentials) {
 
     console.log("Attempting login via proxy...");
 
-    // Use FormData for multipart/form-data
     const formData = new FormData();
+    formData.append("action", "login"); // Added action parameter
     formData.append("username", username);
     formData.append("password", password);
 
-    // Make request to YOUR proxy
     const res = await fetch(PROXY_ENDPOINT, {
       method: "POST",
-      body: formData, // FormData automatically sets Content-Type
-      credentials: "same-origin", // Send cookies if any
+      body: formData,
+      credentials: "same-origin",
     });
 
     console.log("Proxy response status:", res.status);
 
-    // Check response
     if (!res.ok) {
       const errorText = await res.text();
       console.error("Login failed via proxy:", errorText);
@@ -187,9 +186,13 @@ async function login(credentials) {
       }
     }
 
-    // Parse JSON response
     const data = await res.json();
     console.log("Login response:", data);
+
+    // Check if action matches
+    if (data.action !== "login") {
+      console.warn("Unexpected action in response:", data.action);
+    }
 
     if (!data.success) {
       throw new Error(data.message || "Invalid username or password");
@@ -219,16 +222,15 @@ async function login(credentials) {
       const userType = data.user?.user_tipe;
       let redirectUrl = "../dashboard-inverter.php";
 
-      // Custom redirect logic
       switch (userType) {
         case "admin":
-          redirectUrl = "../dashboard-inverter.php"; //'admin-dashboard.html';
+          redirectUrl = "../dashboard-inverter.php";
           break;
         case "user":
-          redirectUrl = "../dashboard-inverter.php"; //user-dashboard.html';
+          redirectUrl = "../dashboard-inverter.php";
           break;
         default:
-          redirectUrl = "../dashboard-inverter.php"; //'dashboard.html';
+          redirectUrl = "../dashboard-inverter.php";
       }
 
       console.log("Redirecting to:", redirectUrl);
@@ -239,7 +241,6 @@ async function login(credentials) {
   } catch (err) {
     console.error("Login error:", err);
 
-    // User-friendly error messages
     let errorMessage = err.message;
     if (
       err.message.includes("Network") ||
@@ -263,6 +264,145 @@ async function login(credentials) {
   }
 }
 
+async function register(userData) {
+  try {
+    const {
+      firstName,
+      lastName,
+      email,
+      username,
+      password,
+      confirmPassword,
+      acceptTerms,
+    } = userData;
+
+    console.log("Attempting registration via proxy...");
+
+    // Client-side validation
+    if (password !== confirmPassword) {
+      throw new Error("Passwords do not match");
+    }
+
+    if (!acceptTerms) {
+      throw new Error("You must accept the terms and conditions");
+    }
+
+    const formData = new FormData();
+    formData.append("action", "register"); // Added action parameter
+    formData.append("first_name", firstName);
+    formData.append("last_name", lastName);
+    formData.append("email", email);
+    formData.append("username", username);
+    formData.append("password", password);
+    formData.append("confirm_password", confirmPassword);
+    formData.append("user_type", "user");
+    formData.append("accept_terms", acceptTerms ? "1" : "0");
+
+    const res = await fetch(PROXY_ENDPOINT, {
+      method: "POST",
+      body: formData,
+      credentials: "same-origin",
+    });
+
+    console.log("Registration proxy response status:", res.status);
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Registration failed via proxy:", errorText);
+
+      try {
+        const errorData = JSON.parse(errorText);
+        throw new Error(
+          errorData.message || `Registration failed: ${res.status}`
+        );
+      } catch {
+        throw new Error(`Registration failed: ${res.status} - Server error`);
+      }
+    }
+
+    const data = await res.json();
+    console.log("Registration response:", data);
+
+    // Check if action matches
+    if (data.action !== "register") {
+      console.warn("Unexpected action in response:", data.action);
+    }
+
+    if (!data.success) {
+      // Check for validation errors
+      if (data.errors && Array.isArray(data.errors)) {
+        throw new Error(data.errors.join(", "));
+      }
+      throw new Error(data.message || "Registration failed. Please try again.");
+    }
+
+    // ✅ Save session if auto-login is enabled
+    if (data.token && data.user) {
+      saveSession(data.token, data.user);
+    }
+
+    // ✅ Show success
+    const successMessage =
+      data.message ||
+      `Welcome ${firstName}! Your account has been created successfully.`;
+
+    Swal.fire({
+      icon: "success",
+      title: "Registration Successful",
+      html:
+        successMessage +
+        "<br><br><small>You will be redirected shortly...</small>",
+      timer: 3000,
+      showConfirmButton: false,
+      willClose: () => {
+        if (data.token && data.user) {
+          const userType = data.user?.user_tipe || data.user?.user_type;
+          let redirectUrl = "../dashboard-inverter.php";
+
+          switch (userType) {
+            case "admin":
+              redirectUrl = "../dashboard-inverter.php";
+              break;
+            case "user":
+              redirectUrl = "../dashboard-inverter.php";
+              break;
+            default:
+              redirectUrl = "../dashboard-inverter.php";
+          }
+
+          window.location.href = redirectUrl;
+        } else {
+          window.location.href = "login.php";
+        }
+      },
+    });
+
+    return data;
+  } catch (err) {
+    console.error("Registration error:", err);
+
+    let errorMessage = err.message;
+    if (
+      err.message.includes("Network") ||
+      err.message.includes("Failed to fetch")
+    ) {
+      errorMessage =
+        "Cannot connect to server. Please check your internet connection.";
+    } else if (err.message.includes("CORS")) {
+      errorMessage =
+        "Cross-origin request blocked. Please contact administrator.";
+    }
+
+    Swal.fire({
+      icon: "error",
+      title: "Registration Failed",
+      text: errorMessage,
+      confirmButtonText: "Try Again",
+    });
+
+    throw err;
+  }
+}
 /* ========= AUTH CHECK ========= */
 function checkAuth() {
   const token = localStorage.getItem("jwt");

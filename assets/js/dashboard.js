@@ -9,7 +9,7 @@ let selectedNodeId = "all";
 // Map toggle functionality
 let isMapFullscreen = false;
 
-function setupMapToggle() {
+function setupMapToggle(devices) {
   const mapContainer = document.getElementById("map-container");
   const mapToggle = document.getElementById("map-toggle");
   const maximizeIcon = document.getElementById("maximize-icon");
@@ -1191,25 +1191,48 @@ function updateMapMarkers() {
   });
 }
 
+const PROXY2_ENDPOINT = "/proxy2.php"; // Your proxy file
+
+// Store token globally after login
+let authToken = null;
+
+function setAuthToken(token) {
+  authToken = token;
+  localStorage.setItem("authToken", token);
+  console.log("Auth token set");
+}
+
 // --- INITIALIZATION ---
 function initApplication() {
-  // Initialize map
-  initMap();
+  loadAndDisplayDevices();
+  const storedToken = localStorage.getItem("authToken");
+  let devices;
+  if (storedToken) {
+    setAuthToken(storedToken);
+    // devices = getDevices(storedToken);
+    // devices = getDevicesWithTelemetry(storedToken);
+    // Initialize map
+    // initMap();
 
-  // Initialize map toggle
-  setupMapToggle();
+    // // Initialize map toggle
+    // setupMapToggle(devices);
 
-  // Initialize nodes
-  initializeNodes();
+    // // Initialize nodes
+    // initializeNodes();
 
-  // Initialize chart
-  initChart();
+    // // Initialize chart
+    // initChart();
 
-  // Set initial display
-  selectNode("all");
+    // // Set initial display
+    // selectNode("all");
 
-  // Start simulation
-  simulationInterval = setInterval(updateNodeData, 2000);
+    // Start simulation
+    simulationInterval = setInterval(updateNodeData, 2000);
+  } else {
+    // Prompt for login if no token
+    console.log("No auth token found. Please login first.");
+    return;
+  }
 
   // Set up event listeners
   document.getElementById("toggle-avg").onclick = function () {
@@ -1245,6 +1268,396 @@ function initApplication() {
   };
 
   console.log("Multi-node dashboard initialized");
+}
+
+// Get devices with Bearer token
+async function getDevices(authToken) {
+  try {
+    console.log("Fetching devices via proxy...");
+
+    const response = await fetch(PROXY2_ENDPOINT, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        action: "get_devices",
+      }),
+    });
+
+    console.log("Devices response status:", response.status);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch devices: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    if (result.success) {
+      console.log("Devices fetched:", result.data);
+      return result.data;
+    } else {
+      throw new Error(result.message || "Failed to get devices");
+    }
+  } catch (error) {
+    console.error("Error fetching devices:", error);
+    throw error;
+  }
+}
+
+async function getDevicesWithTelemetry(authToken) {
+  try {
+    const response = await fetch(PROXY2_ENDPOINT, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        action: "get_devices_with_data",
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch devices: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    if (result.success) {
+      console.log(`Got ${result.data.length} devices with telemetry`);
+      console.log("Summary:", result.summary);
+      return {
+        devices: result.data,
+        summary: result.summary,
+      };
+    } else {
+      throw new Error(result.message || "Failed to get devices");
+    }
+  } catch (error) {
+    console.error("Error fetching devices with telemetry:", error);
+    throw error;
+  }
+}
+
+// Function to display device cards
+function displayDeviceCards(devices) {
+  const container = document.getElementById("devices-container");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  devices.forEach((device) => {
+    const card = createDeviceCard(device);
+    container.appendChild(card);
+  });
+}
+
+// Create device card HTML
+function createDeviceCard(device) {
+  const card = document.createElement("div");
+  card.className = "device-card";
+  card.id = `device-${device.device_id}`;
+
+  const hasTelemetry = device.telemetry !== null;
+  const hasLocation = device.has_location;
+
+  card.innerHTML = `
+        <div class="device-header">
+            <div class="device-status ${device.status}">
+                ${device.status_text}
+            </div>
+            <div class="device-last-updated">
+                ${device.last_updated_ago}
+            </div>
+        </div>
+        
+        <div class="device-info">
+            <h3>${
+              device.device_name || device.device_alias || device.device_id
+            }</h3>
+            <p class="device-id">ID: ${device.device_id}</p>
+            ${
+              device.device_description
+                ? `<p class="device-description">${device.device_description}</p>`
+                : ""
+            }
+        </div>
+        
+        ${
+          hasTelemetry
+            ? `
+        <div class="device-telemetry">
+            <div class="telemetry-grid">
+                <div class="telemetry-item">
+                    <span class="label">AC Power</span>
+                    <span class="value">${
+                      device.metrics.calculated_power
+                    } W</span>
+                </div>
+                <div class="telemetry-item">
+                    <span class="label">Energy</span>
+                    <span class="value">${
+                      device.telemetry.energy || 0
+                    } kWh</span>
+                </div>
+                <div class="telemetry-item">
+                    <span class="label">Voltage</span>
+                    <span class="value">${
+                      device.telemetry.ac_voltage || 0
+                    } V</span>
+                </div>
+                <div class="telemetry-item">
+                    <span class="label">Current</span>
+                    <span class="value">${
+                      device.telemetry.ac_current || 0
+                    } A</span>
+                </div>
+                <div class="telemetry-item">
+                    <span class="label">Power Factor</span>
+                    <span class="value">${
+                      device.telemetry.power_factor || 0
+                    }</span>
+                </div>
+                <div class="telemetry-item">
+                    <span class="label">Frequency</span>
+                    <span class="value">${
+                      device.telemetry.frequency || 0
+                    } Hz</span>
+                </div>
+                ${
+                  device.telemetry.dc_voltage
+                    ? `
+                <div class="telemetry-item">
+                    <span class="label">DC Voltage</span>
+                    <span class="value">${device.telemetry.dc_voltage} V</span>
+                </div>
+                <div class="telemetry-item">
+                    <span class="label">DC Current</span>
+                    <span class="value">${
+                      device.telemetry.dc_current || 0
+                    } A</span>
+                </div>
+                `
+                    : ""
+                }
+            </div>
+            
+            <div class="device-metrics">
+                <div class="metric">
+                    <span class="metric-label">Carbon Reduction</span>
+                    <span class="metric-value">${
+                      device.metrics.carbon_reduction
+                    } kg</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Uptime</span>
+                    <span class="metric-value">${device.metrics.uptime}%</span>
+                </div>
+                ${
+                  device.metrics.battery_percentage > 0
+                    ? `
+                <div class="metric">
+                    <span class="metric-label">Battery</span>
+                    <span class="metric-value">${device.metrics.battery_percentage}%</span>
+                </div>
+                `
+                    : ""
+                }
+                <div class="metric">
+                    <span class="metric-label">Efficiency</span>
+                    <span class="metric-value">${
+                      device.metrics.efficiency
+                    }%</span>
+                </div>
+            </div>
+            
+            ${
+              device.metrics.low_voltage
+                ? `
+            <div class="device-alert warning">
+                ⚠️ Low Voltage Warning
+            </div>
+            `
+                : ""
+            }
+            
+            ${
+              device.metrics.relay_on
+                ? `
+            <div class="device-alert info">
+                🔌 Relay is ON
+            </div>
+            `
+                : ""
+            }
+        </div>
+        `
+            : `
+        <div class="no-telemetry">
+            <p>No telemetry data available</p>
+        </div>
+        `
+        }
+        
+        ${
+          hasLocation
+            ? `
+        <div class="device-location">
+            <p><strong>Location:</strong> ${device.location.formatted}</p>
+            <a href="${device.location.google_maps_link}" target="_blank" class="map-link">
+                📍 View on Map
+            </a>
+        </div>
+        `
+            : ""
+        }
+        
+        <div class="device-actions">
+            <button onclick="viewDeviceDetails('${
+              device.device_id
+            }')" class="btn btn-primary">
+                View Details
+            </button>
+            <button onclick="viewDeviceHistory('${
+              device.device_id
+            }')" class="btn btn-secondary">
+                History
+            </button>
+        </div>
+    `;
+
+  return card;
+}
+
+// Function to update summary dashboard
+function updateSummaryDashboard(summary) {
+  const summaryEl = document.getElementById("dashboard-summary");
+  if (!summaryEl) return;
+
+  summaryEl.innerHTML = `
+        <div class="summary-card">
+            <div class="summary-value">${summary.total_devices}</div>
+            <div class="summary-label">Total Devices</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-value">${summary.active_devices}</div>
+            <div class="summary-label">Active</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-value">${summary.warning_devices}</div>
+            <div class="summary-label">Warning</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-value">${summary.offline_devices}</div>
+            <div class="summary-label">Offline</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-value">${summary.with_telemetry}</div>
+            <div class="summary-label">With Data</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-value">${summary.with_location}</div>
+            <div class="summary-label">With Location</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-value">${summary.total_power.toFixed(0)}</div>
+            <div class="summary-label">Total Power (W)</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-value">${summary.total_energy.toFixed(2)}</div>
+            <div class="summary-label">Total Energy (kWh)</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-value">${summary.total_carbon_reduction.toFixed(
+              1
+            )}</div>
+            <div class="summary-label">CO₂ Reduced (kg)</div>
+        </div>
+    `;
+}
+
+// Main function to load and display data
+async function loadAndDisplayDevices() {
+  try {
+    const storedToken = localStorage.getItem("authToken");
+
+    const { devices, summary } = await getDevicesWithTelemetry(storedToken);
+
+    // Display devices
+    displayDeviceCards(devices);
+
+    // Update summary
+    updateSummaryDashboard(summary);
+
+    // Update map with device locations
+    updateDeviceMap(devices.filter((d) => d.has_location));
+
+    // Update charts with device data
+    updatePowerChart(devices);
+    updateEnergyChart(devices);
+
+    return devices;
+  } catch (error) {
+    console.error("Failed to load devices:", error);
+    showError("Failed to load device data");
+    return [];
+  }
+}
+
+async function fetchDevicesFromServer() {
+  try {
+    if (!authToken) {
+      console.error("No authentication token available");
+      return null;
+    }
+
+    console.log("Fetching devices from server...");
+
+    const formData = new FormData();
+    formData.append("action", "get-devices"); // Added action parameter
+
+    const response = await fetch(PROXY2_ENDPOINT, {
+      method: "POST",
+      body: formData,
+      credentials: "same-origin",
+    });
+
+    console.log("Devices response status:", response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Failed to fetch devices:", errorText);
+
+      try {
+        const errorData = JSON.parse(errorText);
+        throw new Error(
+          errorData.message || `Failed to fetch devices: ${response.status}`
+        );
+      } catch {
+        throw new Error(
+          `Failed to fetch devices: ${response.status} - Server error`
+        );
+      }
+    }
+
+    const result = await response.json();
+
+    if (result.success && result.data) {
+      console.log(
+        "Devices fetched successfully:",
+        result.data.length,
+        "devices found"
+      );
+      return result.data;
+    } else {
+      throw new Error(result.message || "No devices data received");
+    }
+  } catch (error) {
+    console.error("Error fetching devices:", error);
+    throw error;
+  }
 }
 
 // --- GLOBAL FUNCTIONS ---

@@ -68,11 +68,11 @@
             </button>
         </form>
 
-        <div class="divider">
+        <!-- <div class="divider">
             <span>Or continue with</span>
-        </div>
+        </div> -->
 
-        <div class="social-login">
+        <!-- <div class="social-login">
             <button type="button" class="social-button" id="googleLogin">
                 <i class="fab fa-google"></i>
                 Google
@@ -81,7 +81,7 @@
                 <i class="fab fa-github"></i>
                 GitHub
             </button>
-        </div>
+        </div> -->
 
         <p class="register-link">
             Don't have an account?

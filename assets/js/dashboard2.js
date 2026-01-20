@@ -846,7 +846,7 @@ function updateCurrentDisplay() {
     }
 
     if (elements.chartTitle) {
-      elements.chartTitle.textContent = `${nodeData.name} - Inverter Parameter Trend Analysis`;
+      elements.chartTitle.textContent = `Inverter Parameter Trend Analysis`;
     }
   }
 

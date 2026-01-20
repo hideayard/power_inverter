@@ -14,7 +14,7 @@ body {
 }
 
 #map {
-  height: 400px;
+  height: 550px;
   border-radius: 0.5rem;
   z-index: 1;
 }

@@ -144,7 +144,7 @@
 
                         <section class="widget full-width">
                             <div class="widget-header">
-                                <h2>📈 Market Analysis</h2>
+                                <h2>📈 Market Analysis First Source</h2>
                                 <div class="timeframe-display" id="current-tf">4H</div>
                             </div>
                             <div class="widget-content">
@@ -184,6 +184,367 @@
                             </div>
                         </section>
 
+                        <section class="widget full-width">
+                            <div class="widget-header">
+                                <h2>📈 Market Analysis second Source</h2>
+                                <div class="timeframe-display" id="current-tf">4H</div>
+                            </div>
+                            <div class="widget-content">
+                                <div class="analysis-second-placeholder">
+                                    <!-- Summary with Gauge -->
+                                    <div class="analysis-item">
+                                        <h3>Summary</h3>
+                                        <div class="gauge-container">
+                                            <div class="analyst-price-target_gaugeContainer__F_79r" style="width: 300px; height: 135px;" data-c="4">
+                                                <div class="analyst-price-target_gauge__mc_8B" style="width: 204px; height: 102px;">
+                                                    <div class="analyst-price-target_bar__nhotN" data-i="0"></div>
+                                                    <div class="analyst-price-target_bar__nhotN" data-i="1"></div>
+                                                    <div class="analyst-price-target_bar__nhotN" data-i="2"></div>
+                                                    <div class="analyst-price-target_bar__nhotN" data-i="3"></div>
+                                                    <div class="analyst-price-target_bar__nhotN" data-i="4"></div>
+                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="0"></div>
+                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="1"></div>
+                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="2"></div>
+                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="3"></div>
+                                                    <div class="analyst-price-target_indicator__dhPLO" style="width: 198px; height: 198px; top: 3px; left: 3px;">
+                                                        <div class="analyst-price-target_arrow__ZRmAZ" style="bottom: 101px; left: 98px; height: 60px;"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="analyst-price-target_gauge__mc_8B" style="position: absolute; opacity: 0.2; width: 204px; height: 102px;">
+                                                    <div class="analyst-price-target_bar__nhotN" data-i="0"></div>
+                                                    <div class="analyst-price-target_bar__nhotN" data-i="1"></div>
+                                                    <div class="analyst-price-target_bar__nhotN" data-i="2"></div>
+                                                    <div class="analyst-price-target_bar__nhotN" data-i="3"></div>
+                                                    <div class="analyst-price-target_bar__nhotN" data-i="4"></div>
+                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="0"></div>
+                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="1"></div>
+                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="2"></div>
+                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="3"></div>
+                                                    <div class="analyst-price-target_indicator__dhPLO" style="width: 174px; height: 174px; top: 15px; left: 15px;"></div>
+                                                </div>
+                                                <div class="analyst-price-target_circle__ykYoV" style="top: 113px; bottom: 19px;"></div>
+                                                <div class="analyst-price-target_strongSell__OtkYw" style="bottom: 19px; left: 14px;">Strong Sell</div>
+                                                <div class="analyst-price-target_sell__umjJy" style="left: 37px; top: 15px;">Sell</div>
+                                                <div class="analyst-price-target_neutral__L8xm4" style="top: -11px;">Neutral</div>
+                                                <div class="analyst-price-target_buy__5XS2x" style="right: 38px; top: 15px;">Buy</div>
+                                                <div class="analyst-price-target_strongBuy__QaJ8j" style="bottom: 19px; right: 14px;">Strong Buy</div>
+                                            </div>
+                                            <div class="gauge-rating strong-buy">Strong Buy</div>
+                                        </div>
+                                        <div class="summary-details">
+                                            <div class="indicator-row">
+                                                <span>Moving Averages:</span>
+                                                <span class="strong-buy">Strong Buy</span>
+                                                <span>Buy: 12 | Sell: 0</span>
+                                            </div>
+                                            <div class="indicator-row">
+                                                <span>Technical Indicators:</span>
+                                                <span class="strong-buy">Strong Buy</span>
+                                                <span>Buy: 11 | Sell: 0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Technical Indicators Table -->
+                                    <div class="analysis-item">
+                                        <h3>Technical Indicators</h3>
+                                        <div class="table-header">
+                                            <span>Summary: <strong class="strong-buy">Strong Buy</strong></span>
+                                            <span>Buy: 11 | Neutral: 0 | Sell: 0</span>
+                                            <span class="timestamp">Jan 20, 2026 09:07AM GMT</span>
+                                        </div>
+                                        <div class="table-container">
+                                            <table class="rates-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="name-col">
+                                                            <span>Name</span>
+                                                        </th>
+                                                        <th class="value-col">
+                                                            <span>Value</span>
+                                                        </th>
+                                                        <th class="action-col">
+                                                            <span>Action</span>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="name-col">RSI(14)</td>
+                                                        <td class="value-col">69.506</td>
+                                                        <td class="action-col buy">Buy</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">STOCH(9,6)</td>
+                                                        <td class="value-col">67.824</td>
+                                                        <td class="action-col buy">Buy</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">STOCHRSI(14)</td>
+                                                        <td class="value-col">64.032</td>
+                                                        <td class="action-col buy">Buy</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">MACD(12,26)</td>
+                                                        <td class="value-col">0.300</td>
+                                                        <td class="action-col buy">Buy</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">ADX(14)</td>
+                                                        <td class="value-col">59.889</td>
+                                                        <td class="action-col buy">Buy</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">Williams %R</td>
+                                                        <td class="value-col">-24.306</td>
+                                                        <td class="action-col buy">Buy</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">CCI(14)</td>
+                                                        <td class="value-col">118.2944</td>
+                                                        <td class="action-col buy">Buy</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">ATR(14)</td>
+                                                        <td class="value-col">0.235</td>
+                                                        <td class="action-col neutral">High Volatility</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">Highs/Lows(14)</td>
+                                                        <td class="value-col">0.4171</td>
+                                                        <td class="action-col buy">Buy</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">Ultimate Oscillator</td>
+                                                        <td class="value-col">68.996</td>
+                                                        <td class="action-col buy">Buy</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">ROC</td>
+                                                        <td class="value-col">0.435</td>
+                                                        <td class="action-col buy">Buy</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">Bull/Bear Power(13)</td>
+                                                        <td class="value-col">0.680</td>
+                                                        <td class="action-col buy">Buy</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Moving Averages Table -->
+                                    <div class="analysis-item">
+                                        <h3>Moving Averages</h3>
+                                        <div class="table-header">
+                                            <span>Summary: <strong class="strong-buy">Strong Buy</strong></span>
+                                            <span>Buy: 12 | Sell: 0</span>
+                                            <span class="timestamp">Jan 20, 2026 09:07AM GMT</span>
+                                        </div>
+                                        <div class="table-container">
+                                            <table class="rates-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="name-col">
+                                                            <span>Name</span>
+                                                        </th>
+                                                        <th class="simple-col">
+                                                            <span>Simple</span>
+                                                        </th>
+                                                        <th class="exponential-col">
+                                                            <span>Exponential</span>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="name-col">MA5</td>
+                                                        <td class="simple-col">
+                                                            <div class="value-action">
+                                                                <span>184.83</span>
+                                                                <span class="action buy">Buy</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="exponential-col">
+                                                            <div class="value-action">
+                                                                <span>184.77</span>
+                                                                <span class="action buy">Buy</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">MA10</td>
+                                                        <td class="simple-col">
+                                                            <div class="value-action">
+                                                                <span>184.44</span>
+                                                                <span class="action buy">Buy</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="exponential-col">
+                                                            <div class="value-action">
+                                                                <span>184.58</span>
+                                                                <span class="action buy">Buy</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">MA20</td>
+                                                        <td class="simple-col">
+                                                            <div class="value-action">
+                                                                <span>184.25</span>
+                                                                <span class="action buy">Buy</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="exponential-col">
+                                                            <div class="value-action">
+                                                                <span>184.30</span>
+                                                                <span class="action buy">Buy</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">MA50</td>
+                                                        <td class="simple-col">
+                                                            <div class="value-action">
+                                                                <span>183.79</span>
+                                                                <span class="action buy">Buy</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="exponential-col">
+                                                            <div class="value-action">
+                                                                <span>184.07</span>
+                                                                <span class="action buy">Buy</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">MA100</td>
+                                                        <td class="simple-col">
+                                                            <div class="value-action">
+                                                                <span>184.07</span>
+                                                                <span class="action buy">Buy</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="exponential-col">
+                                                            <div class="value-action">
+                                                                <span>184.02</span>
+                                                                <span class="action buy">Buy</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">MA200</td>
+                                                        <td class="simple-col">
+                                                            <div class="value-action">
+                                                                <span>184.10</span>
+                                                                <span class="action buy">Buy</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="exponential-col">
+                                                            <div class="value-action">
+                                                                <span>184.06</span>
+                                                                <span class="action buy">Buy</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Pivot Points Table -->
+                                    <div class="analysis-item">
+                                        <h3>Pivot Points</h3>
+                                        <div class="table-container">
+                                            <table class="rates-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="name-col">
+                                                            <span>Name</span>
+                                                        </th>
+                                                        <th class="value-col">
+                                                            <span>S3</span>
+                                                        </th>
+                                                        <th class="value-col">
+                                                            <span>S2</span>
+                                                        </th>
+                                                        <th class="value-col">
+                                                            <span>S1</span>
+                                                        </th>
+                                                        <th class="pivot-col">
+                                                            <span>Pivot Points</span>
+                                                        </th>
+                                                        <th class="value-col">
+                                                            <span>R1</span>
+                                                        </th>
+                                                        <th class="value-col">
+                                                            <span>R2</span>
+                                                        </th>
+                                                        <th class="value-col">
+                                                            <span>R3</span>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="name-col">Classic</td>
+                                                        <td class="value-col">184.45</td>
+                                                        <td class="value-col">184.63</td>
+                                                        <td class="value-col">184.77</td>
+                                                        <td class="pivot-col">184.95</td>
+                                                        <td class="value-col">185.09</td>
+                                                        <td class="value-col">185.27</td>
+                                                        <td class="value-col">185.41</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">Fibonacci</td>
+                                                        <td class="value-col">184.63</td>
+                                                        <td class="value-col">184.75</td>
+                                                        <td class="value-col">184.83</td>
+                                                        <td class="pivot-col">184.95</td>
+                                                        <td class="value-col">185.07</td>
+                                                        <td class="value-col">185.15</td>
+                                                        <td class="value-col">185.27</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">Camarilla</td>
+                                                        <td class="value-col">184.81</td>
+                                                        <td class="value-col">184.84</td>
+                                                        <td class="value-col">184.87</td>
+                                                        <td class="pivot-col">184.95</td>
+                                                        <td class="value-col">184.93</td>
+                                                        <td class="value-col">184.96</td>
+                                                        <td class="value-col">184.99</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">Woodie's</td>
+                                                        <td class="value-col">184.41</td>
+                                                        <td class="value-col">184.61</td>
+                                                        <td class="value-col">184.73</td>
+                                                        <td class="pivot-col">184.93</td>
+                                                        <td class="value-col">185.05</td>
+                                                        <td class="value-col">185.25</td>
+                                                        <td class="value-col">185.37</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="name-col">DeMark's</td>
+                                                        <td class="value-col">-</td>
+                                                        <td class="value-col">-</td>
+                                                        <td class="value-col">184.69</td>
+                                                        <td class="pivot-col">184.91</td>
+                                                        <td class="value-col">185.02</td>
+                                                        <td class="value-col">-</td>
+                                                        <td class="value-col">-</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
                         <section class="widget full-width dark-theme" id="interestRatesWidget">
                             <div class="widget-header">
                                 <div class="header-content">
@@ -202,7 +563,7 @@
                                 </div>
                             </div>
 
-                            <div class="widget-content"  id="interestRateContainer">
+                            <div class="widget-content" id="interestRateContainer">
                                 <!-- Summary Stats (will be populated dynamically) -->
                                 <div class="stats-grid" id="summaryStats">
                                     <!-- Stats will be generated by JavaScript -->
@@ -1452,22 +1813,7 @@
                     <span class="neutral">${neutralCount} patterns</span>
                 </div>
             </div>
-            <div class="analysis-item">
-                <h3>Market Sentiment</h3>
-                <div class="sentiment-labels">
-                    <span>Bullish: ${bullishPercent}%</span>
-                    <span>Bearish: ${bearishPercent}%</span>
-                </div>
-                <div class="sentiment-bar">
-                    <div class="sentiment-fill bullish" style="width: ${bullishPercent}%"></div>
-                </div>
-                <div class="indicator-row">
-                    <span>Trend:</span>
-                    <span class="${buyCount > sellCount ? 'bullish' : 'bearish'}">
-                        ${buyCount > sellCount ? 'Bullish Bias' : 'Bearish Bias'}
-                    </span>
-                </div>
-            </div>
+
         `;
             }
         }

@@ -28,8 +28,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto,
-    sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
 }
 
 body {
@@ -1887,14 +1887,15 @@ button:hover {
   transform: translateX(-50%);
   overflow: hidden;
   border-radius: 102px 102px 0 0;
-  background: linear-gradient(90deg, 
-    var(--accent-red) 0%, 
-    var(--accent-yellow) 25%, 
+  background: linear-gradient(
+    90deg,
+    var(--accent-red) 0%,
+    var(--accent-yellow) 25%,
     var(--text-secondary) 50%,
     #34d399 75%,
     var(--accent-green) 100%
   );
-  box-shadow: 
+  box-shadow:
     inset 0 2px 10px rgba(0, 0, 0, 0.5),
     0 4px 15px rgba(0, 0, 0, 0.3);
 }
@@ -1913,11 +1914,23 @@ button:hover {
   border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.analyst-price-target_bar__nhotN[data-i="0"] { left: 0; border-left: 1px solid rgba(255, 255, 255, 0.2); }
-.analyst-price-target_bar__nhotN[data-i="1"] { left: 40.8px; }
-.analyst-price-target_bar__nhotN[data-i="2"] { left: 81.6px; }
-.analyst-price-target_bar__nhotN[data-i="3"] { left: 122.4px; }
-.analyst-price-target_bar__nhotN[data-i="4"] { left: 163.2px; border-right: 1px solid rgba(255, 255, 255, 0.2); }
+.analyst-price-target_bar__nhotN[data-i="0"] {
+  left: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+.analyst-price-target_bar__nhotN[data-i="1"] {
+  left: 40.8px;
+}
+.analyst-price-target_bar__nhotN[data-i="2"] {
+  left: 81.6px;
+}
+.analyst-price-target_bar__nhotN[data-i="3"] {
+  left: 122.4px;
+}
+.analyst-price-target_bar__nhotN[data-i="4"] {
+  left: 163.2px;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
 
 .analyst-price-target_separator__682r6 {
   position: absolute;
@@ -2140,7 +2153,8 @@ button:hover {
 
 /* Fixed header background - no green */
 .analysis-second-placeholder .rates-table thead {
-  background: linear-gradient(135deg, 
+  background: linear-gradient(
+    135deg,
     rgba(26, 31, 46, 0.95),
     rgba(30, 41, 59, 0.95)
   ) !important;
@@ -2172,7 +2186,10 @@ button:hover {
   text-align: center;
 }
 
-.analysis-second-placeholder .analysis-item:last-child .rates-table th.name-col {
+.analysis-second-placeholder
+  .analysis-item:last-child
+  .rates-table
+  th.name-col {
   text-align: left;
 }
 
@@ -2208,7 +2225,10 @@ button:hover {
   text-align: left;
 }
 
-.analysis-second-placeholder .analysis-item:last-child .rates-table td.name-col {
+.analysis-second-placeholder
+  .analysis-item:last-child
+  .rates-table
+  td.name-col {
   text-align: left;
 }
 
@@ -2235,10 +2255,22 @@ button:hover {
 }
 
 /* Technical Indicators Table specific alignment */
-.analysis-second-placeholder .analysis-item:nth-child(2) .rates-table th.value-col,
-.analysis-second-placeholder .analysis-item:nth-child(2) .rates-table td.value-col,
-.analysis-second-placeholder .analysis-item:nth-child(2) .rates-table th.action-col,
-.analysis-second-placeholder .analysis-item:nth-child(2) .rates-table td.action-col {
+.analysis-second-placeholder
+  .analysis-item:nth-child(2)
+  .rates-table
+  th.value-col,
+.analysis-second-placeholder
+  .analysis-item:nth-child(2)
+  .rates-table
+  td.value-col,
+.analysis-second-placeholder
+  .analysis-item:nth-child(2)
+  .rates-table
+  th.action-col,
+.analysis-second-placeholder
+  .analysis-item:nth-child(2)
+  .rates-table
+  td.action-col {
   text-align: center;
 }
 
@@ -2262,7 +2294,7 @@ button:hover {
 
 .value-col {
   min-width: 90px;
-  font-family: 'SF Mono', 'Roboto Mono', monospace;
+  font-family: "SF Mono", "Roboto Mono", monospace;
   color: var(--text-primary);
   font-weight: 500;
   font-size: 0.9rem;
@@ -2319,7 +2351,7 @@ button:hover {
 }
 
 .value-action span:first-child {
-  font-family: 'SF Mono', 'Roboto Mono', monospace;
+  font-family: "SF Mono", "Roboto Mono", monospace;
   font-weight: 600;
   color: var(--text-primary);
   font-size: 0.9rem;
@@ -2330,7 +2362,8 @@ button:hover {
   font-size: 0.75rem;
 }
 
-.simple-col, .exponential-col {
+.simple-col,
+.exponential-col {
   min-width: 140px;
 }
 
@@ -2344,7 +2377,7 @@ button:hover {
 }
 
 .pivot-points-table .value-col {
-  font-family: 'SF Mono', 'Roboto Mono', monospace;
+  font-family: "SF Mono", "Roboto Mono", monospace;
   font-weight: 500;
   color: var(--text-primary);
   background: rgba(255, 255, 255, 0.02);
@@ -2377,20 +2410,22 @@ button:hover {
 }
 
 /* Pivot points horizontal scrollbar */
-.analysis-second-placeholder .analysis-item:last-child .table-container::-webkit-scrollbar {
+.analysis-second-placeholder
+  .analysis-item:last-child
+  .table-container::-webkit-scrollbar {
   height: 8px;
 }
 
 /* Animation for gauge */
 @keyframes gauge-pulse {
-  0% { 
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.3); 
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.3);
   }
-  70% { 
-    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); 
+  70% {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
   }
-  100% { 
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); 
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
   }
 }
 
@@ -2433,11 +2468,11 @@ button:hover {
   .dashboard-layout {
     grid-template-columns: minmax(200px, 20%) 1fr minmax(200px, 20%);
   }
-  
+
   .lower-dashboard {
     grid-template-columns: 1fr;
   }
-  
+
   .analysis-placeholder {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
@@ -2846,10 +2881,22 @@ button:hover {
   }
 
   /* Hide some columns on mobile for pivot points */
-  .analysis-second-placeholder .analysis-item:last-child .rates-table th:nth-child(4),
-  .analysis-second-placeholder .analysis-item:last-child .rates-table td:nth-child(4),
-  .analysis-second-placeholder .analysis-item:last-child .rates-table th:nth-child(5),
-  .analysis-second-placeholder .analysis-item:last-child .rates-table td:nth-child(5) {
+  .analysis-second-placeholder
+    .analysis-item:last-child
+    .rates-table
+    th:nth-child(4),
+  .analysis-second-placeholder
+    .analysis-item:last-child
+    .rates-table
+    td:nth-child(4),
+  .analysis-second-placeholder
+    .analysis-item:last-child
+    .rates-table
+    th:nth-child(5),
+  .analysis-second-placeholder
+    .analysis-item:last-child
+    .rates-table
+    td:nth-child(5) {
     display: none;
   }
 }
@@ -2877,7 +2924,8 @@ button:hover {
     overflow: hidden;
   }
 
-  select, button {
+  select,
+  button {
     height: 34px;
     font-size: 0.8rem;
   }
@@ -2920,8 +2968,14 @@ button:hover {
   }
 
   /* Hide more columns on very small screens */
-  .analysis-second-placeholder .analysis-item:last-child .rates-table th:nth-child(3),
-  .analysis-second-placeholder .analysis-item:last-child .rates-table td:nth-child(3) {
+  .analysis-second-placeholder
+    .analysis-item:last-child
+    .rates-table
+    th:nth-child(3),
+  .analysis-second-placeholder
+    .analysis-item:last-child
+    .rates-table
+    td:nth-child(3) {
     display: none;
   }
 
@@ -2949,7 +3003,8 @@ button:hover {
     font-size: 1rem;
   }
 
-  select, button {
+  select,
+  button {
     height: 32px;
     font-size: 0.75rem;
     padding: 6px 10px;
@@ -2978,8 +3033,12 @@ button:hover {
   }
 
   /* Show only essential table columns */
-  .analysis-second-placeholder .rates-table th:not(:first-child):not(:nth-child(2)),
-  .analysis-second-placeholder .rates-table td:not(:first-child):not(:nth-child(2)) {
+  .analysis-second-placeholder
+    .rates-table
+    th:not(:first-child):not(:nth-child(2)),
+  .analysis-second-placeholder
+    .rates-table
+    td:not(:first-child):not(:nth-child(2)) {
     display: none;
   }
 }
@@ -2989,11 +3048,11 @@ button:hover {
   .container {
     height: -webkit-fill-available;
   }
-  
+
   .dashboard-layout {
     height: -webkit-fill-available;
   }
-  
+
   .sidebar {
     max-height: -webkit-fill-available;
   }
@@ -3016,29 +3075,220 @@ button:hover {
   .rate-filter {
     display: none !important;
   }
-  
+
   .container {
     height: auto;
     overflow: visible;
     padding: 0;
   }
-  
+
   .dashboard-layout {
     grid-template-columns: 1fr;
     height: auto;
   }
-  
+
   .sidebar {
     display: none;
   }
-  
+
   .widget {
     break-inside: avoid;
     box-shadow: none;
     border: 1px solid #ddd;
   }
-  
+
   .analysis-second-placeholder .analysis-item {
     break-inside: avoid;
   }
+}
+
+/* Add these styles to ma.css */
+
+/* Loading states */
+.loading-text,
+.loading-cell,
+.no-data {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 20px;
+  font-style: italic;
+}
+
+/* Gauge rating colors */
+.gauge-rating {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+.gauge-rating.strong-sell {
+  color: #dc2626;
+}
+.gauge-rating.sell {
+  color: #ef4444;
+}
+.gauge-rating.neutral {
+  color: #f59e0b;
+}
+.gauge-rating.buy {
+  color: #22c55e;
+}
+.gauge-rating.strong-buy {
+  color: #10b981;
+}
+
+/* Rating text colors in tables */
+.rating-text.strong-sell {
+  color: #dc2626;
+}
+.rating-text.sell {
+  color: #ef4444;
+}
+.rating-text.neutral {
+  color: #f59e0b;
+}
+.rating-text.buy {
+  color: #22c55e;
+}
+.rating-text.strong-buy {
+  color: #10b981;
+}
+
+/* Table cell loading state */
+.loading-cell {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 20px;
+  font-style: italic;
+}
+
+.text-white {
+  color: #ffffff !important;
+}
+
+/* gauge css */
+
+.wrapper {
+  display: table;
+  margin: 0 auto;
+  padding: 35px 40px 40px;
+}
+
+/* ================= GAUGE ================= */
+.gauge {
+  --angle: 0deg; /* -90deg = Strong Sell, +90deg = Strong Buy */
+
+  width: 220px;
+  height: 110px;
+  background: #e7e7e7;
+  border-radius: 220px 220px 0 0;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 6px rgba(255, 255, 255, 0.1),
+    0 0 35px 5px rgba(0, 0, 0, 0.25);
+}
+
+/* ================= CENTER MASK ================= */
+.gauge-center {
+  width: 65%;
+  height: 65%;
+  background: #15222e;
+  border-radius: 200px 200px 0 0;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+}
+
+/* ================= NEEDLE ================= */
+.needle {
+  position: absolute;
+  width: 90px;
+  height: 6px;
+  background: linear-gradient(to right, #eee, #bbb);
+  bottom: 6px;
+  left: 50%;
+  transform-origin: 100% 50%;
+  transform: translateX(-100%) rotate(var(--angle));
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  transition: transform 0.8s cubic-bezier(0.65, 1.95, 0.03, 0.32);
+  z-index: 60;
+}
+
+/* ==== ROUND PIVOT POINT ==== */
+.needle::after {
+  content: "";
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border: 3px solid #0b1320;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ================= SLICES ================= */
+.slice-colors .st {
+  position: absolute;
+  bottom: 0;
+  width: 220px;
+  height: 220px;
+  transform-origin: bottom center;
+}
+
+/* Strong Sell */
+.slice-colors .slice-item:nth-child(1) {
+  background: #c0392b;
+  transform: rotate(215deg);
+  -webkit-transform: rotate(215deg);
+  -moz-transform: rotate(215deg);
+  -ms-transform: rotate(215deg);
+  -o-transform: rotate(215deg);
+}
+
+/* Sell */
+.slice-colors .slice-item:nth-child(2) {
+  background: #e67e22;
+  transform: rotate(35deg);
+  -webkit-transform: rotate(35deg);
+  -moz-transform: rotate(35deg);
+  -ms-transform: rotate(35deg);
+  -o-transform: rotate(35deg);
+}
+
+/* Neutral */
+.slice-colors .slice-item:nth-child(3) {
+  background: #f1c40f;
+  transform: rotate(70deg);
+  -webkit-transform: rotate(70deg);
+  -moz-transform: rotate(70deg);
+  -ms-transform: rotate(70deg);
+  -o-transform: rotate(70deg);
+}
+
+/* Buy */
+.slice-colors .slice-item:nth-child(4) {
+  background: #74f5a9;
+  transform: rotate(110deg);
+  -webkit-transform: rotate(110deg);
+  -moz-transform: rotate(110deg);
+  -ms-transform: rotate(110deg);
+  -o-transform: rotate(110deg);
+}
+
+/* Strong Buy */
+.slice-colors .slice-item:nth-child(5) {
+  background: #27ae60;
+  transform: rotate(145deg);
+  -webkit-transform: rotate(145deg);
+  -moz-transform: rotate(145deg);
+  -ms-transform: rotate(145deg);
+  -o-transform: rotate(145deg);
 }

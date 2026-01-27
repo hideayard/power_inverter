@@ -194,43 +194,24 @@
                                     <!-- Summary with Gauge -->
                                     <div class="analysis-item">
                                         <h3>Summary</h3>
-                                        <div class="gauge-container">
-                                            <div class="analyst-price-target_gaugeContainer__F_79r" style="width: 300px; height: 135px;" data-c="4">
-                                                <div class="analyst-price-target_gauge__mc_8B" style="width: 204px; height: 102px;">
-                                                    <div class="analyst-price-target_bar__nhotN" data-i="0"></div>
-                                                    <div class="analyst-price-target_bar__nhotN" data-i="1"></div>
-                                                    <div class="analyst-price-target_bar__nhotN" data-i="2"></div>
-                                                    <div class="analyst-price-target_bar__nhotN" data-i="3"></div>
-                                                    <div class="analyst-price-target_bar__nhotN" data-i="4"></div>
-                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="0"></div>
-                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="1"></div>
-                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="2"></div>
-                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="3"></div>
-                                                    <div class="analyst-price-target_indicator__dhPLO" style="width: 198px; height: 198px; top: 3px; left: 3px;">
-                                                        <div class="analyst-price-target_arrow__ZRmAZ" style="bottom: 101px; left: 98px; height: 60px;"></div>
-                                                    </div>
+
+                                        <div class="wrapper">
+                                            <div id="gauge" class="gauge" style="--angle: 30deg;">
+                                                <div class="slice-colors">
+                                                    <div class="st slice-item"></div>
+                                                    <div class="st slice-item"></div>
+                                                    <div class="st slice-item"></div>
+                                                    <div class="st slice-item"></div>
+                                                    <div class="st slice-item"></div>
                                                 </div>
-                                                <div class="analyst-price-target_gauge__mc_8B" style="position: absolute; opacity: 0.2; width: 204px; height: 102px;">
-                                                    <div class="analyst-price-target_bar__nhotN" data-i="0"></div>
-                                                    <div class="analyst-price-target_bar__nhotN" data-i="1"></div>
-                                                    <div class="analyst-price-target_bar__nhotN" data-i="2"></div>
-                                                    <div class="analyst-price-target_bar__nhotN" data-i="3"></div>
-                                                    <div class="analyst-price-target_bar__nhotN" data-i="4"></div>
-                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="0"></div>
-                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="1"></div>
-                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="2"></div>
-                                                    <div class="analyst-price-target_separator__682r6" style="height: 106px; left: 100px; width: 1px;" data-i="3"></div>
-                                                    <div class="analyst-price-target_indicator__dhPLO" style="width: 174px; height: 174px; top: 15px; left: 15px;"></div>
-                                                </div>
-                                                <div class="analyst-price-target_circle__ykYoV" style="top: 113px; bottom: 19px;"></div>
-                                                <div class="analyst-price-target_strongSell__OtkYw" style="bottom: 19px; left: 14px;">Strong Sell</div>
-                                                <div class="analyst-price-target_sell__umjJy" style="left: 37px; top: 15px;">Sell</div>
-                                                <div class="analyst-price-target_neutral__L8xm4" style="top: -11px;">Neutral</div>
-                                                <div class="analyst-price-target_buy__5XS2x" style="right: 38px; top: 15px;">Buy</div>
-                                                <div class="analyst-price-target_strongBuy__QaJ8j" style="bottom: 19px; right: 14px;">Strong Buy</div>
+
+                                                <div id="arrow-speedometer" class="needle"></div>
+                                                <div class="gauge-center"></div>
                                             </div>
-                                            <div class="gauge-rating strong-buy">Strong Buy</div>
+                                            <div class="gauge-rating strong-buy text-white">Strong Buy</div>
+
                                         </div>
+
                                         <div class="summary-details">
                                             <div class="indicator-row">
                                                 <span>Moving Averages:</span>
@@ -714,6 +695,17 @@
     </div>
 
     <script>
+        function setNeedleAngle(angle) {
+            gauge.style.setProperty('--angle', angle + 'deg');
+        }
+
+        // setNeedleAngle(15); // Strong Sell
+        // setNeedleAngle(50); // Sell
+        // setNeedleAngle(90);   // Neutral
+        // setNeedleAngle(130);  // Buy
+        // setNeedleAngle(170);  // Strong Buy
+        setNeedleAngle(170);
+
         // TradingView Chart Configuration
         let currentChart = null;
         let isChartLoading = false;
@@ -1820,6 +1812,12 @@
 
         // Initialize chart on page load
         document.addEventListener('DOMContentLoaded', () => {
+
+            isChartLoading = true;
+            const symbol = document.getElementById("pair").value;
+            const tf = document.getElementById("tf").value;
+            const timeframeLabel = getTimeframeLabel(tf);
+
             // Add loading styles
             const style = document.createElement('style');
             style.textContent = `

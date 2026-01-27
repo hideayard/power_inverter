@@ -22,6 +22,8 @@ $apiEndpoints = [
     'forgot_password' => 'https://itrust-tech.id/web/mobile/forgot-password', // Optional
     'get_devices' => 'https://itrust-tech.id/web/mobile/get-devices', // Optional
     'get_scrape_data' => 'https://itrust-tech.id/web/mobile/get-latest-scrape-data', // Optional
+    'get_latest_scrape_data_v2' => 'https://itrust-tech.id/web/mobile/get-latest-scrape-data-v2',
+
 ];
 
 // Get the action from POST or GET
@@ -83,7 +85,7 @@ header('Content-Type: application/json');
 // If API returns an error HTTP code, modify response to include action
 if ($httpCode >= 400) {
     http_response_code($httpCode);
-    
+
     // Try to parse the error response
     $errorData = json_decode($response, true);
     if (json_last_error() === JSON_ERROR_NONE) {
@@ -101,7 +103,7 @@ if ($httpCode >= 400) {
 } else {
     // Success - pass through the response
     http_response_code($httpCode);
-    
+
     // Try to decode and enhance the response
     $responseData = json_decode($response, true);
     if (json_last_error() === JSON_ERROR_NONE) {
@@ -118,4 +120,3 @@ if ($httpCode >= 400) {
 error_log("Proxy Response - Action: $action | Status: $httpCode | Response: " . substr($response, 0, 200));
 
 exit();
-?>

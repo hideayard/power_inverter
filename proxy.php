@@ -22,7 +22,8 @@ $apiEndpoints = [
     'forgot_password' => 'https://itrust-tech.id/web/mobile/forgot-password', // Optional
     'get_devices' => 'https://itrust-tech.id/web/mobile/get-devices', // Optional
     'get_scrape_data' => 'https://itrust-tech.id/web/mobile/get-latest-scrape-data', // Optional
-    'get_latest_scrape_data_v2' => 'https://itrust-tech.id/web/mobile/get-latest-scrape-data-v2',
+    'get_scrape_data_v2' => 'https://itrust-tech.id/web/mobile/get-latest-scrape-data-v2',
+    'get_scrape_data_v3' => 'https://itrust-tech.id/web/mobile/get-latest-scrape-data-v3',
 
 ];
 

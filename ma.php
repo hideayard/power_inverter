@@ -209,7 +209,6 @@
                                                 <div class="gauge-center"></div>
                                             </div>
                                             <div class="gauge-rating strong-buy text-white">Strong Buy</div>
-
                                         </div>
 
                                         <div class="summary-details">
@@ -695,8 +694,12 @@
     </div>
 
     <script>
+        // Gauge needle function (your existing)
         function setNeedleAngle(angle) {
-            gauge.style.setProperty('--angle', angle + 'deg');
+            const gauge = document.getElementById('gauge');
+            if (gauge) {
+                gauge.style.setProperty('--angle', angle + 'deg');
+            }
         }
 
         // setNeedleAngle(15); // Strong Sell
@@ -709,6 +712,12 @@
         // TradingView Chart Configuration
         let currentChart = null;
         let isChartLoading = false;
+        let lastApiRequestTime = 0;
+        const API_REQUEST_COOLDOWN = 60000; // 1 minute cooldown between API requests
+        let rateLimitMessageShown = false;
+        let lastAnalysisUpdateTime = 0;
+        const MIN_ANALYSIS_INTERVAL = 60000; // 60 seconds minimum between analysis updates
+
 
         function loadChart() {
             if (isChartLoading) return;
@@ -725,11 +734,11 @@
             // Show loading state
             const chartContainer = document.getElementById("chart");
             chartContainer.innerHTML = `
-        <div class="chart-loading">
-            <div class="loading-spinner"></div>
-            <p>Loading ${symbol} chart...</p>
-        </div>
-    `;
+                <div class="chart-loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading ${symbol} chart...</p>
+                </div>
+            `;
 
             // Clear previous chart after a short delay
             setTimeout(() => {
@@ -783,11 +792,9 @@
 
                 isChartLoading = false;
 
-                // Update analysis with dynamic data
-                updateAnalysis(symbol, timeframeLabel);
-
-                // Update header with market status
+                // Update header with market status (no API call needed)
                 updateMarketStatus(symbol);
+
             }, 100);
         }
 
@@ -1141,8 +1148,10 @@
 
                 // Parse the JSON string in request_data
                 const scrapedData = JSON.parse(apiResponse.data.latest_data.request_data);
-                const analysisData = scrapedData.data?.technicalAnalysis;
-                const interestRateData = scrapedData.data?.interestRates;
+                const analysisData = scrapedData.data?.myfxbook?.technicalAnalysis;
+                const interestRateData = scrapedData.data?.myfxbook?.interestRates;
+
+                console.log("scrapedData", scrapedData);
 
                 if (!analysisData) {
                     throw new Error('No technical analysis data found');
@@ -1813,6 +1822,8 @@
         // Initialize chart on page load
         document.addEventListener('DOMContentLoaded', () => {
 
+            console.log("DOMContentLoaded");
+
             isChartLoading = true;
             const symbol = document.getElementById("pair").value;
             const tf = document.getElementById("tf").value;
@@ -1846,34 +1857,108 @@
     `;
             document.head.appendChild(style);
 
-            // Load initial chart
-            loadChart();
+            lastAnalysisUpdateTime = Date.now() - MIN_ANALYSIS_INTERVAL;
 
-            // Update analysis with real data from API
-            updateAnalysis(symbol, tf);
+            // Load initial chart with a delay for analysis
+            setTimeout(() => {
+                console.log("loadChart setTimeout DOMContentLoaded");
+                loadChart();
 
-            // Update header with market status
-            updateMarketStatus(symbol);
+                // Request initial data
+                updateAnalysis('EURJPY', 'H4');
+
+                // Add a visual indicator that analysis will update
+                const chartTitle = document.getElementById('current-pair');
+                if (chartTitle) {
+                    chartTitle.innerHTML = 'EURJPY - 4H Chart <span style="font-size: 12px; color: #a0aec0;">(analysis loading...)</span>';
+                }
+            }, 1000); // 1 second delay before initial load
 
             // Add event listeners
-            document.getElementById('pair').addEventListener('change', loadChart);
-            document.getElementById('tf').addEventListener('change', loadChart);
+            document.getElementById('pair').addEventListener('change', () => {
+                // Check if we're rate limited for analysis
+                const now = Date.now();
+                if (now - lastAnalysisUpdateTime < MIN_ANALYSIS_INTERVAL) {
+                    const remainingTime = Math.ceil((MIN_ANALYSIS_INTERVAL - (now - lastAnalysisUpdateTime)) / 1000);
+                    showRateLimitMessage(remainingTime, 'analysis');
+                    return;
+                }
+                loadChart();
+            });
+
+            document.getElementById('tf').addEventListener('change', () => {
+                // Check if we're rate limited for analysis
+                const now = Date.now();
+                if (now - lastAnalysisUpdateTime < MIN_ANALYSIS_INTERVAL) {
+                    const remainingTime = Math.ceil((MIN_ANALYSIS_INTERVAL - (now - lastAnalysisUpdateTime)) / 1000);
+                    showRateLimitMessage(remainingTime, 'analysis');
+                    return;
+                }
+                loadChart();
+            });
 
             // Add click handler to refresh button
-            document.querySelector('.refresh-btn').addEventListener('click', loadChart);
-
-            // Auto-refresh every 2 minutes
-            setInterval(() => {
-                if (document.visibilityState === 'visible' && !isChartLoading) {
-                    loadChart();
+            document.querySelector('.refresh-btn').addEventListener('click', () => {
+                // Check if we're rate limited for analysis
+                const now = Date.now();
+                if (now - lastAnalysisUpdateTime < MIN_ANALYSIS_INTERVAL) {
+                    const remainingTime = Math.ceil((MIN_ANALYSIS_INTERVAL - (now - lastAnalysisUpdateTime)) / 1000);
+                    showRateLimitMessage(remainingTime, 'analysis');
+                    return;
                 }
-            }, 120000);
+                loadChart();
+            });
 
-            // Update market status every minute
+            // Update the rate limit message function to support different types
+            function showRateLimitMessage(remainingTime, type = 'api') {
+                const messageType = type === 'analysis' ? 'Analysis Update' : 'API Request';
+                // ... rest of the showRateLimitMessage function remains the same
+                // just update the message text
+            }
+
+            // Show time since last analysis update
             setInterval(() => {
-                const symbol = document.getElementById("pair").value;
-                updateMarketStatus(symbol);
-            }, 60000);
+                const timeSinceLastUpdate = Date.now() - lastAnalysisUpdateTime;
+                const minutes = Math.floor(timeSinceLastUpdate / 60000);
+                const seconds = Math.floor((timeSinceLastUpdate % 60000) / 1000);
+
+                const timeDisplay = document.getElementById('time-since-update');
+                if (timeDisplay) {
+                    if (lastAnalysisUpdateTime === 0) {
+                        timeDisplay.textContent = 'Analysis: Never updated';
+                    } else if (minutes > 0) {
+                        timeDisplay.textContent = `Analysis: ${minutes}m ${seconds}s ago`;
+                    } else {
+                        timeDisplay.textContent = `Analysis: ${seconds}s ago`;
+                    }
+
+                    // Color code based on freshness
+                    if (timeSinceLastUpdate < 60000) { // Less than 1 minute
+                        timeDisplay.style.color = '#10b981';
+                    } else if (timeSinceLastUpdate < 300000) { // Less than 5 minutes
+                        timeDisplay.style.color = '#f59e0b';
+                    } else { // More than 5 minutes
+                        timeDisplay.style.color = '#ef4444';
+                    }
+                }
+
+                // Update refresh button state
+                const refreshBtn = document.querySelector('.refresh-btn');
+                if (refreshBtn) {
+                    const timeToNextAnalysis = MIN_ANALYSIS_INTERVAL - timeSinceLastUpdate;
+                    const canRefresh = timeToNextAnalysis <= 0;
+                    refreshBtn.disabled = !canRefresh;
+                    refreshBtn.style.opacity = canRefresh ? '1' : '0.5';
+                    refreshBtn.style.cursor = canRefresh ? 'pointer' : 'not-allowed';
+
+                    if (canRefresh) {
+                        refreshBtn.title = 'Refresh analysis data';
+                    } else {
+                        const waitSeconds = Math.ceil(timeToNextAnalysis / 1000);
+                        refreshBtn.title = `Analysis refresh available in ${waitSeconds}s`;
+                    }
+                }
+            }, 1000);
         });
 
         // Handle window resize

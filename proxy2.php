@@ -43,6 +43,8 @@ $apiEndpoints = [
     'get_devices_with_data' => 'https://itrust-tech.id/web/mobile/get-devices-with-data',
     'local_get_devices_with_data' => 'https://itrust.local/mobile/get-devices-with-data',
     'get_scrape_data' => 'https://itrust-tech.id/web/mobile/get-latest-scrape-data',
+    'get_scrape_data_v2' => 'https://itrust-tech.id/web/mobile/get-latest-scrape-data-v2', // Optional
+
 ];
 
 // Get the action from POST or GET
@@ -61,7 +63,7 @@ $authHeader = null;
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
     $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
     error_log("Found Authorization header (HTTP_AUTHORIZATION): " . $authHeader);
-} 
+}
 // Method 2: Check REDIRECT_HTTP_AUTHORIZATION (common with some PHP configs)
 elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
     $authHeader = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
@@ -102,7 +104,7 @@ if ($requiresAuth && !$authHeader) {
         'debug' => [
             'requires_auth' => true,
             'auth_header_found' => false,
-            'headers_received' => array_filter($_SERVER, function($key) {
+            'headers_received' => array_filter($_SERVER, function ($key) {
                 return strpos($key, 'HTTP_') === 0;
             }, ARRAY_FILTER_USE_KEY)
         ]
@@ -125,7 +127,7 @@ curl_setopt($ch, CURLOPT_URL, $apiUrl);
 // Set request method
 if (in_array($action, ['login', 'register', 'forgot_password', 'get_devices', 'get_scrape_data'])) {
     curl_setopt($ch, CURLOPT_POST, true);
-    
+
     // Set POST data appropriately
     if (in_array($action, ['get_scrape_data', 'get_devices']) && !empty($postData)) {
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData));
@@ -223,4 +225,3 @@ if (json_last_error() === JSON_ERROR_NONE) {
 
 error_log("Proxy response sent with code: $httpCode");
 exit();
-?>

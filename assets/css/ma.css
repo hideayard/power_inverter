@@ -2039,7 +2039,7 @@ button:hover {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-.gauge-rating {
+.gauge-rating-old {
   padding: 12px 24px;
   border-radius: 20px;
   font-weight: 700;
@@ -2051,6 +2051,50 @@ button:hover {
   background: linear-gradient(135deg, var(--accent-green), #10a36e);
   color: white;
   margin-top: 10px;
+}
+
+.gauge-rating {
+  padding: 12px 24px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  color: white !important;
+  margin-top: 10px;
+  text-align: center;
+  /* display: inline-block; */
+}
+
+/* Strong Sell - Very Bearish */
+.gauge-rating.strong-sell {
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+/* Sell - Bearish */
+.gauge-rating.sell {
+  border: 1px solid rgba(249, 115, 22, 0.4);
+  background: linear-gradient(135deg, #f97316, #ea580c);
+}
+
+/* Neutral */
+.gauge-rating.neutral {
+  border: 1px solid rgba(156, 163, 175, 0.4);
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+}
+
+/* Buy - Bullish */
+.gauge-rating.buy {
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+/* Strong Buy - Very Bullish */
+.gauge-rating.strong-buy {
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, #10b981, #059669);
 }
 
 .summary-details {

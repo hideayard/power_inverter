@@ -192,37 +192,83 @@
                             <div class="widget-content">
                                 <div class="analysis-second-placeholder">
                                     <!-- Summary with Gauge -->
-                                    <div class="analysis-item">
-                                        <h3>Summary</h3>
+                                    <div class="analysis-container" style="display: flex; gap: 20px; justify-content: space-around; flex-wrap: wrap;">
 
-                                        <div class="wrapper">
-                                            <div id="gauge" class="gauge" style="--angle: 30deg;">
-                                                <div class="slice-colors">
-                                                    <div class="st slice-item"></div>
-                                                    <div class="st slice-item"></div>
-                                                    <div class="st slice-item"></div>
-                                                    <div class="st slice-item"></div>
-                                                    <div class="st slice-item"></div>
+                                        <!-- Technical Indicators Gauge -->
+                                        <div class="analysis-item" style="flex: 1; min-width: 250px;">
+                                            <h3>Technical Indicators</h3>
+                                            <div class="wrapper">
+                                                <div id="ti-gauge" class="gauge" style="--angle: 90deg;">
+                                                    <div class="slice-colors">
+                                                        <div class="st slice-item"></div>
+                                                        <div class="st slice-item"></div>
+                                                        <div class="st slice-item"></div>
+                                                        <div class="st slice-item"></div>
+                                                        <div class="st slice-item"></div>
+                                                    </div>
+                                                    <div id="ti-needle" class="needle"></div>
+                                                    <div class="gauge-center"></div>
                                                 </div>
-
-                                                <div id="arrow-speedometer" class="needle"></div>
-                                                <div class="gauge-center"></div>
+                                                <div class="gauge-rating text-white" id="ti-rating">Neutral</div>
                                             </div>
-                                            <div class="gauge-rating text-white" id="gaugeRating">Neutral</div>
-                                        </div>
-
-                                        <div class="summary-details">
-                                            <div class="indicator-row">
-                                                <span>Moving Averages:</span>
-                                                <span id="maRating">Neutral</span>
-                                                <span id="maCounts">Buy: 0 | Sell: 0</span>
-                                            </div>
-                                            <div class="indicator-row">
-                                                <span>Technical Indicators:</span>
-                                                <span id="tiRating">Neutral</span>
-                                                <span id="tiCounts">Buy: 0 | Sell: 0</span>
+                                            <div class="summary-details">
+                                                <div class="indicator-row">
+                                                    <span>Signal Count:</span>
+                                                    <span id="tiCounts">Buy: 0 | Sell: 0</span>
+                                                </div>
                                             </div>
                                         </div>
+
+                                        <!-- Summary Gauge -->
+                                        <div class="analysis-item" style="flex: 1; min-width: 250px;">
+                                            <h3>Summary</h3>
+                                            <div class="wrapper">
+                                                <div id="summary-gauge" class="gauge" style="--angle: 90deg;">
+                                                    <div class="slice-colors">
+                                                        <div class="st slice-item"></div>
+                                                        <div class="st slice-item"></div>
+                                                        <div class="st slice-item"></div>
+                                                        <div class="st slice-item"></div>
+                                                        <div class="st slice-item"></div>
+                                                    </div>
+                                                    <div id="summary-needle" class="needle"></div>
+                                                    <div class="gauge-center"></div>
+                                                </div>
+                                                <div class="gauge-rating text-white" id="summary-rating">Neutral</div>
+                                            </div>
+                                            <div class="summary-details">
+                                                <div class="indicator-row">
+                                                    <span>Overall Signal:</span>
+                                                    <span id="overallCounts">Buy: 0 | Sell: 0</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Moving Averages Gauge -->
+                                        <div class="analysis-item" style="flex: 1; min-width: 250px;">
+                                            <h3>Moving Averages</h3>
+                                            <div class="wrapper">
+                                                <div id="ma-gauge" class="gauge" style="--angle: 90deg;">
+                                                    <div class="slice-colors">
+                                                        <div class="st slice-item"></div>
+                                                        <div class="st slice-item"></div>
+                                                        <div class="st slice-item"></div>
+                                                        <div class="st slice-item"></div>
+                                                        <div class="st slice-item"></div>
+                                                    </div>
+                                                    <div id="ma-needle" class="needle"></div>
+                                                    <div class="gauge-center"></div>
+                                                </div>
+                                                <div class="gauge-rating text-white" id="ma-rating">Neutral</div>
+                                            </div>
+                                            <div class="summary-details">
+                                                <div class="indicator-row">
+                                                    <span>MA Signal Count:</span>
+                                                    <span id="maCounts">Buy: 0 | Sell: 0</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
 
                                     <!-- Technical Indicators Table -->
@@ -514,7 +560,7 @@
             };
 
             const normalizedRating = rating.toLowerCase().trim();
-            return ratingAngles[normalizedRating] || ratingAngles[normalizedRating.replace(/\s+/g, '-')] || 90; // Default to neutral
+            return ratingAngles[normalizedRating] || ratingAngles[normalizedRating.replace(/\s+/g, '-')] || 90;
         }
 
         // Map rating to CSS class
@@ -530,79 +576,152 @@
             };
 
             const normalizedRating = rating.toLowerCase().trim();
-            return ratingClasses[normalizedRating] || ratingClasses[normalizedRating.replace(/\s+/g, '-')] || 'neutral'; // Default to neutral
+            return ratingClasses[normalizedRating] || ratingClasses[normalizedRating.replace(/\s+/g, '-')] || 'neutral';
         }
 
-        function setNeedleAngle(angle) {
-            const gauge = document.getElementById('gauge');
-            if (gauge) {
-                gauge.style.setProperty('--angle', angle + 'deg');
+        // Set needle angle with safety check
+        function setNeedleAngle(needleId, angle) {
+            const needle = document.getElementById(needleId);
+            if (needle) {
+                const gauge = needle.closest('.gauge');
+                if (gauge) {
+                    gauge.style.setProperty('--angle', angle + 'deg');
+                }
+            } else {
+                console.warn(`Needle element with ID "${needleId}" not found.`);
             }
         }
 
-        function updateGaugeRating(rating) {
-            const gaugeRating = document.getElementById('gaugeRating');
-            if (!gaugeRating) return;
+        // Update gauge rating with safety checks
+        function updateGaugeRating(needleId, ratingElementId, rating) {
+            const gaugeRating = document.getElementById(ratingElementId);
+            if (!gaugeRating) {
+                console.error(`Rating element with ID "${ratingElementId}" not found.`);
+                return false;
+            }
 
-            // Get angle and class for the rating
             const needleAngle = getNeedleAngleForRating(rating);
             const ratingClass = getClassForRating(rating);
 
-            // Update needle position
-            setNeedleAngle(needleAngle);
+            if (needleId) {
+                setNeedleAngle(needleId, needleAngle);
+            }
 
-            // Clear existing classes and update display
-            gaugeRating.className = 'gauge-rating';
+            gaugeRating.className = 'gauge-rating text-white';
 
             if (ratingClass !== 'neutral' || rating.toLowerCase().includes('neutral')) {
-                // Valid rating found
                 gaugeRating.textContent = rating;
                 gaugeRating.classList.add(ratingClass);
             } else {
-                // Unknown rating, default to neutral
                 console.warn(`Unknown rating: "${rating}". Defaulting to neutral.`);
                 gaugeRating.textContent = 'Neutral';
                 gaugeRating.classList.add('neutral');
             }
+
+            return true;
         }
 
-        function updateGaugeRatingBackup(rating) {
-            const gaugeRating = document.getElementById('gaugeRating');
-            if (gaugeRating) {
-                gaugeRating.textContent = rating;
-
-                // Remove all existing signal classes
-                gaugeRating.classList.remove('strong-sell', 'sell', 'neutral', 'buy', 'strong-buy');
-
-                // Convert rating to lowercase and replace spaces with hyphens
-                const ratingClass = rating.toLowerCase().replace(/\s+/g, '-');
-
-                // Add the appropriate class based on the rating
-                if (ratingClass === 'strong-sell' || ratingClass === 'sell' ||
-                    ratingClass === 'neutral' || ratingClass === 'buy' ||
-                    ratingClass === 'strong-buy') {
-                    gaugeRating.classList.add(ratingClass);
-                } else {
-                    // Fallback to neutral if rating doesn't match expected values
-                    console.warn(`Unknown rating: "${rating}". Defaulting to neutral.`);
-                    gaugeRating.classList.add('neutral');
-                    gaugeRating.textContent = 'Neutral';
-                }
-
-                // Ensure base class is always present
-                gaugeRating.classList.add('gauge-rating');
+        // Update count display with safety check
+        function updateCountDisplay(elementId, buyCount = 0, sellCount = 0) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = `Buy: ${buyCount} | Sell: ${sellCount}`;
+            } else {
+                console.warn(`Count display element with ID "${elementId}" not found.`);
             }
         }
 
-        function getGaugeAngleFromRating(rating) {
-            const ratingMap = {
-                'Strong Sell': 30, // Far left
-                'Sell': 60, // Left
-                'Neutral': 90, // Middle
-                'Buy': 130, // Right
-                'Strong Buy': 170 // Far right
-            };
-            return ratingMap[rating] || 90; // Default to neutral
+        // Convenience functions with safety checks
+        function updateTechnicalIndicators(rating, buyCount = 0, sellCount = 0) {
+            const success = updateGaugeRating('ti-needle', 'ti-rating', rating);
+            if (success) {
+                updateCountDisplay('tiCounts', buyCount, sellCount);
+            }
+        }
+
+        function updateSummary(rating, buyCount = 0, sellCount = 0) {
+            const success = updateGaugeRating('summary-needle', 'summary-rating', rating);
+            if (success) {
+                updateCountDisplay('overallCounts', buyCount, sellCount);
+            }
+        }
+
+        function updateMovingAverages(rating, buyCount = 0, sellCount = 0) {
+            const success = updateGaugeRating('ma-needle', 'ma-rating', rating);
+            if (success) {
+                updateCountDisplay('maCounts', buyCount, sellCount);
+            }
+        }
+
+        // Check if all required elements exist
+        function validateGaugeElements() {
+            const requiredElements = [
+                'ti-needle', 'ti-rating', 'tiCounts',
+                'summary-needle', 'summary-rating', 'overallCounts',
+                'ma-needle', 'ma-rating', 'maCounts'
+            ];
+
+            const missingElements = [];
+
+            requiredElements.forEach(id => {
+                if (!document.getElementById(id)) {
+                    missingElements.push(id);
+                }
+            });
+
+            if (missingElements.length > 0) {
+                console.error('Missing gauge elements:', missingElements);
+                return false;
+            }
+
+            return true;
+        }
+
+        // Initialize all gauges safely
+        function initializeGauges() {
+            if (!validateGaugeElements()) {
+                console.error('Cannot initialize gauges - missing HTML elements');
+                return;
+            }
+
+            updateTechnicalIndicators('Neutral');
+            updateSummary('Neutral');
+            updateMovingAverages('Neutral');
+        }
+
+        // Safe way to update all gauges
+        function updateAllGauges(data) {
+            if (!data) {
+                console.error('No data provided to update gauges');
+                return;
+            }
+
+            // Update Technical Indicators if data exists
+            if (data.technical) {
+                updateTechnicalIndicators(
+                    data.technical.rating || 'Neutral',
+                    data.technical.buyCount || 0,
+                    data.technical.sellCount || 0
+                );
+            }
+
+            // Update Summary if data exists
+            if (data.summary) {
+                updateSummary(
+                    data.summary.rating || 'Neutral',
+                    data.summary.buyCount || 0,
+                    data.summary.sellCount || 0
+                );
+            }
+
+            // Update Moving Averages if data exists
+            if (data.movingAverages) {
+                updateMovingAverages(
+                    data.movingAverages.rating || 'Neutral',
+                    data.movingAverages.buyCount || 0,
+                    data.movingAverages.sellCount || 0
+                );
+            }
         }
 
         function updateMarketStatus(symbol) {
@@ -1085,11 +1204,8 @@
 
             // Update overall rating display
             const overallRating = data.overall_signal || 'Neutral';
-
-            // Update gauge
-            const gaugeAngle = getGaugeAngleFromRating(overallRating);
-            setNeedleAngle(gaugeAngle);
-            updateGaugeRating(overallRating);
+            let tiSummary = 'Neutral'; // Define with default value
+            let maSummary = 'Neutral'; // Define with default value
 
             // Update summary details
             if (data.moving_averages && data.moving_averages.sample) {
@@ -1101,19 +1217,38 @@
                     ma.simple.includes('Sell') || ma.exponential.includes('Sell')
                 ).length;
 
-                const maSummary = buyCount > sellCount ? 'Buy' :
+                maSummary = buyCount > sellCount ? 'Buy' :
                     sellCount > buyCount ? 'Sell' : 'Neutral';
 
                 const maCounts = `Buy: ${buyCount} | Sell: ${sellCount}`;
 
-                document.getElementById('maRating').textContent = maSummary;
-                document.getElementById('maRating').className = maSummary.toLowerCase();
-                document.getElementById('maCounts').textContent = maCounts;
+                // Safely update elements if they exist
+                const maRatingEl = document.getElementById('maRating');
+                if (maRatingEl) {
+                    maRatingEl.textContent = maSummary;
+                    maRatingEl.className = maSummary.toLowerCase();
+                }
 
-                document.getElementById('maSummary').textContent = maSummary;
-                document.getElementById('maSummary').className = 'rating-text ' + maSummary.toLowerCase();
-                document.getElementById('maSummaryCounts').textContent = maCounts;
-                document.getElementById('maTimestamp').textContent = data.scrape_timestamp || '-';
+                const maCountsEl = document.getElementById('maCounts');
+                if (maCountsEl) {
+                    maCountsEl.textContent = maCounts;
+                }
+
+                const maSummaryEl = document.getElementById('maSummary');
+                if (maSummaryEl) {
+                    maSummaryEl.textContent = maSummary;
+                    maSummaryEl.className = 'rating-text ' + maSummary.toLowerCase();
+                }
+
+                const maSummaryCountsEl = document.getElementById('maSummaryCounts');
+                if (maSummaryCountsEl) {
+                    maSummaryCountsEl.textContent = maCounts;
+                }
+
+                const maTimestampEl = document.getElementById('maTimestamp');
+                if (maTimestampEl) {
+                    maTimestampEl.textContent = data.scrape_timestamp || '-';
+                }
 
                 // Update moving averages table
                 updateMovingAveragesTable(maData);
@@ -1128,19 +1263,38 @@
                     ti.action === 'Sell' || ti.action === 'Strong Sell'
                 ).length;
 
-                const tiSummary = buyCount > sellCount ? 'Buy' :
+                tiSummary = buyCount > sellCount ? 'Buy' :
                     sellCount > buyCount ? 'Sell' : 'Neutral';
 
                 const tiCounts = `Buy: ${buyCount} | Sell: ${sellCount}`;
 
-                document.getElementById('tiRating').textContent = tiSummary;
-                document.getElementById('tiRating').className = tiSummary.toLowerCase();
-                document.getElementById('tiCounts').textContent = tiCounts;
+                // Safely update elements if they exist
+                const tiRatingEl = document.getElementById('tiRating');
+                if (tiRatingEl) {
+                    tiRatingEl.textContent = tiSummary;
+                    tiRatingEl.className = tiSummary.toLowerCase();
+                }
 
-                document.getElementById('tiSummary').textContent = tiSummary;
-                document.getElementById('tiSummary').className = 'rating-text ' + tiSummary.toLowerCase();
-                document.getElementById('tiSummaryCounts').textContent = tiCounts;
-                document.getElementById('tiTimestamp').textContent = data.scrape_timestamp || '-';
+                const tiCountsEl = document.getElementById('tiCounts');
+                if (tiCountsEl) {
+                    tiCountsEl.textContent = tiCounts;
+                }
+
+                const tiSummaryEl = document.getElementById('tiSummary');
+                if (tiSummaryEl) {
+                    tiSummaryEl.textContent = tiSummary;
+                    tiSummaryEl.className = 'rating-text ' + tiSummary.toLowerCase();
+                }
+
+                const tiSummaryCountsEl = document.getElementById('tiSummaryCounts');
+                if (tiSummaryCountsEl) {
+                    tiSummaryCountsEl.textContent = tiCounts;
+                }
+
+                const tiTimestampEl = document.getElementById('tiTimestamp');
+                if (tiTimestampEl) {
+                    tiTimestampEl.textContent = data.scrape_timestamp || '-';
+                }
 
                 // Update technical indicators table
                 updateTechnicalIndicatorsTable(tiData);
@@ -1148,6 +1302,68 @@
 
             if (data.pivot_points && data.pivot_points.sample) {
                 updatePivotPointsTable(data.pivot_points.sample);
+            }
+
+            // Update gauges - these should exist if you have the 3-gauge layout
+            updateGaugeRating('summary-needle', 'summary-rating', overallRating);
+            updateGaugeRating('ti-needle', 'ti-rating', tiSummary);
+            updateGaugeRating('ma-needle', 'ma-rating', maSummary);
+
+            // Also update count displays on the gauges if they exist
+            if (data.technical_indicators && data.technical_indicators.sample) {
+                const tiData = data.technical_indicators.sample;
+                const tiBuyCount = tiData.filter(ti =>
+                    ti.action === 'Buy' || ti.action === 'Strong Buy'
+                ).length;
+                const tiSellCount = tiData.filter(ti =>
+                    ti.action === 'Sell' || ti.action === 'Strong Sell'
+                ).length;
+
+                // Update the gauge count display
+                const tiCountsEl = document.getElementById('tiCounts');
+                if (tiCountsEl) {
+                    tiCountsEl.textContent = `Buy: ${tiBuyCount} | Sell: ${tiSellCount}`;
+                }
+            }
+
+            if (data.moving_averages && data.moving_averages.sample) {
+                const maData = data.moving_averages.sample;
+                const maBuyCount = maData.filter(ma =>
+                    ma.simple.includes('Buy') || ma.exponential.includes('Buy')
+                ).length;
+                const maSellCount = maData.filter(ma =>
+                    ma.simple.includes('Sell') || ma.exponential.includes('Sell')
+                ).length;
+
+                // Update the gauge count display
+                const maCountsEl = document.getElementById('maCounts');
+                if (maCountsEl) {
+                    maCountsEl.textContent = `Buy: ${maBuyCount} | Sell: ${maSellCount}`;
+                }
+            }
+
+            // Update summary counts if the element exists
+            const overallCountsEl = document.getElementById('overallCounts');
+            if (overallCountsEl) {
+                // You might want to calculate overall counts from both MA and TI
+                const tiBuyCount = data.technical_indicators?.sample?.filter(ti =>
+                    ti.action === 'Buy' || ti.action === 'Strong Buy'
+                ).length || 0;
+                const tiSellCount = data.technical_indicators?.sample?.filter(ti =>
+                    ti.action === 'Sell' || ti.action === 'Strong Sell'
+                ).length || 0;
+
+                const maBuyCount = data.moving_averages?.sample?.filter(ma =>
+                    ma.simple.includes('Buy') || ma.exponential.includes('Buy')
+                ).length || 0;
+                const maSellCount = data.moving_averages?.sample?.filter(ma =>
+                    ma.simple.includes('Sell') || ma.exponential.includes('Sell')
+                ).length || 0;
+
+                const totalBuy = tiBuyCount + maBuyCount;
+                const totalSell = tiSellCount + maSellCount;
+
+                overallCountsEl.textContent = `Buy: ${totalBuy} | Sell: ${totalSell}`;
             }
         }
 
@@ -1387,10 +1603,10 @@
         document.addEventListener('DOMContentLoaded', () => {
             console.log("DOMContentLoaded");
 
-            // Initialize gauge as neutral
-
-            updateGaugeRating('Neutral');
-
+            // Check if we're on a page with gauges
+            if (document.querySelector('.analysis-container')) {
+                initializeGauges();
+            }
             // Add loading styles
             const style = document.createElement('style');
             style.textContent = `

@@ -2502,7 +2502,7 @@ button:hover {
 
 /* Spacing between sections */
 .analysis-second-placeholder .analysis-item + .analysis-item {
-  margin-top: 4px;
+  /* margin-top: 4px; */
 }
 
 /* ==================== RESPONSIVE DESIGN ==================== */

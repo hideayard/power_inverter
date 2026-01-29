@@ -12,6 +12,7 @@
   --accent-blue-dark: #2563eb;
   --accent-green: #10b981;
   --accent-red: #ef4444;
+  --accent-blood: #9b0808;
   --accent-purple: #8b5cf6;
   --accent-yellow: #f59e0b;
   --accent-orange: #f97316;
@@ -763,6 +764,11 @@ button:hover {
 
 .sell {
   color: var(--accent-red);
+  font-weight: 600;
+}
+
+.oversold {
+  color: var(--accent-blood);
   font-weight: 600;
 }
 
@@ -2378,6 +2384,76 @@ button:hover {
 .analysis-second-placeholder .action-col.neutral:hover,
 .analysis-second-placeholder .action.neutral:hover {
   background: rgba(245, 158, 11, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Oversold (Very Bearish) - Strong Red */
+.analysis-second-placeholder .action-col.oversold,
+.analysis-second-placeholder .action.oversold {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--accent-blood);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.analysis-second-placeholder .action-col.oversold:hover,
+.analysis-second-placeholder .action.oversold:hover {
+  background: rgba(239, 68, 68, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Sold (Bearish) - Orange */
+.analysis-second-placeholder .action-col.sold,
+.analysis-second-placeholder .action.sold {
+  background: rgba(249, 115, 22, 0.15);
+  color: #f97316;
+  border-color: rgba(249, 115, 22, 0.3);
+}
+
+.analysis-second-placeholder .action-col.sold:hover,
+.analysis-second-placeholder .action.sold:hover {
+  background: rgba(249, 115, 22, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Bought (Bullish) - Blue */
+.analysis-second-placeholder .action-col.bought,
+.analysis-second-placeholder .action.bought {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.analysis-second-placeholder .action-col.bought:hover,
+.analysis-second-placeholder .action.bought:hover {
+  background: rgba(59, 130, 246, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Overbought (Very Bullish) - Green */
+.analysis-second-placeholder .action-col.overbought,
+.analysis-second-placeholder .action.overbought {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accent-green);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.analysis-second-placeholder .action-col.overbought:hover,
+.analysis-second-placeholder .action.overbought:hover {
+  background: rgba(16, 185, 129, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Sell (Bearish) - Strong Red */
+.analysis-second-placeholder .action-col.sell,
+.analysis-second-placeholder .action.sell {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.analysis-second-placeholder .action-col.sell:hover,
+.analysis-second-placeholder .action.sell:hover {
+  background: rgba(239, 68, 68, 0.25);
   transform: translateY(-1px);
 }
 

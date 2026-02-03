@@ -123,7 +123,7 @@
                                     <div class="chart-controls d-flex align-items-center gap-2">
                                         <div class="status-indicator d-flex align-items-center">
                                             <span class="live-dot me-1"></span>
-                                            <span class="d-none d-md-inline">Live Market Data</span>
+                                            <span class="d-none d-md-inline">Live Market</span>
                                             <span class="d-inline d-md-none">Live</span>
                                         </div>
                                         <button class="refresh-btn btn btn-outline-secondary btn-sm" onclick="loadChart()">
@@ -170,14 +170,13 @@
                             <section class="widget card bg-dark border-secondary mb-3">
                                 <div class="widget-header card-header border-secondary d-flex justify-content-between align-items-center">
                                     <h2 class="h6 mb-0">📈 Technical Analysis and Pattern</h2>
-                                    <span class="timestamp badge bg-warning text-dark" id="fxbTimestamp">-</span>
                                 </div>
                                 <div class="widget-content card-body">
                                     <!-- Summary with Gauge -->
                                     <div class="analysis-container row g-3 mb-3">
                                         <div class="col-lg-4 col-md-6">
                                             <div class="analysis-item p-3 bg-secondary rounded h-100">
-                                                <h3 class="h6 mb-3">Technical Pattern</h3>
+                                                <h3 class="h6 mb-3">Technical Analysis</h3>
                                                 <div class="wrapper">
                                                     <div id="ti-gauge" class="gauge mx-auto" style="--angle: 90deg;">
                                                         <div class="slice-colors">
@@ -257,7 +256,9 @@
                                     <div class="analysis-container row g-3">
                                         <div class="col-lg-4 col-md-6 mb-3">
                                             <div class="analysis-item">
-                                                <h3 class="h6 mb-3">Technical Analysis</h3>
+                                                <h3 class="h6 mb-3">Technical Pattern</h3>
+                                                <span class="timestamp badge bg-warning text-dark" id="fxbTimestamp">-</span>
+
                                                 <div class="ta-container p-3 bg-secondary rounded h-100" id="taContainer">
                                                     <div class="signal d-flex justify-content-between mb-3">
                                                         <span class="label">Overall Signal:</span>

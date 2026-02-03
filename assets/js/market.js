@@ -442,7 +442,7 @@ function updateMarketStatus(symbol) {
   const statusElement = document.querySelector(".status-indicator");
   if (statusElement) {
     statusElement.innerHTML =
-      '<span class="live-dot me-2"></span> Live ' + symbol + " Data";
+      '<span class="live-dot me-2"></span> Live ' + symbol;
   }
 }
 
@@ -994,7 +994,7 @@ function updateFirstSourceAnalysis(data, symbol, timeframe) {
         neutralDiv.className =
           "bg-neutral d-flex justify-content-center align-items-center text-uppercase fw-bold mx-auto";
         neutralDiv.style.maxWidth = "43%";
-        neutralDiv.textContent = pattern.buy || pattern.sell || "N/A";
+        neutralDiv.textContent = pattern.buy || pattern.sell || "Neutral";
         buyCell.appendChild(neutralDiv);
 
         // Remove sell cell

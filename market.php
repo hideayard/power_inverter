@@ -181,7 +181,7 @@
                                     <div class="analysis-container row g-3 mb-3">
                                         <div class="col-lg-4 col-md-6">
                                             <div class="analysis-item p-3 bg-secondary rounded h-100">
-                                                <h3 class="h6 mb-3">Technical Indicators</h3>
+                                                <h3 class="h6 mb-3">Technical Pattern</h3>
                                                 <div class="wrapper">
                                                     <div id="ti-gauge" class="gauge mx-auto" style="--angle: 90deg;">
                                                         <div class="slice-colors">
@@ -259,7 +259,7 @@
                                     </div>
 
                                     <div class="analysis-container row g-3">
-                                        <div class="col-lg-4 col-md-4 mb-3">
+                                        <div class="col-lg-4 col-md-6 mb-3">
                                             <div class="analysis-item">
                                                 <h3 class="h6 mb-3">Technical Analysis</h3>
                                                 <div class="ta-container p-3 bg-secondary rounded h-100" id="taContainer">
@@ -275,7 +275,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-lg-4 col-md-4 mb-3">
+                                        <div class="col-lg-4 col-md-6 mb-3">
                                             <div class="analysis-item">
                                                 <h3 class="h6 mb-3">Moving Averages</h3>
 
@@ -306,7 +306,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-lg-4 col-md-4 mb-3">
+                                        <div class="col-lg-4 col-md-6 mb-3">
                                             <!-- Technical Indicators Table -->
                                             <div class="analysis-item mb-3">
                                                 <h3 class="h6 mb-3">Technical Indicators</h3>

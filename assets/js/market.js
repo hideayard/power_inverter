@@ -7,6 +7,246 @@ let rateLimitMessageShown = false;
 let lastAnalysisUpdateTime = 0;
 const MIN_ANALYSIS_INTERVAL = 60000; // 60 seconds minimum between analysis updates
 
+/**
+ * Convert timestamp to human-readable "2 words" format
+ * @param {string|Date} timestamp - ISO string, Date object, or 'YYYY-MM-DD HH:MM:SS'
+ * @returns {string} - Human readable time in "2 words" format
+ */
+function timeAgoTwoWords(timestamp) {
+  // Parse the timestamp
+  let date;
+  if (timestamp instanceof Date) {
+    date = timestamp;
+  } else if (typeof timestamp === "string") {
+    // Handle 'YYYY-MM-DD HH:MM:SS' format
+    if (timestamp.includes(" ")) {
+      // Replace space with 'T' for ISO format
+      timestamp = timestamp.replace(" ", "T");
+    }
+    date = new Date(timestamp);
+  } else {
+    return "Invalid date";
+  }
+
+  // Get current time
+  const now = new Date();
+  const diffMs = now - date;
+
+  // If future date, handle differently
+  if (diffMs < 0) {
+    return "In future";
+  }
+
+  // Convert to seconds
+  const diffSec = Math.floor(diffMs / 1000);
+
+  // Time units in seconds
+  const minute = 60;
+  const hour = minute * 60;
+  const day = hour * 24;
+  const week = day * 7;
+  const month = day * 30; // Approximation
+  const year = day * 365; // Approximation
+
+  // Calculate time differences
+  if (diffSec < minute) {
+    return "Just now";
+  } else if (diffSec < hour) {
+    const minutes = Math.floor(diffSec / minute);
+    return `${minutes} min${minutes > 1 ? "s" : ""} ago`;
+  } else if (diffSec < day) {
+    const hours = Math.floor(diffSec / hour);
+    return `${hours} hr${hours > 1 ? "s" : ""} ago`;
+  } else if (diffSec < week) {
+    const days = Math.floor(diffSec / day);
+    return `${days} day${days > 1 ? "s" : ""} ago`;
+  } else if (diffSec < month) {
+    const weeks = Math.floor(diffSec / week);
+    if (weeks === 1) return "1 week ago";
+    return `${weeks} wk${weeks > 1 ? "s" : ""} ago`;
+  } else if (diffSec < year) {
+    const months = Math.floor(diffSec / month);
+    if (months === 1) return "1 month ago";
+    return `${months} mo${months > 1 ? "s" : ""} ago`;
+  } else {
+    const years = Math.floor(diffSec / year);
+    if (years === 1) return "1 year ago";
+    return `${years} yr${years > 1 ? "s" : ""} ago`;
+  }
+}
+
+/**
+ * Alternative: Get "2 days 2 hours" format (without "ago")
+ * @param {string|Date} timestamp - ISO string, Date object, or 'YYYY-MM-DD HH:MM:SS'
+ * @returns {string} - Human readable time in "X units Y units" format
+ */
+function timeDiffTwoUnits(timestamp) {
+  // Parse the timestamp
+  let date;
+  if (timestamp instanceof Date) {
+    date = timestamp;
+  } else if (typeof timestamp === "string") {
+    if (timestamp.includes(" ")) {
+      timestamp = timestamp.replace(" ", "T");
+    }
+    date = new Date(timestamp);
+  } else {
+    return "Invalid date";
+  }
+
+  const now = new Date();
+  const diffMs = now - date;
+
+  if (diffMs < 0) {
+    return "0 mins";
+  }
+
+  const diffSec = Math.floor(diffMs / 1000);
+  const minute = 60;
+  const hour = minute * 60;
+  const day = hour * 24;
+
+  // Calculate all units
+  const days = Math.floor(diffSec / day);
+  const hours = Math.floor((diffSec % day) / hour);
+  const minutes = Math.floor((diffSec % hour) / minute);
+
+  // Return the two largest non-zero units
+  if (days > 0) {
+    if (hours > 0) {
+      return `${days} day${days > 1 ? "s" : ""} ${hours} hr${hours > 1 ? "s" : ""}`;
+    } else if (minutes > 0) {
+      return `${days} day${days > 1 ? "s" : ""} ${minutes} min${minutes > 1 ? "s" : ""}`;
+    } else {
+      return `${days} day${days > 1 ? "s" : ""}`;
+    }
+  } else if (hours > 0) {
+    if (minutes > 0) {
+      return `${hours} hr${hours > 1 ? "s" : ""} ${minutes} min${minutes > 1 ? "s" : ""}`;
+    } else {
+      return `${hours} hr${hours > 1 ? "s" : ""}`;
+    }
+  } else {
+    return `${minutes} min${minutes > 1 ? "s" : ""}`;
+  }
+}
+
+/**
+ * Compact version: Always returns exactly 2 words (number + unit)
+ * @param {string|Date} timestamp - ISO string, Date object, or 'YYYY-MM-DD HH:MM:SS'
+ * @returns {string} - Exactly 2 words format
+ */
+function timeAgoCompact(timestamp) {
+  // Parse the timestamp
+  let date;
+  if (timestamp instanceof Date) {
+    date = timestamp;
+  } else if (typeof timestamp === "string") {
+    if (timestamp.includes(" ")) {
+      timestamp = timestamp.replace(" ", "T");
+    }
+    date = new Date(timestamp);
+  } else {
+    return "Invalid date";
+  }
+
+  const now = new Date();
+  const diffMs = now - date;
+
+  if (diffMs < 0) {
+    return "Future";
+  }
+
+  const diffSec = Math.floor(diffMs / 1000);
+  const units = [
+    { unit: "year", seconds: 31536000, short: "yr" },
+    { unit: "month", seconds: 2592000, short: "mo" },
+    { unit: "week", seconds: 604800, short: "wk" },
+    { unit: "day", seconds: 86400, short: "day" },
+    { unit: "hour", seconds: 3600, short: "hr" },
+    { unit: "minute", seconds: 60, short: "min" },
+    { unit: "second", seconds: 1, short: "sec" },
+  ];
+
+  for (let i = 0; i < units.length; i++) {
+    const { seconds, short } = units[i];
+    const count = Math.floor(diffSec / seconds);
+
+    if (count >= 1) {
+      return `${count} ${short}`;
+    }
+  }
+
+  return "0 sec";
+}
+
+/**
+ * Update all timestamp elements on the page
+ */
+function updateAllTimestamps() {
+  // Find all elements with data-timestamp attribute
+  document.querySelectorAll("[data-timestamp]").forEach((element) => {
+    const timestamp = element.getAttribute("data-timestamp");
+    const formatted = timeAgoTwoWords(timestamp);
+    element.textContent = formatted;
+
+    // Update tooltip with full date
+    if (element.hasAttribute("data-tooltip")) {
+      const date = new Date(timestamp.replace(" ", "T"));
+      const fullDate = date.toLocaleString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        timeZoneName: "short",
+      });
+      element.setAttribute("data-tooltip", `Updated: ${fullDate}`);
+    }
+  });
+
+  // Update all elements with specific IDs
+  const timestampIds = ["maTimestamp", "tiTimestamp", "fxbTimestamp"];
+  timestampIds.forEach((id) => {
+    const element = document.getElementById(id);
+    if (element && element.dataset.originalTime) {
+      const formatted = timeAgoTwoWords(element.dataset.originalTime);
+      element.textContent = formatted;
+    }
+  });
+}
+
+/**
+ * Initialize timestamps with auto-update
+ */
+function initTimestamps() {
+  console.log("initTimestamps");
+
+  // Initial update
+  updateAllTimestamps();
+
+  // Update every minute
+  setInterval(updateAllTimestamps, 60000);
+
+  // Mark elements that should auto-update
+  document.querySelectorAll(".timestamp").forEach((element) => {
+    if (!element.hasAttribute("data-original-time") && element.textContent) {
+      // Try to parse current text as a time
+      const text = element.textContent;
+      if (text.includes("min") || text.includes("hr") || text.includes("day")) {
+        // Set a fake timestamp 2 hours ago for demo
+        const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+        element.dataset.originalTime = twoHoursAgo
+          .toISOString()
+          .replace("T", " ")
+          .slice(0, 19);
+      }
+    }
+  });
+}
+
 // Map rating to needle angle
 function getNeedleAngleForRating(rating) {
   const ratingAngles = {
@@ -233,8 +473,8 @@ function loadChart() {
   // Update current pair display
   document.getElementById("current-pair").textContent =
     `${symbol} - ${timeframeLabel} Chart`;
-  document.getElementById("current-tf").textContent = timeframeLabel;
-//   document.getElementById("current-tf-second").textContent = timeframeLabel;
+  //   document.getElementById("current-tf").textContent = timeframeLabel;
+  //   document.getElementById("current-tf-second").textContent = timeframeLabel;
 
   // Show loading state
   const chartContainer = document.getElementById("chart");
@@ -890,7 +1130,24 @@ function updateSecondSourceAnalysis(data, symbol, timeframe) {
 
     const maTimestampEl = document.getElementById("maTimestamp");
     if (maTimestampEl) {
-      maTimestampEl.textContent = data.scrape_timestamp || "-";
+      const timestamp = data.scrape_timestamp || "-";
+      const timeAgoText = timeAgoTwoWords(timestamp);
+
+      maTimestampEl.textContent = timeAgoText;
+
+      // Set the full timestamp as the tooltip title
+      if (timestamp !== "-") {
+        maTimestampEl.setAttribute("data-bs-original-title", timestamp);
+        maTimestampEl.setAttribute("title", timestamp);
+      }
+
+      // Initialize Bootstrap tooltip if it exists
+      if (typeof bootstrap !== "undefined" && bootstrap.Tooltip) {
+        new bootstrap.Tooltip(maTimestampEl, {
+          placement: "top",
+          trigger: "hover",
+        });
+      }
     }
 
     // Update moving averages table
@@ -936,7 +1193,24 @@ function updateSecondSourceAnalysis(data, symbol, timeframe) {
 
     const tiTimestampEl = document.getElementById("tiTimestamp");
     if (tiTimestampEl) {
-      tiTimestampEl.textContent = data.scrape_timestamp || "-";
+      const timestamp = data.scrape_timestamp || "-";
+      const timeAgoText = timeAgoTwoWords(timestamp);
+
+      tiTimestampEl.textContent = timeAgoText;
+
+      // Set the full timestamp as the tooltip title
+      if (timestamp !== "-") {
+        tiTimestampEl.setAttribute("data-bs-original-title", timestamp);
+        tiTimestampEl.setAttribute("title", timestamp);
+      }
+
+      // Initialize Bootstrap tooltip if it exists
+      if (typeof bootstrap !== "undefined" && bootstrap.Tooltip) {
+        new bootstrap.Tooltip(tiTimestampEl, {
+          placement: "top",
+          trigger: "hover",
+        });
+      }
     }
 
     // Update technical indicators table
@@ -1381,9 +1655,26 @@ function updateDetailedAnalysisSection(
 
   let analysisHTML = "";
 
-  const fxbTimestamp = document.getElementById("fxbTimestamp");
-  if (fxbTimestamp) {
-    fxbTimestamp.textContent = myfxbookData.created_at || "-";
+  const fxbTimestampEl = document.getElementById("fxbTimestamp");
+  if (fxbTimestampEl) {
+    const timestamp = myfxbookData.created_at || "-";
+    const timeAgoText = timeAgoTwoWords(timestamp);
+
+    fxbTimestampEl.textContent = timeAgoText;
+
+    // Set the full timestamp as the tooltip title
+    if (timestamp !== "-") {
+      fxbTimestampEl.setAttribute("data-bs-original-title", timestamp);
+      fxbTimestampEl.setAttribute("title", timestamp);
+    }
+
+    // Initialize Bootstrap tooltip if it exists
+    if (typeof bootstrap !== "undefined" && bootstrap.Tooltip) {
+      new bootstrap.Tooltip(fxbTimestampEl, {
+        placement: "top",
+        trigger: "hover",
+      });
+    }
   }
 
   // Add myfxbook pattern analysis
@@ -1535,6 +1826,8 @@ function exportData() {
 // Initialize chart on page load
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOMContentLoaded");
+
+  initTimestamps();
 
   // Check if we're on a page with gauges
   if (document.querySelector(".analysis-container")) {

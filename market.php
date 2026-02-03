@@ -170,11 +170,7 @@
                             <section class="widget card bg-dark border-secondary mb-3">
                                 <div class="widget-header card-header border-secondary d-flex justify-content-between align-items-center">
                                     <h2 class="h6 mb-0">📈 Technical Analysis and Pattern</h2>
-                                    <div>
-                                        <div class="timeframe-display badge bg-primary" id="current-tf">4H</div>
-                                        <span class="timestamp badge bg-warning text-dark" id="fxbTimestamp">-</span>
-
-                                    </div>
+                                    <span class="timestamp badge bg-warning text-dark" id="fxbTimestamp">-</span>
                                 </div>
                                 <div class="widget-content card-body">
                                     <!-- Summary with Gauge -->
@@ -217,7 +213,7 @@
                                                             <div class="st slice-item"></div>
                                                             <div class="st slice-item"></div>
                                                         </div>
-                                                        <div analysis-item col-lg-6 col-md-6="summary-needle" class="needle"></div>
+                                                        <div id="summary-needle" class="needle"></div>
                                                         <div class="gauge-center"></div>
                                                     </div>
                                                     <div class="gauge-rating text-white text-center mt-3" id="summary-rating">Neutral</div>
@@ -278,13 +274,12 @@
                                         <div class="col-lg-4 col-md-6 mb-3">
                                             <div class="analysis-item">
                                                 <h3 class="h6 mb-3">Moving Averages</h3>
-
+                                                <span class="timestamp badge bg-warning text-dark" id="maTimestamp">-</span>
                                                 <div class="ta-container p-3 bg-secondary rounded h-100">
                                                     <!-- Moving Averages Table -->
                                                     <div class="table-header d-flex justify-content-between align-items-center mb-3 p-3 bg-secondary rounded">
                                                         <span>Summary: <strong class="rating-text" id="maSummary">Neutral</strong></span>
                                                         <span id="maSummaryCounts" class="badge bg-dark">Buy: 0 | Sell: 0</span>
-                                                        <span class="timestamp badge bg-warning text-dark" id="maTimestamp">-</span>
                                                     </div>
                                                     <div class="table-container">
                                                         <table class="rates-table table table-dark table-hover" id="maTable">
@@ -313,7 +308,14 @@
                                                 <div class="table-header d-flex justify-content-between align-items-center mb-3 p-3 bg-secondary rounded">
                                                     <span>Summary: <strong class="rating-text" id="tiSummary">Neutral</strong></span>
                                                     <span id="tiSummaryCounts" class="badge bg-dark">Buy: 0 | Sell: 0</span>
-                                                    <span class="timestamp badge bg-warning text-dark" id="tiTimestamp">-</span>
+                                                    <!-- <span class="timestamp badge bg-warning text-dark" id="tiTimestamp">-</span> -->
+                                                    <div class="timestamp badge bg-warning text-dark"
+                                                        id="tiTimestamp"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        title="-">
+                                                        -
+                                                    </div>
                                                 </div>
                                                 <div class="table-container">
                                                     <table class="rates-table table table-dark table-hover" id="tiTable">

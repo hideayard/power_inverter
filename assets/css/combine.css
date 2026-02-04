@@ -267,13 +267,24 @@ body.bg-dark {
 }
 
 .widget-header h2 {
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--text-primary);
+  margin: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 0;
+}
+
+.widget-header h2 span {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.widget-header h2 i {
+  color: inherit; /* Keeps the icon's natural color */
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
 }
 
 .widget-badge {
@@ -445,7 +456,6 @@ body.bg-dark {
   /* Remove the old tooltip styles from .timestamp */
 }
 
-
 .indicator-row {
   display: flex;
   justify-content: space-between;
@@ -598,7 +608,7 @@ body.bg-dark {
 
 .bg-neutral,
 .action.neutral {
-  background: rgba(245, 158, 11, 0.15)!important;
+  background: rgba(245, 158, 11, 0.15) !important;
   color: var(--text-secondary) !important;
   border: 1px solid rgba(245, 158, 11, 0.3) !important;
   height: 32px;
@@ -612,10 +622,106 @@ body.bg-dark {
   margin: 0 auto;
 }
 
+/* Overbought - typically purple/magenta */
+.bg-overbought,
+.action.overbought {
+  background: rgba(168, 85, 247, 0.15) !important;
+  color: var(
+    --accent-purple,
+    #8b5cf6
+  ) !important; /* Fallback if var not defined */
+  border: 1px solid rgba(168, 85, 247, 0.3) !important;
+  height: 32px;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+/* Oversold - typically blue/cyan */
+.bg-oversold,
 .action.oversold {
   background: rgba(239, 68, 68, 0.15) !important;
   color: var(--accent-blood) !important;
   border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  height: 32px;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+/* Less Volatility - typically gray/neutral */
+.bg-less-volatility,
+.action.less-volatility {
+  background: rgba(156, 163, 175, 0.15) !important;
+  color: var(
+    --text-secondary,
+    #6b7280
+  ) !important; /* Fallback if var not defined */
+  border: 1px solid rgba(156, 163, 175, 0.3) !important;
+  height: 32px;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+/* For hyphenated class names in HTML, you might also want these variants */
+.bg-less_volatility,
+.action.less_volatility {
+  background: rgba(156, 163, 175, 0.15) !important;
+  color: var(--text-secondary, #6b7280) !important;
+  border: 1px solid rgba(156, 163, 175, 0.3) !important;
+  height: 32px;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+/* High Volatility - typically orange/red for high risk/activity */
+.bg-high-volatility,
+.action.high-volatility {
+  background: rgba(249, 115, 22, 0.15) !important;
+  color: var(--accent-orange, #F97316) !important;
+  border: 1px solid rgba(249, 115, 22, 0.3) !important;
+  height: 32px;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+/* For hyphenated class names in HTML, you might also want these variants */
+.bg-high_volatility,
+.action.high_volatility {
+  background: rgba(249, 115, 22, 0.15) !important;
+  color: var(--accent-orange, #F97316) !important;
+  border: 1px solid rgba(249, 115, 22, 0.3) !important;
+  height: 32px;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 12px;
+  border-radius: 4px;
 }
 
 /* Bootstrap badge overrides */
@@ -1427,4 +1533,154 @@ iframe {
 /* Make sure text is readable on our theme */
 .text-white {
   color: #ffffff !important;
+}
+
+/* Pivot Points Table */
+.rates-table.table-dark {
+  background-color: transparent;
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.rates-table.table-dark thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.rates-table.table-dark thead th {
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-widget));
+  border-bottom: 2px solid var(--border-light) !important;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 12px 8px;
+  vertical-align: middle;
+  /* All headers align left */
+  text-align: left !important;
+}
+
+.rates-table.table-dark thead th.text-center {
+  /* Override if you want specific columns centered */
+  text-align: left !important;
+}
+
+.rates-table.table-dark thead th:first-child {
+  border-top-left-radius: 8px;
+  padding-left: 16px;
+}
+
+.rates-table.table-dark thead th:last-child {
+  border-top-right-radius: 8px;
+  padding-right: 16px;
+}
+
+.rates-table.table-dark tbody td {
+  border-top: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  padding: 12px 8px;
+  vertical-align: middle;
+  transition: all 0.2s ease;
+}
+
+.rates-table.table-dark tbody td:first-child {
+  padding-left: 16px;
+}
+
+.rates-table.table-dark tbody td:last-child {
+  padding-right: 16px;
+}
+
+.rates-table.table-dark tbody tr {
+  background-color: var(--bg-widget);
+  transition: all 0.2s ease;
+}
+
+.rates-table.table-dark tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  transform: translateY(-1px);
+}
+
+.rates-table.table-dark tbody tr:hover td {
+  color: var(--text-primary);
+}
+
+/* Loading state */
+.rates-table.table-dark .loading-cell {
+  color: var(--text-secondary) !important;
+  font-style: italic;
+  background-color: var(--bg-widget);
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* Specific column styling */
+.rates-table.table-dark tbody td:first-child {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* Pivot Points column (center column) */
+/* .rates-table.table-dark tbody td:nth-child(4) {
+  color: var(--accent-orange);
+  font-weight: 600;
+  background-color: rgba(245, 158, 11, 0.05);
+} */
+
+/* Support levels (S1, S2, S3) */
+/* .rates-table.table-dark tbody td:nth-child(2),
+.rates-table.table-dark tbody td:nth-child(3),
+.rates-table.table-dark tbody td:nth-child(4) {
+  color: var(--accent-red);
+  font-weight: 500;
+} */
+
+/* Resistance levels (R1, R2, R3) */
+/* .rates-table.table-dark tbody td:nth-child(5),
+.rates-table.table-dark tbody td:nth-child(6),
+.rates-table.table-dark tbody td:nth-child(7) {
+  color: var(--accent-green);
+  font-weight: 500;
+} */
+
+/* Row striping for better readability */
+.rates-table.table-dark tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.rates-table.table-dark tbody tr:nth-child(even):hover {
+  background-color: rgba(255, 255, 255, 0.07);
+}
+
+/* Empty state */
+.rates-table.table-dark tbody tr:only-child td {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .rates-table.table-dark {
+    font-size: 0.85rem;
+  }
+  
+  .rates-table.table-dark thead th,
+  .rates-table.table-dark tbody td {
+    padding: 8px 6px;
+  }
+  
+  .rates-table.table-dark thead th:first-child,
+  .rates-table.table-dark tbody td:first-child {
+    padding-left: 12px;
+  }
+  
+  .rates-table.table-dark thead th:last-child,
+  .rates-table.table-dark tbody td:last-child {
+    padding-right: 12px;
+  }
 }

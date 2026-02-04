@@ -1299,11 +1299,13 @@ function updateMovingAveragesTable(maData) {
 
     // Extract value and action from simple field
     const simpleMatch = item.simple?.match(/([\d.]+)\s*(.+)/);
+    console.log("simpleMatch", simpleMatch);
+    const expMatch = item.col_3?.match(/([\d.]+)\s*(.+)/);
+    console.log("expMatch", expMatch);
     const simpleValue = simpleMatch ? simpleMatch[1] : "";
     const simpleAction = simpleMatch ? simpleMatch[2] : "";
-
-    // Extract value and action from exponential field
-    const expAction = item.exponential || "";
+    const exponentialValue = expMatch ? expMatch[1] : "";
+    const exponentialAction = expMatch ? expMatch[2] : "";
 
     row.innerHTML = `
             <td class="name-col">${item.name}</td>
@@ -1313,9 +1315,11 @@ function updateMovingAveragesTable(maData) {
                     <span class="badge action ${simpleAction.toLowerCase()}">${simpleAction}</span>
                 </div>
             </td>
-            <td class="exponential-col ${expAction.toLowerCase()}">
+            <td class="exponential-col ${exponentialAction.toLowerCase()}">
                 <div class="value-action">
-                    <span class="badge action ${expAction.toLowerCase()}">${expAction}</span>
+                                        <span>${exponentialValue}</span>
+                    <span class="badge action ${exponentialAction.toLowerCase()}">${exponentialAction}</span>
+
                 </div>
             </td>
         `;
@@ -1335,7 +1339,7 @@ function updateTechnicalIndicatorsTable(tiData) {
     row.innerHTML = `
             <td class="name-col">${item.name}</td>
             <td class="value-col">${item.value}</td>
-            <td class="action-col"><span class="badge ${actionClass}">${item.action}</span></td>
+            <td class="action-col"><span class="badge action ${actionClass}">${item.action}</span></td>
         `;
     tableBody.appendChild(row);
   });

@@ -142,22 +142,22 @@
                             </section>
                         </div>
 
-                        <!-- Lower Dashboard Grid -->
                         <div class="col-lg-4 col-md-12">
-                            <div class="lower-dashboard row g-3">
-                                <section class="widget card bg-dark border-secondary widget-height-equal">
-                                    <div class="widget-header card-header border-secondary">
-                                        <h2 class="h6 mb-0">📊 Market Data Watchlist</h2>
+                            <div class="widget card bg-dark border-secondary mb-3 widget-height-equal">
+                                <div class="widget-header card-header border-secondary">
+                                    <div class="header-content">
+                                        <h2 class="h6 mb-0">📊 <span>Market Data Watchlist</span></h2>
                                     </div>
-                                    <div class="widget-content card-body p-0">
-                                        <div class="watchlist-container" id="watchlist-all">
-                                            <tv-market-summary
-                                                symbol-sectors='[{"sectionName":"Currency","symbols":["OANDA:EURJPY","OANDA:EURUSD","OANDA:USDJPY","OANDA:GBPUSD","OANDA:GBPJPY"]},{"sectionName":"Crypto","symbols":["BINANCEUS:BTCUSDT","BINANCEUS:ETHUSDT","BINANCEUS:XRPUSDT","BINANCEUS:SOLUSDT","OKX:HYPEUSDT","BINANCE:BNBUSDT","CRYPTOCAP:TOTAL3","OKX:XAUTUSDT"]},{"sectionName":"Stocks","symbols":["SPREADEX:SPX","NASDAQ:TSLA","NASDAQ:NVDA","NASDAQ:GOOGL","FXOPEN:DXY","IDX:BBCA","IDX:COMPOSITE","IDX:ANTM","IDX:BBRI"]},{"sectionName":"Commodity","symbols":["CMCMARKETS:GOLD","CMCMARKETS:SILVER","TVC:USOIL"]}]'
-                                                show-time-range layout-mode="grid" item-size="compact" mode="custom"></tv-market-summary>
-                                        </div>
-                                        <script type="module"
-                                            src="https://widgets.tradingview-widget.com/w/en/tv-market-summary.js"></script>
+                                </div>
+                                <div class="widget-content card-body p-0">
+                                    <div class="watchlist-container" id="watchlist-all">
+                                        <tv-market-summary
+                                            symbol-sectors='[{"sectionName":"Currency","symbols":["OANDA:EURJPY","OANDA:EURUSD","OANDA:USDJPY","OANDA:GBPUSD","OANDA:GBPJPY"]},{"sectionName":"Crypto","symbols":["BINANCEUS:BTCUSDT","BINANCEUS:ETHUSDT","BINANCEUS:XRPUSDT","BINANCEUS:SOLUSDT","OKX:HYPEUSDT","BINANCE:BNBUSDT","CRYPTOCAP:TOTAL3","OKX:XAUTUSDT"]},{"sectionName":"Stocks","symbols":["SPREADEX:SPX","NASDAQ:TSLA","NASDAQ:NVDA","NASDAQ:GOOGL","FXOPEN:DXY","IDX:BBCA","IDX:COMPOSITE","IDX:ANTM","IDX:BBRI"]},{"sectionName":"Commodity","symbols":["CMCMARKETS:GOLD","CMCMARKETS:SILVER","TVC:USOIL"]}]'
+                                            show-time-range layout-mode="grid" item-size="compact" mode="custom"></tv-market-summary>
                                     </div>
+                                    <script type="module"
+                                        src="https://widgets.tradingview-widget.com/w/en/tv-market-summary.js"></script>
+                                </div>
                                 </section>
 
                             </div>
@@ -169,7 +169,9 @@
 
                             <section class="widget card bg-dark border-secondary mb-3">
                                 <div class="widget-header card-header border-secondary d-flex justify-content-between align-items-center">
-                                    <h2 class="h6 mb-0">📈 Technical Analysis and Pattern</h2>
+                                    <div class="header-content">
+                                        <h2 class="h6 mb-0">📈 <span> Technical Analysis and Pattern</span></h2>
+                                    </div>
                                 </div>
                                 <div class="widget-content card-body">
                                     <!-- Summary with Gauge -->
@@ -374,7 +376,7 @@
                             <section class="widget card bg-dark border-secondary mb-3" id="interestRatesWidget">
                                 <div class="widget-header card-header border-secondary">
                                     <div class="header-content">
-                                        <h2 class="h6 mb-0"><i class="fas fa-percentage me-2"></i> EUR JPY Interest Rates Dashboard</h2>
+                                        <h2 class="h6 mb-0"><i class="fas fa-percentage me-2"></i> <span>EUR JPY Interest Rates Dashboard</span></h2>
                                     </div>
                                 </div>
 
@@ -454,7 +456,9 @@
                             <!-- Additional Analysis Section -->
                             <section class="widget card bg-dark border-secondary">
                                 <div class="widget-header card-header border-secondary">
-                                    <h2 class="h6 mb-0">🔍 Detailed Analysis</h2>
+                                    <div class="header-content">
+                                        <h2 class="h6 mb-0">🔍 <span> Detailed Analysis</span></h2>
+                                    </div>
                                 </div>
                                 <div class="widget-content card-body">
                                     <div class="detailed-analysis row g-3" id="detailedAnalysis">

@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geran Komuniti Iskandar Puteri Rendah Karbon 5.0 Dashboard</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon.png">
+    <link rel="shortcut icon" href="assets/images/favicon.png">
+
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Load Chart.js for graphing capabilities -->
@@ -17,7 +22,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Load SweetAlert2 for notifications -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <script src="assets/js/auth.js"></script>
     <link rel="stylesheet" href="assets/css/dashboard.css">
 
@@ -204,7 +209,6 @@
 
         <!-- Metrics Grid (8 cards - your existing code remains) -->
         <main id="metrics-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            <!-- Your existing 8 metric cards here -->
             <!-- 1. Voltage -->
             <div class="metric-card p-6 rounded-xl shadow-lg transition duration-300 hover:shadow-cyan-700/50 hover:ring-2 ring-cyan-500/50" id="voltage-card">
                 <div class="flex items-center justify-between mb-4">
@@ -222,68 +226,58 @@
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-xl font-semibold text-red-400">Current</h2>
                     <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 4v4m0 4v2"></path>
                     </svg>
                 </div>
                 <div class="text-5xl font-bold tracking-tight" id="current-value">2.897</div>
                 <div class="text-2xl font-light text-gray-400 mt-1">Amperes (A)</div>
             </div>
 
-            <!-- 3. Active Power -->
+            <!-- 3. Active Power (Font Awesome) -->
             <div class="metric-card p-6 rounded-xl shadow-lg transition duration-300 hover:shadow-green-700/50 hover:ring-2 ring-green-500/50" id="power-card">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-xl font-semibold text-green-400">Active Power</h2>
-                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.976l-1.293 1.293-2.31 2.31"></path>
-                    </svg>
+                    <i class="fas fa-bolt text-green-400 text-xl"></i>
                 </div>
                 <div class="text-5xl font-bold tracking-tight" id="power-value">658.7</div>
                 <div class="text-2xl font-light text-gray-400 mt-1">Watts (W)</div>
             </div>
 
-            <!-- 4. Power Factor -->
+            <!-- 4. Power Factor (Font Awesome) -->
             <div class="metric-card p-6 rounded-xl shadow-lg transition duration-300 hover:shadow-indigo-700/50 hover:ring-2 ring-indigo-500/50" id="pf-card">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-xl font-semibold text-indigo-400">Power Factor</h2>
-                    <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v14h-3"></path>
-                    </svg>
+                    <i class="fas fa-wave-square text-indigo-400 text-xl"></i>
                 </div>
                 <div class="text-5xl font-bold tracking-tight" id="pf-value">0.987</div>
                 <div class="text-2xl font-light text-gray-400 mt-1">Ratio</div>
             </div>
 
-            <!-- 5. Frequency -->
+            <!-- 5. Frequency (Font Awesome) -->
             <div class="metric-card p-6 rounded-xl shadow-lg transition duration-300 hover:shadow-fuchsia-700/50 hover:ring-2 ring-fuchsia-500/50" id="frequency-card">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-xl font-semibold text-fuchsia-400">Frequency</h2>
-                    <svg class="w-6 h-6 text-fuchsia-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 13h10M7 17h10M7 9h10"></path>
-                    </svg>
+                    <i class="fas fa-tachometer-alt text-fuchsia-400 text-xl"></i>
                 </div>
                 <div class="text-5xl font-bold tracking-tight" id="frequency-value">50.01</div>
                 <div class="text-2xl font-light text-gray-400 mt-1">Hertz (Hz)</div>
             </div>
 
-            <!-- 6. Total Energy (Persisted) -->
+            <!-- 6. Total Energy (Font Awesome) -->
             <div class="metric-card p-6 rounded-xl shadow-lg transition duration-300 hover:shadow-yellow-700/50 hover:ring-2 ring-yellow-500/50" id="energy-card">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-xl font-semibold text-yellow-400">Total Energy</h2>
-                    <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18M3 18h18M3 6h18"></path>
-                    </svg>
+                    <i class="fas fa-charging-station text-yellow-400 text-xl"></i>
                 </div>
                 <div class="text-5xl font-bold tracking-tight" id="energy-value">6250.55</div>
                 <div class="text-2xl font-light text-gray-400 mt-1">Kilowatt-hours (kWh)</div>
             </div>
 
-            <!-- 7. Battery Remaining Time (SoC Visual) -->
+            <!-- 7. Battery Status (Font Awesome) -->
             <div class="metric-card p-6 rounded-xl shadow-lg transition duration-300 hover:shadow-orange-700/50 hover:ring-2 ring-orange-500/50" id="battery-card">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-semibold text-orange-400">Battery Status (SoC)</h2>
-                    <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+                    <h2 class="text-xl font-semibold text-orange-400">Battery Status</h2>
+                    <i class="fas fa-car-battery text-orange-400 text-xl"></i>
                 </div>
                 <div class="flex items-center justify-between mb-2">
                     <div class="text-5xl font-bold tracking-tight" id="battery-time-value">04:32</div>
@@ -295,13 +289,11 @@
                 </div>
             </div>
 
-            <!-- 8. Carbon Reduction (Calculated) -->
+            <!-- 8. Carbon Reduction (Font Awesome) -->
             <div class="metric-card p-6 rounded-xl shadow-lg transition duration-300 hover:shadow-sky-700/50 hover:ring-2 ring-sky-500/50" id="carbon-card">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-xl font-semibold text-sky-400">CO₂ Reduction</h2>
-                    <svg class="w-6 h-6 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 0020 14c0 1.576-.58 3.056-1.55 4.168M1.168 18.45A8.001 8.001 0 014 6h5"></path>
-                    </svg>
+                    <i class="fas fa-leaf text-sky-400 text-xl"></i>
                 </div>
                 <div class="text-5xl font-bold tracking-tight" id="carbon-reduction-value">3657.85</div>
                 <div class="text-2xl font-light text-gray-400 mt-1">kg CO₂</div>
@@ -365,14 +357,14 @@
             const userName = user.name || user.username || "User";
             const userEmail = user.user_email || "user@example.com";
             const userRole = user.user_tipe || "ADMIN";
-            
+
             // Generate initials from name
             function getInitials(name) {
                 return name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2);
             }
-            
+
             const initials = getInitials(userName);
-            
+
             // Update UI elements
             document.getElementById('user-avatar').textContent = initials;
             document.getElementById('dropdown-avatar').textContent = initials;
@@ -381,23 +373,23 @@
             document.getElementById('dropdown-email').textContent = userEmail;
             document.getElementById('dropdown-role').textContent = `Role: ${userRole}`;
             document.getElementById('current-role').textContent = userRole;
-            
+
             // Toggle dropdown menu
             const userMenuButton = document.getElementById('user-menu-button');
             const userDropdown = document.getElementById('user-dropdown');
-            
+
             userMenuButton.addEventListener('click', function(e) {
                 e.stopPropagation();
                 userDropdown.classList.toggle('hidden');
             });
-            
+
             // Close dropdown when clicking outside
             document.addEventListener('click', function(e) {
                 if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
                     userDropdown.classList.add('hidden');
                 }
             });
-            
+
             // Logout functionality
             document.getElementById('logout-button').addEventListener('click', function() {
                 Swal.fire({
@@ -422,7 +414,7 @@
                     }
                 });
             });
-            
+
             // Make logout function globally available if not in auth.js
             if (typeof logout === 'undefined') {
                 window.logout = function() {
@@ -432,7 +424,7 @@
                         timer: 1500,
                         showConfirmButton: false,
                     });
-                    
+
                     setTimeout(() => {
                         localStorage.clear();
                         window.location.href = "/auth/login.php";
@@ -440,19 +432,19 @@
                 };
             }
         });
-        
+
         // Auth check - moved to bottom to ensure DOM is loaded
         (function() {
             try {
                 const token = localStorage.getItem("jwt");
                 const user = localStorage.getItem("user");
-                
+
                 if (!token || !user) {
                     console.log("Not authenticated, redirecting to login");
                     window.location.href = "/auth/login.php";
                     return;
                 }
-                
+
                 // If requireAuth exists, use it
                 if (typeof requireAuth === 'function') {
                     requireAuth("ADMIN").then(authResult => {

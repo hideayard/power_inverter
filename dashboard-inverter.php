@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PZEM-004T Multi-Node Energy Monitoring Dashboard</title>
+    <title>Geran Komuniti Iskandar Puteri Rendah Karbon 5.0 Dashboard</title>
 
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -91,7 +91,7 @@
             <div class="flex justify-between items-center mb-4">
                 <div>
                     <h1 class="text-4xl font-extrabold text-white text-center sm:text-left border-b border-gray-700 pb-3">
-                        PZEM-004T Multi-Node Energy Monitor
+                        Geran Komuniti Iskandar Puteri Rendah Karbon 5.0
                     </h1>
                     <p class="text-gray-400 text-center sm:text-left mt-2">
                         Real-time AC Power System Metrics Across Multiple Nodes

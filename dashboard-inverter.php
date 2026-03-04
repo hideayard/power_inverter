@@ -109,7 +109,7 @@
 
                 <!-- Footer -->
                 <div class="px-4 py-3 border-t border-[#EDF2F7] dark:border-[#315492] bg-[#FFF6E1] dark:bg-[#1A2B3E] dropdown-footer">
-                    <p class="text-xs text-[#2C5282] dark:text-[#EDF2F7]">© 2024 Energy Monitoring System</p>
+                    <p class="text-xs text-[#2C5282] dark:text-[#EDF2F7]">© 2025 Pasar Malam Hijau</p>
                 </div>
             </div>
         </div>

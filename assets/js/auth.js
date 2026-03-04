@@ -639,3 +639,166 @@ function initLoginUI() {
 
   console.log("Login UI initialized");
 }
+
+
+ // Direct form submission handler to ensure it works
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Login page loaded, initializing direct handler...');
+            
+            const loginForm = document.getElementById('loginForm');
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            
+            // Password toggle
+            if (togglePasswordBtn) {
+                togglePasswordBtn.addEventListener('click', function() {
+                    const passwordInput = document.getElementById('password');
+                    const icon = this.querySelector('i');
+                    
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        icon.className = 'fas fa-eye-slash';
+                    } else {
+                        passwordInput.type = 'password';
+                        icon.className = 'fas fa-eye';
+                    }
+                });
+            }
+            
+            // Form submission
+            if (loginForm) {
+                // Remove any existing listeners to avoid duplicates
+                loginForm.removeEventListener('submit', handleFormSubmit);
+                loginForm.addEventListener('submit', handleFormSubmit);
+            }
+            
+            // Input focus effects
+            document.querySelectorAll('.form-input').forEach(input => {
+                input.addEventListener('focus', function() {
+                    const icon = this.parentElement.querySelector('.input-icon');
+                    if (icon) icon.style.color = '#FDA300';
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (!this.value) {
+                        const icon = this.parentElement.querySelector('.input-icon');
+                        if (icon) icon.style.color = '#2C5282';
+                    }
+                });
+            });
+            
+            // Auto-fill remembered user
+            const rememberedUser = localStorage.getItem('rememberedUser');
+            if (rememberedUser) {
+                const usernameInput = document.getElementById('username');
+                const rememberCheckbox = document.getElementById('remember');
+                if (usernameInput) usernameInput.value = rememberedUser;
+                if (rememberCheckbox) rememberCheckbox.checked = true;
+            }
+        });
+        
+        // Separate handler function
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            console.log('Form submitted directly');
+            
+            const username = document.getElementById('username')?.value.trim();
+            const password = document.getElementById('password')?.value;
+            const rememberMe = document.getElementById('remember')?.checked;
+            const loginButton = document.getElementById('loginButton');
+            
+            // Validation
+            if (!username || !password) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Missing Fields',
+                    text: 'Please enter both username and password',
+                    confirmButtonColor: '#FDA300'
+                });
+                return;
+            }
+            
+            if (password.length < 6) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Password',
+                    text: 'Password must be at least 6 characters',
+                    confirmButtonColor: '#FDA300'
+                });
+                return;
+            }
+            
+            // Show loading state
+            const originalText = loginButton.innerHTML;
+            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+            loginButton.disabled = true;
+            
+            try {
+                // Try to use the login function from auth.js first
+                if (typeof window.login === 'function') {
+                    console.log('Using auth.js login function');
+                    await window.login({ username, password, rememberMe });
+                } 
+                else {
+                    // Fallback direct login
+                    console.log('Using fallback login');
+                    // await fallbackLogin(username, password, rememberMe);
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Login Failed',
+                    text: error.message || 'An error occurred during login',
+                    confirmButtonColor: '#FDA300'
+                });
+                loginButton.innerHTML = originalText;
+                loginButton.disabled = false;
+            }
+        }
+        
+        // Fallback login function in case auth.js isn't loaded properly
+        async function fallbackLogin(username, password, rememberMe) {
+            console.log('Using fallback login with username:', username);
+            
+            // Simulate API call - replace with your actual API endpoint
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    // Demo credentials check
+                    if (username === 'admin' && password === 'password123') {
+                        const userData = {
+                            name: 'Admin User',
+                            username: 'admin',
+                            user_email: 'admin@example.com',
+                            user_tipe: 'ADMIN'
+                        };
+                        
+                        // Save to localStorage
+                        localStorage.setItem('jwt', 'demo-token-12345');
+                        localStorage.setItem('authToken', 'demo-token-12345');
+                        localStorage.setItem('user', JSON.stringify(userData));
+                        localStorage.setItem('lastLogin', new Date().toISOString());
+                        
+                        if (rememberMe) {
+                            localStorage.setItem('rememberedUser', username);
+                        }
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Login Successful',
+                            text: 'Welcome! Redirecting to dashboard...',
+                            timer: 1500,
+                            showConfirmButton: false,
+                            background: '#FFFFFF',
+                            color: '#2C5282',
+                            iconColor: '#FDA300'
+                        }).then(() => {
+                            window.location.href = 'dashboard-inverter.php';
+                        });
+                        
+                        resolve();
+                    } else {
+                        reject(new Error('Invalid username or password'));
+                    }
+                }, 1000);
+            });
+        }

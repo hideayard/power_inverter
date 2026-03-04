@@ -73,7 +73,6 @@ const elements = {
   authStatus: document.getElementById("auth-status"),
   lastUpdated: document.getElementById("last-updated-time"),
   nodeSelector: document.getElementById("node-selector"),
-  selectedNode: document.getElementById("selected-node"),
   nodesTableBody: document.getElementById("nodes-table-body"),
   totalNodes: document.getElementById("total-nodes"),
   activeNodesCount: document.getElementById("active-nodes-count"),
@@ -425,19 +424,6 @@ function updateNodeSelector() {
     nodeSelector.appendChild(button);
   });
 
-  // Update dropdown
-  const selectElement = elements.selectedNode;
-  if (selectElement) {
-    selectElement.innerHTML =
-      '<option value="all">All Nodes (Aggregate)</option>';
-    NODES.forEach((node) => {
-      const option = document.createElement("option");
-      option.value = node.id;
-      option.textContent = node.name;
-      selectElement.appendChild(option);
-    });
-    selectElement.value = selectedNodeId;
-  }
 }
 
 function updateNodesTable() {
@@ -768,10 +754,6 @@ function selectNode(nodeId) {
     }
   });
 
-  // Update dropdown
-  if (elements.selectedNode) {
-    elements.selectedNode.value = nodeId;
-  }
 }
 
 function highlightSelectedMarker(nodeId) {
@@ -907,12 +889,6 @@ async function initApplication() {
         this.classList.remove("text-gray-300");
         toggleAvg.classList.remove("bg-blue-600", "text-white");
         toggleAvg.classList.add("text-gray-300");
-      };
-    }
-
-    if (elements.selectedNode) {
-      elements.selectedNode.onchange = function () {
-        selectNode(this.value);
       };
     }
 

@@ -94,10 +94,10 @@
             <div class="flex justify-between items-center mb-4">
                 <div>
                     <h1 class="text-4xl font-extrabold text-white text-center sm:text-left border-b border-gray-700 pb-3">
-                        Geran Komuniti Iskandar Puteri Rendah Karbon 5.0
+                        PROJEK PASAR MALAM HIJAU DIKUASAKAN POWER INVERTER 2.0
                     </h1>
                     <p class="text-gray-400 text-center sm:text-left mt-2">
-                        Real-time AC Power System Metrics Across Multiple Nodes
+                        dibiyai oleh Geran Komuniti Iskandar Puteri Rendah Karbon 5.0
                     </p>
                 </div>
             </div>
@@ -113,34 +113,6 @@
                 </p>
             </div>
         </header>
-
-        <!-- Rest of your existing dashboard content remains exactly the same -->
-        <!-- Node Selection and Toggle Controls -->
-        <section class="mb-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h2 class="text-xl font-semibold text-white mb-2">Node Selection</h2>
-                    <div id="node-selector" class="flex flex-wrap gap-2">
-                        <!-- Node selection buttons will be populated here -->
-                    </div>
-                </div>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-300">View Mode:</span>
-                        <div class="flex bg-gray-700 rounded-lg p-1">
-                            <button id="toggle-avg" class="px-3 py-1 rounded-md bg-blue-600 text-white">Average</button>
-                            <button id="toggle-total" class="px-3 py-1 rounded-md text-gray-300 hover:bg-gray-600">Total</button>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-300">Selected Node:</span>
-                        <select id="selected-node" class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-1 text-white">
-                            <!-- Options will be populated dynamically -->
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <!-- Business Metrics Section -->
         <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">

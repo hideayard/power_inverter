@@ -13,6 +13,8 @@
 
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Chart.js for graphing capabilities -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js" crossorigin="anonymous"></script>
     <!-- Load Leaflet for maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -53,7 +55,7 @@
                         </div>
                         <div>
                             <h3 id="dropdown-name" class="font-semibold text-gray-100">Loading...</h3>
-                            <p id="dropdown-email" class="text-sm text-gray-400 truncate"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5a36353b3e33343d1a3f223b372a363f74393537">[email&#160;protected]</a></p>
+                            <p id="dropdown-email" class="text-sm text-gray-400 truncate">loading@example.com</p>
                             <p id="dropdown-role" class="text-xs text-blue-400 font-medium mt-1">Role: Loading...</p>
                         </div>
                     </div>
@@ -148,25 +150,155 @@
             <!-- Projected Annual Savings -->
             <div class="md:col-span-2 bg-green-900/40 p-6 rounded-xl shadow-2xl border border-green-700 transition duration-300 hover:shadow-green-500/50">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-2xl font-bold text-green-400">Total CO₂ Reduction</h2>
-                    <i class="fas fa-leaf text-green-400 text-xl"></i>
+                    <h2 class="text-2xl font-bold text-green-400">Projected Annual Savings</h2>
+                    <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 4v4m0 4v2"></path>
+                    </svg>
                 </div>
-                <div class="text-6xl font-extrabold tracking-tight text-white mt-3">8.212</div>
+                <div class="text-6xl font-extrabold tracking-tight text-white mt-3" id="total-savings">RM 8,212.50</div>
                 <p class="text-lg text-green-300 mt-2">
-                kg CO₂
+                    Capital retained yearly across all nodes by switching from high-cost fossil fuels.
                 </p>
             </div>
 
+            <!-- Daily Cost Difference Card -->
             <div class="metric-card p-6 rounded-xl shadow-lg border-b-4 border-yellow-500 transition duration-300 hover:shadow-yellow-700/50">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-semibold text-yellow-400">CO₂ Reduction</h2>
-                    <i class="fas fa-leaf text-yellow-400 text-xl"></i>
+                    <h2 class="text-xl font-semibold text-yellow-400">Avg Cost Reduction</h2>
+                    <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.001 0 0120.488 9z"></path>
+                    </svg>
                 </div>
-                <div class="text-4xl font-bold tracking-tight text-white" id="carbon-reduction-value">3657.85</div>
-                <div class="text-lg font-light text-gray-400 mt-1">kg CO₂</div>
+                <div class="text-4xl font-bold tracking-tight text-white" id="avg-reduction">90% Daily</div>
+                <div class="text-lg font-light text-gray-400 mt-1" id="total-saved">RM 22.50 saved per cycle</div>
             </div>
 
         </section>
+
+        <!-- Main Chart Section (Multi-line Trend Analysis) -->
+        <section class="mb-10 p-6 rounded-xl shadow-2xl bg-gray-800 border border-gray-700 transition duration-300 hover:shadow-lg hover:shadow-blue-500/30">
+            <div class="flex justify-between items-center mb-4 flex-wrap gap-4">
+                <h2 class="text-2xl font-semibold text-blue-400" id="chart-title">Selected Node Parameter Trend Analysis</h2>
+
+                <!-- Parameter Selector Checkboxes -->
+                <div id="param-selector" class="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+                    <label class="inline-flex items-center cursor-pointer text-green-400">
+                        <input type="checkbox" value="power" checked onchange="handleParamChange()" class="form-checkbox h-4 w-4 text-green-500 rounded border-gray-700 bg-gray-700 focus:ring-green-500">
+                        <span class="ml-2 font-medium">Power (W)</span>
+                    </label>
+                    <label class="inline-flex items-center cursor-pointer text-cyan-400">
+                        <input type="checkbox" value="voltage" checked onchange="handleParamChange()" class="form-checkbox h-4 w-4 text-cyan-500 rounded border-gray-700 bg-gray-700 focus:ring-cyan-500">
+                        <span class="ml-2 font-medium">Voltage (V)</span>
+                    </label>
+                    <label class="inline-flex items-center cursor-pointer text-red-400">
+                        <input type="checkbox" value="current" checked onchange="handleParamChange()" class="form-checkbox h-4 w-4 text-red-500 rounded border-gray-700 bg-gray-700 focus:ring-red-500">
+                        <span class="ml-2 font-medium">Current (A)</span>
+                    </label>
+                    <label class="inline-flex items-center cursor-pointer text-indigo-400">
+                        <input type="checkbox" value="pf" onchange="handleParamChange()" class="form-checkbox h-4 w-4 text-indigo-500 rounded border-gray-700 bg-gray-700 focus:ring-indigo-500">
+                        <span class="ml-2 font-medium">PF (Ratio)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="h-64">
+                <canvas id="powerChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Metrics Grid (8 cards - your existing code remains) -->
+        <main id="metrics-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <!-- 1. Voltage -->
+            <div class="metric-card p-6 rounded-xl shadow-lg transition duration-300 hover:shadow-cyan-700/50 hover:ring-2 ring-cyan-500/50" id="voltage-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-cyan-400">Voltage</h2>
+                    <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <div class="text-5xl font-bold tracking-tight" id="voltage-value">230.38</div>
+                <div class="text-2xl font-light text-gray-400 mt-1">Volts (V)</div>
+            </div>
+
+            <!-- 2. Current -->
+            <div class="metric-card p-6 rounded-xl shadow-lg transition duration-300 hover:shadow-red-700/50 hover:ring-2 ring-red-500/50" id="current-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-red-400">Current</h2>
+                    <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 4v4m0 4v2"></path>
+                    </svg>
+                </div>
+                <div class="text-5xl font-bold tracking-tight" id="current-value">2.897</div>
+                <div class="text-2xl font-light text-gray-400 mt-1">Amperes (A)</div>
+            </div>
+
+            <!-- 3. Active Power (Font Awesome) -->
+            <div class="metric-card p-6 rounded-xl shadow-lg transition duration-300 hover:shadow-green-700/50 hover:ring-2 ring-green-500/50" id="power-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-green-400">Active Power</h2>
+                    <i class="fas fa-bolt text-green-400 text-xl"></i>
+                </div>
+                <div class="text-5xl font-bold tracking-tight" id="power-value">658.7</div>
+                <div class="text-2xl font-light text-gray-400 mt-1">Watts (W)</div>
+            </div>
+
+            <!-- 4. Power Factor (Font Awesome) -->
+            <div class="metric-card p-6 rounded-xl shadow-lg transition duration-300 hover:shadow-indigo-700/50 hover:ring-2 ring-indigo-500/50" id="pf-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-indigo-400">Power Factor</h2>
+                    <i class="fas fa-wave-square text-indigo-400 text-xl"></i>
+                </div>
+                <div class="text-5xl font-bold tracking-tight" id="pf-value">0.987</div>
+                <div class="text-2xl font-light text-gray-400 mt-1">Ratio</div>
+            </div>
+
+            <!-- 5. Frequency (Font Awesome) -->
+            <div class="metric-card p-6 rounded-xl shadow-lg transition duration-300 hover:shadow-fuchsia-700/50 hover:ring-2 ring-fuchsia-500/50" id="frequency-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-fuchsia-400">Frequency</h2>
+                    <i class="fas fa-tachometer-alt text-fuchsia-400 text-xl"></i>
+                </div>
+                <div class="text-5xl font-bold tracking-tight" id="frequency-value">50.01</div>
+                <div class="text-2xl font-light text-gray-400 mt-1">Hertz (Hz)</div>
+            </div>
+
+            <!-- 6. Total Energy (Font Awesome) -->
+            <div class="metric-card p-6 rounded-xl shadow-lg transition duration-300 hover:shadow-yellow-700/50 hover:ring-2 ring-yellow-500/50" id="energy-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-yellow-400">Total Energy</h2>
+                    <i class="fas fa-charging-station text-yellow-400 text-xl"></i>
+                </div>
+                <div class="text-5xl font-bold tracking-tight" id="energy-value">6250.55</div>
+                <div class="text-2xl font-light text-gray-400 mt-1">Kilowatt-hours (kWh)</div>
+            </div>
+
+            <!-- 7. Battery Status (Font Awesome) -->
+            <div class="metric-card p-6 rounded-xl shadow-lg transition duration-300 hover:shadow-orange-700/50 hover:ring-2 ring-orange-500/50" id="battery-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-orange-400">Battery Status</h2>
+                    <i class="fas fa-car-battery text-orange-400 text-xl"></i>
+                </div>
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-5xl font-bold tracking-tight" id="battery-time-value">04:32</div>
+                    <div class="text-2xl font-bold text-orange-300" id="battery-soc-percent">95%</div>
+                </div>
+                <div class="text-2xl font-light text-gray-400 mb-2">Time Remaining (H:MM)</div>
+                <div class="h-4 w-full bg-gray-700 rounded-full overflow-hidden">
+                    <div id="battery-bar" class="h-full bg-green-500 rounded-full battery-bar" style="width: 95%;"></div>
+                </div>
+            </div>
+
+            <!-- 8. Carbon Reduction (Font Awesome) -->
+            <div class="metric-card p-6 rounded-xl shadow-lg transition duration-300 hover:shadow-sky-700/50 hover:ring-2 ring-sky-500/50" id="carbon-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-sky-400">CO₂ Reduction</h2>
+                    <i class="fas fa-leaf text-sky-400 text-xl"></i>
+                </div>
+                <div class="text-5xl font-bold tracking-tight" id="carbon-reduction-value">3657.85</div>
+                <div class="text-2xl font-light text-gray-400 mt-1">kg CO₂</div>
+            </div>
+        </main>
 
         <!-- Two Column Layout for Map and Table -->
         <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
@@ -217,7 +349,7 @@
         </section>
     </div>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script>
         // User Profile Management
         document.addEventListener('DOMContentLoaded', function() {
             // Get user data from localStorage
@@ -321,7 +453,7 @@
                         }
                     });
                 }
-           } catch (error) {
+            } catch (error) {
                 console.error("Auth check error:", error);
                 window.location.href = "/auth/login.php";
             }

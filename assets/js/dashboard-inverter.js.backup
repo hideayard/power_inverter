@@ -2,6 +2,7 @@
 let simulationInterval;
 let map = null;
 let markers = {};
+let powerChart;
 let viewMode = "avg"; // 'avg' or 'total'
 let selectedNodeId = "all";
 let serverUpdateInterval = null;
@@ -63,21 +64,65 @@ function generateRandomColor() {
 
 // Node data storage
 let nodesData = {};
+let historicalData = {};
+const MAX_HISTORY_POINTS = 30;
 
+// Configuration for the chart metrics
+const METRIC_CONFIG = {
+  voltage: {
+    label: "Voltage",
+    unit: "Volts (V)",
+    color: "#06b6d4",
+    checked: true,
+  },
+  current: {
+    label: "Current",
+    unit: "Amperes (A)",
+    color: "#f87171",
+    checked: true,
+  },
+  power: {
+    label: "Active Power",
+    unit: "Watts (W)",
+    color: "#10b981",
+    checked: true,
+  },
+  pf: {
+    label: "Power Factor",
+    unit: "Ratio",
+    color: "#818cf8",
+    checked: false,
+  },
+};
 
 // Simulation constants
 const CARBON_REDUCTION_FACTOR = 0.585;
 
 // DOM Element Mapping
 const elements = {
+  voltage: document.getElementById("voltage-value"),
+  current: document.getElementById("current-value"),
+  power: document.getElementById("power-value"),
+  energy: document.getElementById("energy-value"),
+  frequency: document.getElementById("frequency-value"),
+  pf: document.getElementById("pf-value"),
+  batteryTime: document.getElementById("battery-time-value"),
+  batterySoC: document.getElementById("battery-soc-percent"),
+  batteryBar: document.getElementById("battery-bar"),
+  carbonReduction: document.getElementById("carbon-reduction-value"),
   coordinatesText: document.getElementById("coordinates-text"),
   authStatus: document.getElementById("auth-status"),
   lastUpdated: document.getElementById("last-updated-time"),
+  paramSelector: document.getElementById("param-selector"),
   nodeSelector: document.getElementById("node-selector"),
   selectedNode: document.getElementById("selected-node"),
   nodesTableBody: document.getElementById("nodes-table-body"),
   totalNodes: document.getElementById("total-nodes"),
   activeNodesCount: document.getElementById("active-nodes-count"),
+  totalSavings: document.getElementById("total-savings"),
+  avgReduction: document.getElementById("avg-reduction"),
+  totalSaved: document.getElementById("total-saved"),
+  chartTitle: document.getElementById("chart-title"),
 };
 
 // --- FETCH DATA FROM SERVER ---
@@ -213,6 +258,32 @@ async function updateDataFromServer() {
         raw_telemetry: device.telemetry,
         raw_metrics: device.metrics,
       };
+
+      // Update historical data
+      if (!historicalData[node.id]) {
+        historicalData[node.id] = [];
+      }
+
+      const timeString = new Date().toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+
+      historicalData[node.id].push({
+        timestamp: Date.now(),
+        timeString,
+        voltage: voltage,
+        current: current,
+        power: power,
+        pf: pf,
+      });
+
+      // Keep only the last MAX_HISTORY_POINTS
+      if (historicalData[node.id].length > MAX_HISTORY_POINTS) {
+        historicalData[node.id].shift();
+      }
     });
 
     // Update all UI components
@@ -348,6 +419,11 @@ async function initializeDataFromServer() {
         raw_metrics: device.metrics,
       };
     });
+
+    // Initialize historical data
+    NODES.forEach((node) => {
+      historicalData[node.id] = generateHistoricalDataForNode(node.id);
+    });
   } catch (error) {
     console.error("Failed to initialize data from server:", error);
     updateEmptyState();
@@ -358,6 +434,7 @@ async function initializeDataFromServer() {
 function updateEmptyState() {
   NODES = [];
   nodesData = {};
+  historicalData = {};
   markers = {};
 
   // Update UI to show no data
@@ -376,10 +453,18 @@ async function updateAllUI() {
   updateNodesTable();
   updateAggregateMetrics();
   updateNodeSelector();
+  updateCurrentDisplay();
 
   // Update map markers (optimized)
   // await updateMapMarkersOptimized();
   updateMapMarkersOptimized();
+
+  // Update chart
+  if (selectedNodeId === "all") {
+    updateChartForAggregate();
+  } else {
+    updateChartData(historicalData[selectedNodeId]);
+  }
 }
 
 // Calculate battery time from SoC
@@ -392,6 +477,35 @@ function calculateBatteryTime(batterySoC) {
   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
 }
 
+function generateHistoricalDataForNode(nodeId) {
+  const now = Date.now();
+  const data = [];
+  const node = nodesData[nodeId];
+
+  if (!node) return data;
+
+  for (let i = MAX_HISTORY_POINTS - 1; i >= 0; i--) {
+    const timestamp = now - i * 2000;
+    const timeString = new Date(timestamp).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+
+    // Use actual node data
+    data.push({
+      timestamp,
+      timeString,
+      voltage: parseFloat(node.voltage.toFixed(2)),
+      current: parseFloat(node.current.toFixed(3)),
+      power: parseFloat(node.power.toFixed(1)),
+      pf: parseFloat(node.pf.toFixed(3)),
+    });
+  }
+
+  return data;
+}
 
 // --- INITIALIZE MAP ---
 function initMap() {
@@ -570,6 +684,7 @@ function initializeNodes() {
   updateNodeSelector();
   updateNodesTable();
   updateAggregateMetrics();
+  updateCurrentDisplay();
 }
 
 // --- UI UPDATE FUNCTIONS ---
@@ -708,7 +823,21 @@ function updateNodesTable() {
 }
 
 function updateAggregateMetrics() {
-  if (NODES.length === 0) return;
+  if (NODES.length === 0) {
+    // Update business metrics with zeros or placeholder
+    if (elements.totalSavings) {
+      elements.totalSavings.textContent = `RM 0.00`;
+    }
+
+    if (elements.avgReduction) {
+      elements.avgReduction.textContent = `0% Daily`;
+    }
+
+    if (elements.totalSaved) {
+      elements.totalSaved.textContent = `RM 0.00 saved per cycle`;
+    }
+    return;
+  }
 
   // Calculate aggregate values
   const nodeIds = Object.keys(nodesData);
@@ -720,9 +849,518 @@ function updateAggregateMetrics() {
     (sum, id) => sum + parseFloat(nodesData[id].carbonReduction),
     0,
   );
+
+  // Update business metrics
+  if (elements.totalSavings) {
+    elements.totalSavings.textContent = `RM ${(totalEnergy * 1.6425).toFixed(2)}`;
+  }
+
+  if (elements.avgReduction) {
+    elements.avgReduction.textContent = `${Math.min(90, totalEnergy > 0 ? 90 : 0)}% Daily`;
+  }
+
+  if (elements.totalSaved) {
+    elements.totalSaved.textContent = `RM ${(totalEnergy * 0.0045).toFixed(2)} saved per cycle`;
+  }
 }
 
+function updateCurrentDisplay() {
+  if (!elements.voltage) return;
 
+  if (NODES.length === 0) {
+    // Show "No Data" for all metrics
+    elements.voltage.textContent = "0.00";
+    elements.current.textContent = "0.000";
+    elements.power.textContent = "0.0";
+    elements.energy.textContent = "0.00";
+    elements.frequency.textContent = "0.00";
+    elements.pf.textContent = "0.000";
+    elements.batterySoC.textContent = "0%";
+    elements.batteryTime.textContent = "00:00";
+    elements.batteryBar.style.width = "0%";
+    elements.carbonReduction.textContent = "0.00";
+
+    // Update battery bar color
+    updateBatteryBarColor(0);
+
+    if (elements.chartTitle) {
+      elements.chartTitle.textContent = "No Device Data Available";
+    }
+
+    if (elements.coordinatesText) {
+      elements.coordinatesText.textContent = "No devices configured";
+    }
+
+    if (elements.lastUpdated) {
+      elements.lastUpdated.textContent = new Date().toLocaleTimeString(
+        "en-US",
+        {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+        },
+      );
+    }
+    return;
+  }
+
+  if (selectedNodeId === "all") {
+    const nodeIds = Object.keys(nodesData);
+    const activeNodes = nodeIds.filter((id) => nodesData[id].batterySoC > 0);
+
+    if (viewMode === "avg") {
+      // Calculate averages for all metrics
+      const avgVoltage =
+        nodeIds.reduce((sum, id) => sum + nodesData[id].voltage, 0) /
+        nodeIds.length;
+      const avgCurrent =
+        nodeIds.reduce((sum, id) => sum + nodesData[id].current, 0) /
+        nodeIds.length;
+      const avgPower =
+        nodeIds.reduce((sum, id) => sum + parseFloat(nodesData[id].power), 0) /
+        nodeIds.length;
+      const avgPF =
+        nodeIds.reduce((sum, id) => sum + nodesData[id].pf, 0) / nodeIds.length;
+      const totalEnergy = nodeIds.reduce(
+        (sum, id) => sum + nodesData[id].energy,
+        0,
+      );
+      const avgFrequency =
+        nodeIds.reduce((sum, id) => sum + nodesData[id].frequency, 0) /
+        nodeIds.length;
+      const totalCarbon = nodeIds.reduce(
+        (sum, id) => sum + parseFloat(nodesData[id].carbonReduction),
+        0,
+      );
+
+      // Calculate AVERAGE battery SoC
+      let avgBatterySoC = 0;
+      let avgBatteryTime = "00:00";
+
+      if (activeNodes.length > 0) {
+        avgBatterySoC =
+          activeNodes.reduce((sum, id) => sum + nodesData[id].batterySoC, 0) /
+          activeNodes.length;
+
+        // Calculate average remaining time
+        const totalHours = activeNodes.reduce((sum, id) => {
+          const timeStr = nodesData[id].batteryTime;
+          if (timeStr.includes(":")) {
+            const [hours, minutes] = timeStr.split(":").map(Number);
+            return sum + hours + minutes / 60;
+          }
+          return sum;
+        }, 0);
+
+        const avgHours = totalHours / activeNodes.length;
+        const hours = Math.floor(avgHours);
+        const minutes = Math.floor((avgHours % 1) * 60);
+        avgBatteryTime = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+      }
+
+      // Update display
+      elements.voltage.textContent = avgVoltage.toFixed(2);
+      elements.current.textContent = avgCurrent.toFixed(3);
+      elements.power.textContent = avgPower.toFixed(1);
+      elements.energy.textContent = totalEnergy.toFixed(2);
+      elements.frequency.textContent = avgFrequency.toFixed(2);
+      elements.pf.textContent = avgPF.toFixed(3);
+      elements.batterySoC.textContent = `${(avgBatterySoC * 100).toFixed(0)}%`;
+      elements.batteryTime.textContent = avgBatteryTime;
+      elements.batteryBar.style.width = `${(avgBatterySoC * 100).toFixed(0)}%`;
+      elements.carbonReduction.textContent = totalCarbon.toFixed(2);
+
+      // Update battery bar color
+      updateBatteryBarColor(avgBatterySoC);
+
+      if (elements.chartTitle) {
+        elements.chartTitle.textContent =
+          "All Inverters Average Parameter Trend Analysis";
+      }
+    } else {
+      // TOTAL mode
+      const totalCurrent = nodeIds.reduce(
+        (sum, id) => sum + nodesData[id].current,
+        0,
+      );
+      const totalPower = nodeIds.reduce(
+        (sum, id) => sum + parseFloat(nodesData[id].power),
+        0,
+      );
+      const totalEnergy = nodeIds.reduce(
+        (sum, id) => sum + nodesData[id].energy,
+        0,
+      );
+      const totalCarbon = nodeIds.reduce(
+        (sum, id) => sum + parseFloat(nodesData[id].carbonReduction),
+        0,
+      );
+
+      // Calculate AVERAGES for voltage and frequency (not sums)
+      const avgVoltage =
+        nodeIds.reduce((sum, id) => sum + nodesData[id].voltage, 0) /
+        nodeIds.length;
+      const avgFrequency =
+        nodeIds.reduce((sum, id) => sum + nodesData[id].frequency, 0) /
+        nodeIds.length;
+      const avgPF =
+        nodeIds.reduce((sum, id) => sum + nodesData[id].pf, 0) / nodeIds.length;
+
+      // Calculate AVERAGE battery capacity
+      let avgBatterySoC = 0;
+      let totalBatteryTime = "00:00";
+
+      if (activeNodes.length > 0) {
+        avgBatterySoC =
+          activeNodes.reduce((sum, id) => sum + nodesData[id].batterySoC, 0) /
+          activeNodes.length;
+
+        // Calculate MINIMUM remaining time among all inverters (safest estimate)
+        let minRemainingMinutes = Infinity;
+
+        activeNodes.forEach((id) => {
+          const nodeData = nodesData[id];
+          const timeStr = nodeData.batteryTime;
+          if (timeStr.includes(":")) {
+            const [hours, minutes] = timeStr.split(":").map(Number);
+            const totalMinutes = hours * 60 + minutes;
+            if (totalMinutes < minRemainingMinutes) {
+              minRemainingMinutes = totalMinutes;
+            }
+          }
+        });
+
+        if (minRemainingMinutes !== Infinity && minRemainingMinutes > 0) {
+          const hours = Math.floor(minRemainingMinutes / 60);
+          const minutes = minRemainingMinutes % 60;
+          totalBatteryTime = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+        } else {
+          totalBatteryTime = "00:00";
+        }
+      }
+
+      // Update display
+      elements.voltage.textContent = avgVoltage.toFixed(2);
+      elements.current.textContent = totalCurrent.toFixed(3);
+      elements.power.textContent = totalPower.toFixed(1);
+      elements.energy.textContent = totalEnergy.toFixed(2);
+      elements.frequency.textContent = avgFrequency.toFixed(2);
+      elements.pf.textContent = avgPF.toFixed(3);
+      elements.batterySoC.textContent = `${(avgBatterySoC * 100).toFixed(0)}%`;
+      elements.batteryTime.textContent = totalBatteryTime;
+      elements.batteryBar.style.width = `${(avgBatterySoC * 100).toFixed(0)}%`;
+      elements.carbonReduction.textContent = totalCarbon.toFixed(2);
+
+      // Update battery bar color
+      updateBatteryBarColor(avgBatterySoC);
+
+      if (elements.chartTitle) {
+        elements.chartTitle.textContent =
+          "All Inverters Total Parameter Trend Analysis";
+      }
+    }
+
+    if (elements.coordinatesText) {
+      elements.coordinatesText.textContent = "Multiple inverters selected";
+    }
+  } else {
+    // Show selected inverter values
+    const nodeData = nodesData[selectedNodeId];
+
+    elements.voltage.textContent = nodeData.voltage.toFixed(2);
+    elements.current.textContent = nodeData.current.toFixed(3);
+    elements.power.textContent = parseFloat(nodeData.power).toFixed(1);
+    elements.energy.textContent = nodeData.energy.toFixed(2);
+    elements.frequency.textContent = nodeData.frequency.toFixed(2);
+    elements.pf.textContent = nodeData.pf.toFixed(3);
+    elements.batteryTime.textContent = nodeData.batteryTime;
+    elements.batterySoC.textContent = `${(nodeData.batterySoC * 100).toFixed(0)}%`;
+    elements.batteryBar.style.width = `${(nodeData.batterySoC * 100).toFixed(0)}%`;
+    elements.carbonReduction.textContent = nodeData.carbonReduction;
+
+    // Update battery bar color
+    updateBatteryBarColor(nodeData.batterySoC);
+
+    const node = NODES.find((n) => n.id === selectedNodeId);
+    if (node && elements.coordinatesText) {
+      elements.coordinatesText.textContent = `Inverter: ${
+        node.name
+      } - ${node.latitude.toFixed(4)} N, ${node.longitude.toFixed(4)} E`;
+    }
+
+    if (elements.chartTitle) {
+      elements.chartTitle.textContent = `Inverter Parameter Trend Analysis`;
+    }
+  }
+
+  // Update timestamp
+  if (elements.lastUpdated) {
+    elements.lastUpdated.textContent = new Date().toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+  }
+}
+
+// Add this helper function for battery color
+function updateBatteryBarColor(batterySoC) {
+  const batteryBar = elements.batteryBar;
+  if (!batteryBar) return;
+
+  if (batterySoC < 0.2) {
+    batteryBar.className = "h-full bg-red-600 rounded-full battery-bar";
+  } else if (batterySoC < 0.5) {
+    batteryBar.className = "h-full bg-yellow-500 rounded-full battery-bar";
+  } else {
+    batteryBar.className = "h-full bg-green-500 rounded-full battery-bar";
+  }
+}
+
+function updateChartForAggregate() {
+  if (selectedNodeId !== "all") return;
+
+  const nodeIds = Object.keys(nodesData);
+  if (nodeIds.length === 0) {
+    // Clear chart data
+    if (powerChart) {
+      powerChart.data.labels = [];
+      powerChart.data.datasets = [];
+      powerChart.update("none");
+    }
+    return;
+  }
+
+  const timeLabels = historicalData[nodeIds[0]]?.map((d) => d.timeString) || [];
+
+  // Calculate aggregate data for each time point
+  const aggregateData = timeLabels.map((_, index) => {
+    if (viewMode === "avg") {
+      // Calculate average for each metric
+      const voltages = nodeIds.map(
+        (id) => historicalData[id]?.[index]?.voltage || 0,
+      );
+      const currents = nodeIds.map(
+        (id) => historicalData[id]?.[index]?.current || 0,
+      );
+      const powers = nodeIds.map(
+        (id) => historicalData[id]?.[index]?.power || 0,
+      );
+      const pfs = nodeIds.map((id) => historicalData[id]?.[index]?.pf || 0);
+
+      return {
+        voltage:
+          voltages.reduce((a, b) => a + b, 0) / Math.max(voltages.length, 1),
+        current:
+          currents.reduce((a, b) => a + b, 0) / Math.max(currents.length, 1),
+        power: powers.reduce((a, b) => a + b, 0) / Math.max(powers.length, 1),
+        pf: pfs.reduce((a, b) => a + b, 0) / Math.max(pfs.length, 1),
+      };
+    } else {
+      // Calculate totals for power and current, but keep voltage as average
+      const currents = nodeIds.map(
+        (id) => historicalData[id]?.[index]?.current || 0,
+      );
+      const powers = nodeIds.map(
+        (id) => historicalData[id]?.[index]?.power || 0,
+      );
+      const voltages = nodeIds.map(
+        (id) => historicalData[id]?.[index]?.voltage || 0,
+      );
+
+      return {
+        voltage:
+          voltages.reduce((a, b) => a + b, 0) / Math.max(voltages.length, 1),
+        current: currents.reduce((a, b) => a + b, 0),
+        power: powers.reduce((a, b) => a + b, 0),
+        pf: 0,
+      };
+    }
+  });
+
+  updateChartData(aggregateData, timeLabels);
+}
+
+// --- CHART FUNCTIONS ---
+function getSelectedMetrics() {
+  const paramSelector = elements.paramSelector;
+  if (!paramSelector) return ["power"];
+
+  const checkboxes = paramSelector.querySelectorAll('input[type="checkbox"]');
+  const selected = [];
+  checkboxes.forEach((cb) => {
+    if (cb.checked) {
+      selected.push(cb.value);
+    }
+  });
+  return selected.length > 0 ? selected : ["power"];
+}
+
+function updateChartData(data, customLabels = null) {
+  if (!powerChart) return;
+
+  const timeLabels =
+    customLabels || (data && data.map((d) => d.timeString)) || [];
+  const selectedMetrics = getSelectedMetrics();
+  const newDatasets = [];
+
+  selectedMetrics.forEach((metricKey) => {
+    const config = METRIC_CONFIG[metricKey];
+    const metricData = data ? data.map((d) => d[metricKey]) : [];
+
+    const ctx = document.getElementById("powerChart").getContext("2d");
+    const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+    gradient.addColorStop(0, `${config.color}44`);
+    gradient.addColorStop(1, `${config.color}00`);
+
+    const isElectricMetric = metricKey !== "pf";
+
+    newDatasets.push({
+      label: `${config.label}`,
+      data: metricData,
+      borderColor: config.color,
+      backgroundColor: isElectricMetric ? gradient : "transparent",
+      borderWidth: 3,
+      pointRadius: 3,
+      pointHoverRadius: 6,
+      tension: 0.4,
+      fill: isElectricMetric ? "start" : false,
+      yAxisID: isElectricMetric ? "electric-y-axis" : "ratio-y-axis",
+    });
+  });
+
+  powerChart.data.labels = timeLabels;
+  powerChart.data.datasets = newDatasets;
+
+  const scales = {
+    x: {
+      display: true,
+      title: {
+        display: true,
+        text: "Time",
+        color: "#9ca3af",
+        font: {
+          size: 14,
+          weight: "600",
+        },
+      },
+      grid: {
+        color: "rgba(55, 65, 81, 0.5)",
+        drawBorder: true,
+      },
+      ticks: {
+        color: "#d1d5db",
+        maxRotation: 45,
+        minRotation: 45,
+      },
+    },
+  };
+
+  const hasElectricMetric = selectedMetrics.some((m) => m !== "pf");
+  if (hasElectricMetric) {
+    scales["electric-y-axis"] = {
+      display: true,
+      position: "left",
+      title: {
+        display: true,
+        text: "V / A / W",
+        color: "#06b6d4",
+        font: {
+          size: 14,
+          weight: "600",
+        },
+      },
+      grid: {
+        color: "rgba(55, 65, 81, 0.5)",
+      },
+      ticks: {
+        color: "#d1d5db",
+      },
+    };
+  }
+
+  const hasPfMetric = selectedMetrics.includes("pf");
+  if (hasPfMetric) {
+    scales["ratio-y-axis"] = {
+      display: true,
+      position: hasElectricMetric ? "right" : "left",
+      title: {
+        display: true,
+        text: "Power Factor (Ratio)",
+        color: "#818cf8",
+        font: {
+          size: 14,
+          weight: "600",
+        },
+      },
+      min: 0.9,
+      max: 1.05,
+      grid: {
+        color: hasElectricMetric
+          ? "rgba(55, 65, 81, 0.1)"
+          : "rgba(55, 65, 81, 0.5)",
+        drawOnChartArea: hasElectricMetric ? false : true,
+      },
+      ticks: {
+        color: "#d1d5db",
+      },
+    };
+  }
+
+  powerChart.options.scales = scales;
+  powerChart.options.plugins.legend.display = selectedMetrics.length > 1;
+
+  powerChart.update("none");
+}
+
+function initChart() {
+  const ctx = document.getElementById("powerChart");
+  if (!ctx) return;
+
+  powerChart = new Chart(ctx.getContext("2d"), {
+    type: "line",
+    data: {
+      labels: [],
+      datasets: [],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: {
+        duration: 0,
+      },
+      interaction: {
+        mode: "index",
+        intersect: false,
+      },
+      plugins: {
+        legend: {
+          display: true,
+          labels: {
+            color: "#d1d5db",
+            font: {
+              size: 14,
+            },
+          },
+        },
+        tooltip: {
+          mode: "index",
+          intersect: false,
+          backgroundColor: "rgba(31, 41, 55, 0.9)",
+          titleColor: "#ffffff",
+          bodyColor: "#e5e7eb",
+          borderColor: "#4b5563",
+          borderWidth: 1,
+          cornerRadius: 8,
+          padding: 12,
+        },
+      },
+      scales: {},
+    },
+  });
+}
 
 function createNodePopup(node) {
   const nodeData = nodesData[node.id];
@@ -906,15 +1544,19 @@ function selectNode(nodeId) {
 
   // Update UI
   updateNodeSelector();
+  updateCurrentDisplay();
 
-  // Zoom to show all markers or highlight selected
+  // Update chart
   if (nodeId === "all") {
+    updateChartForAggregate();
+    // Zoom to show all markers
     const markerArray = Object.values(markers);
     if (markerArray.length > 0 && map) {
       const group = new L.featureGroup(markerArray);
       map.fitBounds(group.getBounds().pad(0.1));
     }
   } else {
+    updateChartData(historicalData[nodeId]);
     // Find and highlight the selected marker
     highlightSelectedMarker(nodeId);
   }
@@ -1018,6 +1660,9 @@ async function initApplication() {
     // Initialize map toggle
     setupMapToggle();
 
+    // Initialize chart
+    initChart();
+
     // Initialize data from server
     await initializeDataFromServer();
 
@@ -1043,6 +1688,10 @@ async function initApplication() {
         this.classList.remove("text-gray-300");
         toggleTotal.classList.remove("bg-blue-600", "text-white");
         toggleTotal.classList.add("text-gray-300");
+        updateCurrentDisplay();
+        if (selectedNodeId === "all") {
+          updateChartForAggregate();
+        }
       };
 
       toggleTotal.onclick = function () {
@@ -1051,6 +1700,10 @@ async function initApplication() {
         this.classList.remove("text-gray-300");
         toggleAvg.classList.remove("bg-blue-600", "text-white");
         toggleAvg.classList.add("text-gray-300");
+        updateCurrentDisplay();
+        if (selectedNodeId === "all") {
+          updateChartForAggregate();
+        }
       };
     }
 
@@ -1075,6 +1728,13 @@ async function initApplication() {
 }
 
 // --- GLOBAL FUNCTIONS ---
+window.handleParamChange = function () {
+  if (selectedNodeId === "all") {
+    updateChartForAggregate();
+  } else {
+    updateChartData(historicalData[selectedNodeId]);
+  }
+};
 
 // Refresh data from server
 window.refreshData = async function () {

@@ -218,8 +218,8 @@
                         <i class="fas fa-microchip text-[#FDA300] mr-2"></i>
                         All Nodes Overview
                     </h2>
-                    <div class="px-3 py-1 bg-[#FFF6E1] dark:bg-[#315492] rounded-full text-sm text-[#2C5282] dark:text-white">
-                        <span id="total-nodes">5</span> Active
+                    <div class="px-3 py-1 bg-[#FFF6E1] dark:bg-[#315492] rounded-full text-sm text-white ">
+                        <span id="total-nodes">5 Active</span> 
                     </div>
                 </div>
                 <div class="node-table-container">

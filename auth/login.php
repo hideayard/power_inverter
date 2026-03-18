@@ -531,9 +531,6 @@
                 <!-- Image Container -->
                 <div class="image-container">
                     <img src="../assets/images/pasarmalamhijau.png" alt="Pasar Malam Hijau" onerror="this.src='https://via.placeholder.com/1024x790/2C5282/FDA300?text=Pasar+Malam+Hijau'">
-                    <div class="image-overlay">
-                        <p>Pasar Malam Hijau • Inisiatif Rendah Karbon</p>
-                    </div>
                 </div>
 
                 <ul class="feature-list">
@@ -598,29 +595,7 @@
                     <i class="fas fa-sign-in-alt"></i>
                     <span>Log Masuk</span>
                 </button>
-
-                <div class="social-login">
-                    <p>Atau log masuk dengan</p>
-                    <div class="social-icons">
-                        <a href="#" class="social-icon" title="Google">
-                            <i class="fab fa-google"></i>
-                        </a>
-                        <a href="#" class="social-icon" title="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="social-icon" title="Microsoft">
-                            <i class="fab fa-microsoft"></i>
-                        </a>
-                    </div>
-                </div>
             </form>
-
-            <!-- Demo credentials -->
-            <!-- <div class="demo-credentials">
-                <p class="title">📋 Demo Credentials</p>
-                <p>Username: admin</p>
-                <p>Password: password123</p>
-            </div> -->
         </div>
     </div>
 

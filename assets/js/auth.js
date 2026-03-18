@@ -62,14 +62,14 @@ async function requireAuth(role = null) {
       }
     } else {
       console.log(
-        "requireAuth: isExpired function not available, skipping expiration check"
+        "requireAuth: isExpired function not available, skipping expiration check",
       );
     }
 
     // Check role if specified
     if (role && userObj.user_tipe !== role) {
       console.log(
-        `requireAuth: Role mismatch. Required: ${role}, User has: ${userObj.user_tipe}`
+        `requireAuth: Role mismatch. Required: ${role}, User has: ${userObj.user_tipe}`,
       );
       // Don't clear session for role mismatch - just return false
       // User might want to navigate to a different page
@@ -122,7 +122,7 @@ function saveSession(token, user) {
 
   console.log(
     "Session saved, expires at:",
-    new Date(expiresAt).toLocaleString()
+    new Date(expiresAt).toLocaleString(),
   );
 }
 
@@ -313,7 +313,7 @@ async function register(userData) {
       try {
         const errorData = JSON.parse(errorText);
         throw new Error(
-          errorData.message || `Registration failed: ${res.status}`
+          errorData.message || `Registration failed: ${res.status}`,
         );
       } catch {
         throw new Error(`Registration failed: ${res.status} - Server error`);
@@ -640,165 +640,308 @@ function initLoginUI() {
   console.log("Login UI initialized");
 }
 
+// Direct form submission handler to ensure it works
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("Login page loaded, initializing direct handler...");
 
- // Direct form submission handler to ensure it works
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Login page loaded, initializing direct handler...');
-            
-            const loginForm = document.getElementById('loginForm');
-            const togglePasswordBtn = document.getElementById('togglePassword');
-            
-            // Password toggle
-            if (togglePasswordBtn) {
-                togglePasswordBtn.addEventListener('click', function() {
-                    const passwordInput = document.getElementById('password');
-                    const icon = this.querySelector('i');
-                    
-                    if (passwordInput.type === 'password') {
-                        passwordInput.type = 'text';
-                        icon.className = 'fas fa-eye-slash';
-                    } else {
-                        passwordInput.type = 'password';
-                        icon.className = 'fas fa-eye';
-                    }
-                });
-            }
-            
-            // Form submission
-            if (loginForm) {
-                // Remove any existing listeners to avoid duplicates
-                loginForm.removeEventListener('submit', handleFormSubmit);
-                loginForm.addEventListener('submit', handleFormSubmit);
-            }
-            
-            // Input focus effects
-            document.querySelectorAll('.form-input').forEach(input => {
-                input.addEventListener('focus', function() {
-                    const icon = this.parentElement.querySelector('.input-icon');
-                    if (icon) icon.style.color = '#FDA300';
-                });
-                
-                input.addEventListener('blur', function() {
-                    if (!this.value) {
-                        const icon = this.parentElement.querySelector('.input-icon');
-                        if (icon) icon.style.color = '#2C5282';
-                    }
-                });
-            });
-            
-            // Auto-fill remembered user
-            const rememberedUser = localStorage.getItem('rememberedUser');
-            if (rememberedUser) {
-                const usernameInput = document.getElementById('username');
-                const rememberCheckbox = document.getElementById('remember');
-                if (usernameInput) usernameInput.value = rememberedUser;
-                if (rememberCheckbox) rememberCheckbox.checked = true;
-            }
+  const loginForm = document.getElementById("loginForm");
+  const togglePasswordBtn = document.getElementById("togglePassword");
+
+  // Password toggle
+  if (togglePasswordBtn) {
+    togglePasswordBtn.addEventListener("click", function () {
+      const passwordInput = document.getElementById("password");
+      const icon = this.querySelector("i");
+
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        icon.className = "fas fa-eye-slash";
+      } else {
+        passwordInput.type = "password";
+        icon.className = "fas fa-eye";
+      }
+    });
+  }
+
+  // Form submission
+  if (loginForm) {
+    // Remove any existing listeners to avoid duplicates
+    loginForm.removeEventListener("submit", handleFormSubmit);
+    loginForm.addEventListener("submit", handleFormSubmit);
+  }
+
+  // Input focus effects
+  document.querySelectorAll(".form-input").forEach((input) => {
+    input.addEventListener("focus", function () {
+      const icon = this.parentElement.querySelector(".input-icon");
+      if (icon) icon.style.color = "#FDA300";
+    });
+
+    input.addEventListener("blur", function () {
+      if (!this.value) {
+        const icon = this.parentElement.querySelector(".input-icon");
+        if (icon) icon.style.color = "#2C5282";
+      }
+    });
+  });
+
+  // Auto-fill remembered user
+  const rememberedUser = localStorage.getItem("rememberedUser");
+  if (rememberedUser) {
+    const usernameInput = document.getElementById("username");
+    const rememberCheckbox = document.getElementById("remember");
+    if (usernameInput) usernameInput.value = rememberedUser;
+    if (rememberCheckbox) rememberCheckbox.checked = true;
+  }
+});
+
+// Separate handler function
+async function handleFormSubmit(event) {
+  event.preventDefault();
+  console.log("Form submitted directly");
+
+  const username = document.getElementById("username")?.value.trim();
+  const password = document.getElementById("password")?.value;
+  const rememberMe = document.getElementById("remember")?.checked;
+  const loginButton = document.getElementById("loginButton");
+
+  // Validation
+  if (!username || !password) {
+    Swal.fire({
+      icon: "error",
+      title: "Missing Fields",
+      text: "Please enter both username and password",
+      confirmButtonColor: "#FDA300",
+    });
+    return;
+  }
+
+  if (password.length < 6) {
+    Swal.fire({
+      icon: "error",
+      title: "Invalid Password",
+      text: "Password must be at least 6 characters",
+      confirmButtonColor: "#FDA300",
+    });
+    return;
+  }
+
+  // Show loading state
+  const originalText = loginButton.innerHTML;
+  loginButton.innerHTML =
+    '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+  loginButton.disabled = true;
+
+  try {
+    // Try to use the login function from auth.js first
+    if (typeof window.login === "function") {
+      console.log("Using auth.js login function");
+      await window.login({ username, password, rememberMe });
+    } else {
+      // Fallback direct login
+      console.log("Using fallback login");
+      // await fallbackLogin(username, password, rememberMe);
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Login Failed",
+      text: error.message || "An error occurred during login",
+      confirmButtonColor: "#FDA300",
+    });
+    loginButton.innerHTML = originalText;
+    loginButton.disabled = false;
+  }
+}
+
+// Fallback login function in case auth.js isn't loaded properly
+async function fallbackLogin(username, password, rememberMe) {
+  console.log("Using fallback login with username:", username);
+
+  // Simulate API call - replace with your actual API endpoint
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      // Demo credentials check
+      if (username === "admin" && password === "password123") {
+        const userData = {
+          name: "Admin User",
+          username: "admin",
+          user_email: "admin@example.com",
+          user_tipe: "ADMIN",
+        };
+
+        // Save to localStorage
+        localStorage.setItem("jwt", "demo-token-12345");
+        localStorage.setItem("authToken", "demo-token-12345");
+        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("lastLogin", new Date().toISOString());
+
+        if (rememberMe) {
+          localStorage.setItem("rememberedUser", username);
+        }
+
+        Swal.fire({
+          icon: "success",
+          title: "Login Successful",
+          text: "Welcome! Redirecting to dashboard...",
+          timer: 1500,
+          showConfirmButton: false,
+          background: "#FFFFFF",
+          color: "#2C5282",
+          iconColor: "#FDA300",
+        }).then(() => {
+          window.location.href = "dashboard-inverter.php";
         });
-        
-        // Separate handler function
-        async function handleFormSubmit(event) {
-            event.preventDefault();
-            console.log('Form submitted directly');
-            
-            const username = document.getElementById('username')?.value.trim();
-            const password = document.getElementById('password')?.value;
-            const rememberMe = document.getElementById('remember')?.checked;
-            const loginButton = document.getElementById('loginButton');
-            
-            // Validation
-            if (!username || !password) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Missing Fields',
-                    text: 'Please enter both username and password',
-                    confirmButtonColor: '#FDA300'
-                });
-                return;
-            }
-            
-            if (password.length < 6) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Password',
-                    text: 'Password must be at least 6 characters',
-                    confirmButtonColor: '#FDA300'
-                });
-                return;
-            }
-            
-            // Show loading state
-            const originalText = loginButton.innerHTML;
-            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
-            loginButton.disabled = true;
-            
-            try {
-                // Try to use the login function from auth.js first
-                if (typeof window.login === 'function') {
-                    console.log('Using auth.js login function');
-                    await window.login({ username, password, rememberMe });
-                } 
-                else {
-                    // Fallback direct login
-                    console.log('Using fallback login');
-                    // await fallbackLogin(username, password, rememberMe);
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Login Failed',
-                    text: error.message || 'An error occurred during login',
-                    confirmButtonColor: '#FDA300'
-                });
-                loginButton.innerHTML = originalText;
-                loginButton.disabled = false;
-            }
-        }
-        
-        // Fallback login function in case auth.js isn't loaded properly
-        async function fallbackLogin(username, password, rememberMe) {
-            console.log('Using fallback login with username:', username);
-            
-            // Simulate API call - replace with your actual API endpoint
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    // Demo credentials check
-                    if (username === 'admin' && password === 'password123') {
-                        const userData = {
-                            name: 'Admin User',
-                            username: 'admin',
-                            user_email: 'admin@example.com',
-                            user_tipe: 'ADMIN'
-                        };
-                        
-                        // Save to localStorage
-                        localStorage.setItem('jwt', 'demo-token-12345');
-                        localStorage.setItem('authToken', 'demo-token-12345');
-                        localStorage.setItem('user', JSON.stringify(userData));
-                        localStorage.setItem('lastLogin', new Date().toISOString());
-                        
-                        if (rememberMe) {
-                            localStorage.setItem('rememberedUser', username);
-                        }
-                        
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Login Successful',
-                            text: 'Welcome! Redirecting to dashboard...',
-                            timer: 1500,
-                            showConfirmButton: false,
-                            background: '#FFFFFF',
-                            color: '#2C5282',
-                            iconColor: '#FDA300'
-                        }).then(() => {
-                            window.location.href = 'dashboard-inverter.php';
-                        });
-                        
-                        resolve();
-                    } else {
-                        reject(new Error('Invalid username or password'));
-                    }
-                }, 1000);
-            });
-        }
+
+        resolve();
+      } else {
+        reject(new Error("Invalid username or password"));
+      }
+    }, 1000);
+  });
+}
+
+// Add this to your auth.js file
+
+/* ========= FORGOT PASSWORD FUNCTION ========= */
+async function forgotPassword(email) {
+  try {
+    console.log("Sending password reset email to:", email);
+
+    const formData = new FormData();
+    formData.append("action", "forgot_password");
+    formData.append("email", email);
+
+    const response = await fetch(PROXY_ENDPOINT, {
+      method: "POST",
+      body: formData,
+      credentials: "same-origin",
+    });
+
+    console.log("Forgot password response status:", response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Forgot password failed:", errorText);
+      throw new Error(`Gagal menghantar email: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Forgot password response:", data);
+
+    if (data.action !== "forgot_password") {
+      console.warn("Unexpected action in response:", data.action);
+    }
+
+    if (!data.success) {
+      throw new Error(data.message || "Email tidak dijumpai");
+    }
+
+    // Show success message
+    Swal.fire({
+      icon: "success",
+      title: "Email Dihantar!",
+      text:
+        data.message ||
+        "Pautan reset kata laluan telah dihantar ke email anda.",
+      confirmButtonColor: "#FDA300",
+      background: "#FFFFFF",
+      color: "#2C5282",
+    });
+
+    return data;
+  } catch (error) {
+    console.error("Forgot password error:", error);
+
+    let errorMessage = error.message;
+    if (
+      error.message.includes("Network") ||
+      error.message.includes("Failed to fetch")
+    ) {
+      errorMessage =
+        "Tidak dapat menyambung ke pelayan. Sila periksa sambungan internet anda.";
+    } else if (error.message.includes("CORS")) {
+      errorMessage = "Permintaan lintas asal disekat. Sila hubungi pentadbir.";
+    }
+
+    Swal.fire({
+      icon: "error",
+      title: "Ralat",
+      text: errorMessage,
+      confirmButtonColor: "#FDA300",
+      background: "#FFFFFF",
+      color: "#2C5282",
+    });
+
+    throw error;
+  }
+}
+
+// Also add reset password function
+async function resetPassword(token, newPassword, confirmPassword) {
+  try {
+    console.log("Resetting password with token");
+
+    if (newPassword !== confirmPassword) {
+      throw new Error("Kata laluan tidak sepadan");
+    }
+
+    if (newPassword.length < 8) {
+      throw new Error("Kata laluan mesti sekurang-kurangnya 8 aksara");
+    }
+
+    const formData = new FormData();
+    formData.append("action", "reset_password");
+    formData.append("token", token);
+    formData.append("new_password", newPassword);
+    formData.append("confirm_password", confirmPassword);
+
+    const response = await fetch(PROXY_ENDPOINT, {
+      method: "POST",
+      body: formData,
+      credentials: "same-origin",
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Reset password failed:", errorText);
+      throw new Error(
+        `Gagal menetapkan semula kata laluan: ${response.status}`,
+      );
+    }
+
+    const data = await response.json();
+    console.log("Reset password response:", data);
+
+    if (!data.success) {
+      throw new Error(data.message || "Gagal menetapkan semula kata laluan");
+    }
+
+    Swal.fire({
+      icon: "success",
+      title: "Berjaya!",
+      text: data.message || "Kata laluan anda telah berjaya ditetapkan semula.",
+      confirmButtonColor: "#FDA300",
+      background: "#FFFFFF",
+      color: "#2C5282",
+    }).then(() => {
+      window.location.href = "login.php";
+    });
+
+    return data;
+  } catch (error) {
+    console.error("Reset password error:", error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Ralat",
+      text: error.message,
+      confirmButtonColor: "#FDA300",
+      background: "#FFFFFF",
+      color: "#2C5282",
+    });
+
+    throw error;
+  }
+}

@@ -109,6 +109,33 @@
         .user-row:hover {
             background: rgba(59, 130, 246, 0.1);
         }
+
+        .avatar-container {
+            position: relative;
+            width: 96px;
+            height: 96px;
+        }
+
+        .avatar-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(59, 130, 246, 0.5);
+        }
+
+        .avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+        }
     </style>
 </head>
 
@@ -173,8 +200,11 @@
                     <!-- User Info Card -->
                     <div class="mt-8 pt-6 border-t border-gray-700">
                         <div class="flex items-center p-3 bg-gray-800/50 rounded-lg">
-                            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-3">
-                                <span id="sidebar-initials">JD</span>
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 mr-3">
+                                <img id="sidebar-avatar" src="" alt="Avatar" class="w-full h-full object-cover hidden">
+                                <div id="sidebar-avatar-placeholder" class="w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                                    <span id="sidebar-initials">JD</span>
+                                </div>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="font-medium truncate" id="sidebar-name">John Doe</p>
@@ -199,10 +229,10 @@
                         <form id="profile-form" onsubmit="saveProfile(event)">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="md:col-span-2 flex justify-center mb-4">
-                                    <div class="relative">
-                                        <div class="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl font-bold overflow-hidden">
-                                            <span id="profile-initials" class="absolute inset-0 flex items-center justify-center">JD</span>
-                                            <img id="profile-avatar-img" src="" alt="Avatar" class="w-full h-full object-cover hidden">
+                                    <div class="avatar-container">
+                                        <img id="profile-avatar-img" src="" alt="Avatar" class="avatar-image hidden">
+                                        <div id="profile-avatar-placeholder" class="avatar-placeholder">
+                                            <span id="profile-initials">JD</span>
                                         </div>
                                         <button type="button" onclick="changeAvatar()" class="absolute bottom-0 right-0 bg-blue-600 p-2 rounded-full hover:bg-blue-700 transition-colors">
                                             <i class="fas fa-camera text-sm"></i>
@@ -410,14 +440,23 @@
                                 <i class="fas fa-users-cog mr-3 text-purple-400"></i>
                                 User Management
                             </h2>
-                            <button onclick="refreshUserList()" 
-                                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center">
-                                <i class="fas fa-sync-alt mr-2"></i>Refresh
-                            </button>
+                            <div class="flex space-x-2">
+                                <select id="user-info-filter" onchange="filterUsers()" 
+                                    class="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500">
+                                    <option value="all">All Users</option>
+                                    <option value="missing_account">Missing Account</option>
+                                    <option value="missing_license">Missing License</option>
+                                    <option value="missing_both">Missing Both</option>
+                                </select>
+                                <button onclick="refreshUserList()" 
+                                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center">
+                                    <i class="fas fa-sync-alt mr-2"></i>Refresh
+                                </button>
+                            </div>
                         </div>
 
                         <!-- User Stats -->
-                        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                             <div class="bg-gray-800/50 rounded-lg p-4">
                                 <p class="text-sm text-gray-400 mb-1">Total Users</p>
                                 <p class="text-2xl font-bold text-white" id="total-users">0</p>
@@ -427,16 +466,12 @@
                                 <p class="text-2xl font-bold text-green-400" id="active-users">0</p>
                             </div>
                             <div class="bg-gray-800/50 rounded-lg p-4">
-                                <p class="text-sm text-gray-400 mb-1">Inactive</p>
-                                <p class="text-2xl font-bold text-gray-400" id="inactive-users">0</p>
+                                <p class="text-sm text-gray-400 mb-1">Missing Account</p>
+                                <p class="text-2xl font-bold text-yellow-400" id="missing-account">0</p>
                             </div>
                             <div class="bg-gray-800/50 rounded-lg p-4">
-                                <p class="text-sm text-gray-400 mb-1">Admins</p>
-                                <p class="text-2xl font-bold text-purple-400" id="admin-users">0</p>
-                            </div>
-                            <div class="bg-gray-800/50 rounded-lg p-4">
-                                <p class="text-sm text-gray-400 mb-1">Regular Users</p>
-                                <p class="text-2xl font-bold text-blue-400" id="regular-users">0</p>
+                                <p class="text-sm text-gray-400 mb-1">Missing License</p>
+                                <p class="text-2xl font-bold text-orange-400" id="missing-license">0</p>
                             </div>
                         </div>
 
@@ -477,8 +512,8 @@
                                         <th class="text-left py-3 px-4 text-gray-400 font-medium">Contact</th>
                                         <th class="text-left py-3 px-4 text-gray-400 font-medium">Type</th>
                                         <th class="text-left py-3 px-4 text-gray-400 font-medium">Status</th>
+                                        <th class="text-left py-3 px-4 text-gray-400 font-medium">Account/License</th>
                                         <th class="text-left py-3 px-4 text-gray-400 font-medium">Devices</th>
-                                        <th class="text-left py-3 px-4 text-gray-400 font-medium">Joined</th>
                                         <th class="text-left py-3 px-4 text-gray-400 font-medium">Actions</th>
                                     </tr>
                                 </thead>
@@ -623,6 +658,18 @@
                     </div>
 
                     <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Account</label>
+                        <input type="text" id="edit-account" placeholder="Leave empty to clear"
+                            class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">License</label>
+                        <input type="text" id="edit-license" placeholder="Leave empty to clear"
+                            class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500">
+                    </div>
+
+                    <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">User Type</label>
                         <select id="edit-user-type" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500">
                             <option value="USER">Regular User</option>
@@ -684,6 +731,7 @@
         let deleteType = null;
         let currentUser = null;
         let isAdmin = false;
+        let baseUrl = '';
         
         // Pagination variables
         let currentPage = 1;
@@ -694,6 +742,19 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Check authentication
             const token = localStorage.getItem('jwt');
+            
+            // Try to decode JWT to get URL
+            if (token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    baseUrl = payload.url || 'https://itrust-tech.id';
+                    console.log('Base URL from JWT:', baseUrl);
+                } catch (e) {
+                    console.error('Error decoding JWT:', e);
+                    baseUrl = 'https://itrust-tech.id'; // Fallback
+                }
+            }
+
             const user = JSON.parse(localStorage.getItem('user') || '{}');
 
             if (!token || !user) {
@@ -714,8 +775,16 @@
             if (isAdmin) {
                 document.getElementById('user-management-tab-btn').classList.remove('hidden');
                 fetchUsersFromServer();
+                fetchUserStats();
             }
         });
+
+        // Helper function to get full image URL
+        function getImageUrl(photoPath) {
+            if (!photoPath) return null;
+            if (photoPath.startsWith('http')) return photoPath;
+            return `${baseUrl}/${photoPath}`;
+        }
 
         // ============= PROFILE FUNCTIONS =============
 
@@ -765,6 +834,18 @@
             document.getElementById('sidebar-name').textContent = name;
             document.getElementById('sidebar-email').textContent = user.user_email || user.email || '';
             document.getElementById('sidebar-role').textContent = user.user_tipe === 'ADMIN' ? 'Administrator' : 'Standard User';
+
+            // Handle sidebar avatar
+            if (user.user_foto) {
+                const avatarUrl = getImageUrl(user.user_foto);
+                const sidebarAvatar = document.getElementById('sidebar-avatar');
+                sidebarAvatar.src = avatarUrl;
+                sidebarAvatar.classList.remove('hidden');
+                document.getElementById('sidebar-avatar-placeholder').classList.add('hidden');
+            } else {
+                document.getElementById('sidebar-avatar').classList.add('hidden');
+                document.getElementById('sidebar-avatar-placeholder').classList.remove('hidden');
+            }
             
             // Update profile form
             document.getElementById('profile-initials').textContent = initials;
@@ -777,12 +858,16 @@
             document.getElementById('profile-timezone').value = user.timezone || 'Asia/Kuala_Lumpur';
             document.getElementById('profile-language').value = user.language || 'en';
 
-            // Handle avatar
+            // Handle profile avatar
             if (user.user_foto) {
-                const avatarImg = document.getElementById('profile-avatar-img');
-                avatarImg.src = user.user_foto;
-                avatarImg.classList.remove('hidden');
-                document.getElementById('profile-initials').classList.add('hidden');
+                const avatarUrl = getImageUrl(user.user_foto);
+                const profileAvatar = document.getElementById('profile-avatar-img');
+                profileAvatar.src = avatarUrl;
+                profileAvatar.classList.remove('hidden');
+                document.getElementById('profile-avatar-placeholder').classList.add('hidden');
+            } else {
+                document.getElementById('profile-avatar-img').classList.add('hidden');
+                document.getElementById('profile-avatar-placeholder').classList.remove('hidden');
             }
         }
 
@@ -803,10 +888,6 @@
                 user_nama: document.getElementById('profile-fullname').value,
                 user_email: document.getElementById('profile-email').value,
                 user_hp: document.getElementById('profile-phone').value,
-                // These would need corresponding backend fields
-                // bio: document.getElementById('profile-bio').value,
-                // timezone: document.getElementById('profile-timezone').value,
-                // language: document.getElementById('profile-language').value
             };
 
             try {
@@ -1020,10 +1101,17 @@
 
                     if (result.success) {
                         // Update avatar
-                        const avatarImg = document.getElementById('profile-avatar-img');
-                        avatarImg.src = result.data.user_foto;
-                        avatarImg.classList.remove('hidden');
-                        document.getElementById('profile-initials').classList.add('hidden');
+                        const avatarUrl = getImageUrl(result.data.user_foto);
+                        const profileAvatar = document.getElementById('profile-avatar-img');
+                        profileAvatar.src = avatarUrl;
+                        profileAvatar.classList.remove('hidden');
+                        document.getElementById('profile-avatar-placeholder').classList.add('hidden');
+
+                        // Update sidebar avatar
+                        const sidebarAvatar = document.getElementById('sidebar-avatar');
+                        sidebarAvatar.src = avatarUrl;
+                        sidebarAvatar.classList.remove('hidden');
+                        document.getElementById('sidebar-avatar-placeholder').classList.add('hidden');
 
                         Swal.fire({
                             icon: 'success',
@@ -1407,9 +1495,6 @@
                     
                     filterUsers();
                     updatePagination();
-                    
-                    // Also fetch user stats
-                    fetchUserStats();
                 } else {
                     throw new Error(result.message || "Failed to fetch users");
                 }
@@ -1444,9 +1529,8 @@
                     const stats = result.data;
                     document.getElementById('total-users').textContent = stats.total_users || 0;
                     document.getElementById('active-users').textContent = stats.active_users || 0;
-                    document.getElementById('inactive-users').textContent = stats.inactive_users || 0;
-                    document.getElementById('admin-users').textContent = stats.admin_users || 0;
-                    document.getElementById('regular-users').textContent = stats.regular_users || 0;
+                    document.getElementById('missing-account').textContent = stats.missing_account || 0;
+                    document.getElementById('missing-license').textContent = stats.missing_license || 0;
                     document.getElementById('user-count').textContent = stats.total_users || 0;
                 }
             } catch (error) {
@@ -1458,6 +1542,7 @@
             const searchTerm = document.getElementById('user-search')?.value.toLowerCase() || '';
             const typeFilter = document.getElementById('user-type-filter')?.value || 'all';
             const statusFilter = document.getElementById('user-status-filter')?.value || 'all';
+            const infoFilter = document.getElementById('user-info-filter')?.value || 'all';
 
             let filteredUsers = allUsers.filter(user => {
                 const matchesSearch = (user.user_nama?.toLowerCase().includes(searchTerm) ||
@@ -1468,7 +1553,17 @@
                 const matchesType = typeFilter === 'all' || user.user_tipe === typeFilter;
                 const matchesStatus = statusFilter === 'all' || user.user_status.toString() === statusFilter;
                 
-                return matchesSearch && matchesType && matchesStatus;
+                // Info filter
+                let matchesInfo = true;
+                if (infoFilter === 'missing_account') {
+                    matchesInfo = !user.has_account;
+                } else if (infoFilter === 'missing_license') {
+                    matchesInfo = !user.has_license;
+                } else if (infoFilter === 'missing_both') {
+                    matchesInfo = !user.has_account && !user.has_license;
+                }
+                
+                return matchesSearch && matchesType && matchesStatus && matchesInfo;
             });
 
             renderUsers(filteredUsers);
@@ -1486,12 +1581,26 @@
 
             emptyState.classList.add('hidden');
 
-            tbody.innerHTML = usersToRender.map(user => `
+            tbody.innerHTML = usersToRender.map(user => {
+                const accountBadge = user.has_account 
+                    ? '<span class="text-green-400 text-xs">✓ Has Account</span>' 
+                    : '<span class="text-yellow-400 text-xs">⚠ No Account</span>';
+                
+                const licenseBadge = user.has_license 
+                    ? '<span class="text-green-400 text-xs">✓ Has License</span>' 
+                    : '<span class="text-yellow-400 text-xs">⚠ No License</span>';
+
+                return `
                 <tr class="border-b border-gray-700 user-row">
                     <td class="py-3 px-4">
                         <div class="flex items-center">
-                            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2">
-                                ${getInitials(user.user_nama || user.user_name)}
+                            <div class="w-8 h-8 rounded-full overflow-hidden mr-2 flex-shrink-0">
+                                ${user.user_foto ? 
+                                    `<img src="${getImageUrl(user.user_foto)}" class="w-full h-full object-cover">` : 
+                                    `<div class="w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
+                                        ${getInitials(user.user_nama || user.user_name)}
+                                    </div>`
+                                }
                             </div>
                             <div>
                                 <p class="font-medium text-white">${user.user_nama || 'N/A'}</p>
@@ -1514,11 +1623,14 @@
                             ${user.user_status ? 'Active' : 'Inactive'}
                         </span>
                     </td>
+                    <td class="py-3 px-4">
+                        <div class="space-y-1">
+                            <div>${accountBadge}</div>
+                            <div>${licenseBadge}</div>
+                        </div>
+                    </td>
                     <td class="py-3 px-4 text-center">
                         <span class="text-white">${user.device_count || 0}</span>
-                    </td>
-                    <td class="py-3 px-4">
-                        <p class="text-sm text-white">${formatDate(user.created_at)}</p>
                     </td>
                     <td class="py-3 px-4">
                         <button onclick="editUser('${user.user_id}')" 
@@ -1531,11 +1643,12 @@
                         </button>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
 
         function refreshUserList() {
             fetchUsersFromServer(1);
+            fetchUserStats();
         }
 
         function loadUsersPage(direction) {
@@ -1567,6 +1680,8 @@
             document.getElementById('edit-fullname').value = user.user_nama || '';
             document.getElementById('edit-email').value = user.user_email || '';
             document.getElementById('edit-phone').value = user.user_hp || '';
+            document.getElementById('edit-account').value = user.user_account || '';
+            document.getElementById('edit-license').value = user.user_license || '';
             document.getElementById('edit-user-type').value = user.user_tipe || 'USER';
             document.getElementById('edit-user-status').value = user.user_status;
 
@@ -1589,6 +1704,8 @@
                 user_nama: document.getElementById('edit-fullname').value,
                 user_email: document.getElementById('edit-email').value,
                 user_hp: document.getElementById('edit-phone').value,
+                user_account: document.getElementById('edit-account').value || null,
+                user_license: document.getElementById('edit-license').value || null,
                 user_tipe: document.getElementById('edit-user-type').value,
                 user_status: document.getElementById('edit-user-status').value
             };

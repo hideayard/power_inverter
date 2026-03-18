@@ -60,9 +60,10 @@
         <div class="relative">
             <!-- User Avatar Button -->
             <button id="user-menu-button" class="flex items-center gap-2 px-3 py-2 rounded-full bg-white dark:bg-[#2C5282] border border-[#FDA300] transition-all duration-200 shadow-lg">
-                <!-- Avatar with initials -->
-                <div id="user-avatar" class="w-8 h-8 bg-gradient-to-r from-[#2C5282] to-[#FDA300] rounded-full flex items-center justify-center text-white font-bold text-sm">
-                    <!-- Initials will be added by JavaScript -->
+                <!-- Avatar with image or initials -->
+                <div id="user-avatar" class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-r from-[#2C5282] to-[#FDA300]">
+                    <img id="user-avatar-image" class="hidden w-full h-full object-cover" src="" alt="Profile" onerror="this.onerror=null; this.classList.add('hidden'); document.getElementById('user-avatar-initials').classList.remove('hidden');">
+                    <span id="user-avatar-initials" class="text-white font-bold text-sm block">JD</span>
                 </div>
                 <!-- User Name -->
                 <span id="user-name" class="text-sm font-medium text-[#2C5282] dark:text-white light:text-[#2C5282] hidden md:inline">Loading...</span>
@@ -75,8 +76,9 @@
                 <!-- User Info Section -->
                 <div class="p-4 border-b border-[#EDF2F7] dark:border-[#315492] dropdown-header">
                     <div class="flex items-center gap-3">
-                        <div id="dropdown-avatar" class="w-10 h-10 bg-gradient-to-r from-[#2C5282] to-[#FDA300] rounded-full flex items-center justify-center text-white font-bold">
-                            <!-- Initials will be added by JavaScript -->
+                        <div id="dropdown-avatar" class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-r from-[#2C5282] to-[#FDA300]">
+                            <img id="dropdown-avatar-image" class="hidden w-full h-full object-cover" src="" alt="Profile" onerror="this.onerror=null; this.classList.add('hidden'); document.getElementById('dropdown-avatar-initials').classList.remove('hidden');">
+                            <span id="dropdown-avatar-initials" class="text-white font-bold block">JD</span>
                         </div>
                         <div>
                             <h3 id="dropdown-name" class="font-semibold text-[#2C5282] dark:text-white light:text-[#2C5282]">Loading...</h3>
@@ -95,10 +97,6 @@
                     <a href="settings.php" class="flex items-center gap-3 px-4 py-3 text-[#2C5282] dark:text-white light:text-[#2C5282] hover:bg-[#FFF6E1] dark:hover:bg-[#315492] transition-colors">
                         <i class="fas fa-cog w-5 text-center text-[#2C5282] dark:text-white light:text-[#2C5282]"></i>
                         <span>Settings</span>
-                    </a>
-                    <a href="help.php" class="flex items-center gap-3 px-4 py-3 text-[#2C5282] dark:text-white light:text-[#2C5282] hover:bg-[#FFF6E1] dark:hover:bg-[#315492] transition-colors">
-                        <i class="fas fa-question-circle w-5 text-center text-[#2C5282] dark:text-white light:text-[#2C5282]"></i>
-                        <span>Help & Support</span>
                     </a>
                     <div class="border-t border-[#EDF2F7] dark:border-[#315492] my-2"></div>
                     <button id="logout-button" class="flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left transition-colors">
@@ -256,6 +254,164 @@
             }
         }
 
+        // Global variables
+        let baseUrl = '';
+
+        // Helper function to get full image URL (same as profile.php)
+        function getImageUrl(photoPath) {
+            if (!photoPath) return null;
+            if (photoPath.startsWith('http')) return photoPath;
+            // Remove leading slash if present to avoid double slashes
+            const cleanPath = photoPath.replace(/^\//, '');
+            return `${baseUrl}/${cleanPath}`;
+        }
+
+        // Function to update user avatar with image or initials
+        function updateUserAvatar(user) {
+            // Get all avatar elements
+            const userAvatarImage = document.getElementById('user-avatar-image');
+            const userAvatarInitials = document.getElementById('user-avatar-initials');
+            const dropdownAvatarImage = document.getElementById('dropdown-avatar-image');
+            const dropdownAvatarInitials = document.getElementById('dropdown-avatar-initials');
+            
+            // Get user name for initials - try different fields (same as profile.php)
+            const userName = user.user_nama || user.name || user.username || "User";
+            
+            // Generate initials
+            function getInitials(name) {
+                if (!name) return "U";
+                return name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2);
+            }
+            
+            const initials = getInitials(userName);
+            
+            // Check for profile image in various possible fields (same as profile.php)
+            // profile.php uses user_foto, so prioritize that
+            const profileImage = user.user_foto || user.profileImage || user.profilePicture || user.avatar || user.photoURL;
+            
+            console.log("User data:", user);
+            console.log("Profile image field:", profileImage);
+            
+            if (profileImage && profileImage.trim() !== '') {
+                const avatarUrl = getImageUrl(profileImage);
+                console.log("Full image URL:", avatarUrl);
+                
+                if (avatarUrl) {
+                    // Show image, hide initials for main avatar
+                    userAvatarImage.src = avatarUrl;
+                    userAvatarImage.classList.remove('hidden');
+                    userAvatarInitials.classList.add('hidden');
+                    
+                    // Show image, hide initials for dropdown avatar
+                    dropdownAvatarImage.src = avatarUrl;
+                    dropdownAvatarImage.classList.remove('hidden');
+                    dropdownAvatarInitials.classList.add('hidden');
+                    
+                    // Add error handling for image load failures
+                    userAvatarImage.onerror = function() {
+                        console.log("Image failed to load, falling back to initials");
+                        userAvatarImage.classList.add('hidden');
+                        userAvatarInitials.classList.remove('hidden');
+                        userAvatarInitials.textContent = initials;
+                    };
+                    
+                    dropdownAvatarImage.onerror = function() {
+                        dropdownAvatarImage.classList.add('hidden');
+                        dropdownAvatarInitials.classList.remove('hidden');
+                        dropdownAvatarInitials.textContent = initials;
+                    };
+                    
+                    return;
+                }
+            }
+            
+            // No image or URL construction failed - show initials
+            userAvatarImage.classList.add('hidden');
+            userAvatarInitials.classList.remove('hidden');
+            userAvatarInitials.textContent = initials;
+            
+            dropdownAvatarImage.classList.add('hidden');
+            dropdownAvatarInitials.classList.remove('hidden');
+            dropdownAvatarInitials.textContent = initials;
+        }
+
+        // Function to fetch user profile from server (same as profile.php)
+        async function fetchUserProfile() {
+            try {
+                const authToken = localStorage.getItem("jwt");
+
+                const response = await fetch("/proxy2.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Authorization": `Bearer ${authToken}`,
+                    },
+                    body: new URLSearchParams({
+                        action: "get_user_profile",
+                    }),
+                });
+
+                if (!response.ok) throw new Error(`Failed to fetch profile: ${response.status}`);
+
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const userData = result.data;
+                    // Update localStorage with fresh data
+                    localStorage.setItem('user', JSON.stringify(userData));
+                    return userData;
+                } else {
+                    // Fallback to existing localStorage data
+                    return JSON.parse(localStorage.getItem("user") || "{}");
+                }
+            } catch (error) {
+                console.error("Error fetching profile:", error);
+                // Fallback to localStorage
+                return JSON.parse(localStorage.getItem("user") || "{}");
+            }
+        }
+
+        // Function to refresh user data
+        async function refreshUserData() {
+            // Try to decode JWT to get URL (same as profile.php)
+            const token = localStorage.getItem("jwt");
+            if (token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    baseUrl = payload.url || 'https://itrust-tech.id';
+                    console.log('Base URL from JWT:', baseUrl);
+                } catch (e) {
+                    console.error('Error decoding JWT:', e);
+                    baseUrl = 'https://itrust-tech.id'; // Fallback
+                }
+            }
+
+            // Fetch fresh user data
+            const user = await fetchUserProfile();
+            
+            const userName = user.user_nama || user.name || user.username || "User";
+            const userEmail = user.user_email || user.email || "user@example.com";
+            const userRole = user.user_tipe || user.role || "ADMIN";
+
+            console.log("Refreshing user data:", user);
+
+            // Update avatar with image or initials
+            updateUserAvatar(user);
+
+            // Update UI elements
+            const userNameEl = document.getElementById('user-name');
+            const dropdownNameEl = document.getElementById('dropdown-name');
+            const dropdownEmailEl = document.getElementById('dropdown-email');
+            const dropdownRoleEl = document.getElementById('dropdown-role');
+            const currentRoleEl = document.getElementById('current-role');
+            
+            if (userNameEl) userNameEl.textContent = userName;
+            if (dropdownNameEl) dropdownNameEl.textContent = userName;
+            if (dropdownEmailEl) dropdownEmailEl.textContent = userEmail;
+            if (dropdownRoleEl) dropdownRoleEl.textContent = `Role: ${userRole}`;
+            if (currentRoleEl) currentRoleEl.textContent = userRole;
+        }
+
         // Theme Toggle Functionality
         document.addEventListener('DOMContentLoaded', function() {
             const themeToggle = document.getElementById('theme-toggle');
@@ -297,75 +453,78 @@
                 }
             });
 
-            // User Profile Management
-            const user = JSON.parse(localStorage.getItem("user") || "{}");
-            const userName = user.name || user.username || "User";
-            const userEmail = user.user_email || "user@example.com";
-            const userRole = user.user_tipe || "ADMIN";
+            // Initial user data load (using the same method as profile.php)
+            refreshUserData();
 
-            // Generate initials from name
-            function getInitials(name) {
-                return name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2);
-            }
+            // Listen for storage events (when user data is updated in another tab)
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'user') {
+                    console.log("Storage event detected, refreshing user data");
+                    refreshUserData();
+                }
+            });
 
-            const initials = getInitials(userName);
-
-            // Update UI elements
-            document.getElementById('user-avatar').textContent = initials;
-            document.getElementById('dropdown-avatar').textContent = initials;
-            document.getElementById('user-name').textContent = userName;
-            document.getElementById('dropdown-name').textContent = userName;
-            document.getElementById('dropdown-email').textContent = userEmail;
-            document.getElementById('dropdown-role').textContent = `Role: ${userRole}`;
-            document.getElementById('current-role').textContent = userRole;
+            // Custom event listener for same-tab updates
+            window.addEventListener('userDataUpdated', function() {
+                console.log("Custom event detected, refreshing user data");
+                refreshUserData();
+            });
 
             // Toggle dropdown menu
             const userMenuButton = document.getElementById('user-menu-button');
             const userDropdown = document.getElementById('user-dropdown');
 
-            userMenuButton.addEventListener('click', function(e) {
-                e.stopPropagation();
-                userDropdown.classList.toggle('hidden');
-            });
+            if (userMenuButton && userDropdown) {
+                userMenuButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('hidden');
+                });
 
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
-                    userDropdown.classList.add('hidden');
-                }
-            });
-
-            // Logout functionality
-            document.getElementById('logout-button').addEventListener('click', function() {
-                Swal.fire({
-                    title: 'Sign Out?',
-                    text: 'Are you sure you want to sign out?',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#FDA300',
-                    cancelButtonColor: '#2C5282',
-                    confirmButtonText: 'Yes, sign out',
-                    cancelButtonText: 'Cancel',
-                    background: document.documentElement.classList.contains('light-mode') ? '#FFFFFF' : '#2C3E50',
-                    color: document.documentElement.classList.contains('light-mode') ? '#2C5282' : '#EDF2F7'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire({
-                            icon: "info",
-                            title: "Signing Out",
-                            timer: 1500,
-                            showConfirmButton: false,
-                            background: document.documentElement.classList.contains('light-mode') ? '#FFFFFF' : '#2C3E50',
-                            color: document.documentElement.classList.contains('light-mode') ? '#2C5282' : '#EDF2F7'
-                        });
-
-                        setTimeout(() => {
-                            localStorage.clear();
-                            window.location.href = "/auth/login.php";
-                        }, 1500);
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.classList.add('hidden');
                     }
                 });
-            });
+            }
+
+            // Logout functionality
+            const logoutButton = document.getElementById('logout-button');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function() {
+                    Swal.fire({
+                        title: 'Sign Out?',
+                        text: 'Are you sure you want to sign out?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#FDA300',
+                        cancelButtonColor: '#2C5282',
+                        confirmButtonText: 'Yes, sign out',
+                        cancelButtonText: 'Cancel',
+                        background: document.documentElement.classList.contains('light-mode') ? '#FFFFFF' : '#2C3E50',
+                        color: document.documentElement.classList.contains('light-mode') ? '#2C5282' : '#EDF2F7'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                icon: "info",
+                                title: "Signing Out",
+                                timer: 1500,
+                                showConfirmButton: false,
+                                background: document.documentElement.classList.contains('light-mode') ? '#FFFFFF' : '#2C3E50',
+                                color: document.documentElement.classList.contains('light-mode') ? '#2C5282' : '#EDF2F7'
+                            });
+
+                            setTimeout(() => {
+                                localStorage.clear();
+                                window.location.href = "/auth/login.php";
+                            }, 1500);
+                        }
+                    });
+                });
+            }
+
+            // Refresh user data every 5 minutes to keep it current
+            setInterval(refreshUserData, 300000);
         });
 
         // Auth check

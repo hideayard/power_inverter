@@ -367,7 +367,7 @@ body {
 
 /* Map */
 #map {
-  height: 550px;
+  height: 600px;
   border-radius: 0.75rem;
   border: 2px solid #fda300;
   z-index: 1;

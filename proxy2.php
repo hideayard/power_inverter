@@ -44,6 +44,13 @@ $apiEndpoints = [
     'local_get_devices_with_data' => 'https://itrust.local/mobile/get-devices-with-data',
     'get_scrape_data' => 'https://itrust-tech.id/web/mobile/get-latest-scrape-data',
     'get_scrape_data_v2' => 'https://itrust-tech.id/web/mobile/get-latest-scrape-data-v2', // Optional
+    // User management endpoints
+    'get_user_profile' => 'https://itrust-tech.id/web/mobile/get-user-profile',
+    'update_user' => 'https://itrust-tech.id/web/mobile/update-user',
+    'change_password' => 'https://itrust-tech.id/web/mobile/change-password',
+    'update_photo' => 'https://itrust-tech.id/web/mobile/update-photo',
+    'get_user_stats' => 'https://itrust-tech.id/web/mobile/get-user-stats',
+    'get_users' => 'https://itrust-tech.id/web/mobile/get-users',
 
 ];
 
@@ -61,7 +68,7 @@ $authHeader = null;
 
 // Method 1: Check standard Authorization header
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-    $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+    $authHeader = $_SERVER['HTTP_AUTHORIZATION'];\
     error_log("Found Authorization header (HTTP_AUTHORIZATION): " . $authHeader);
 }
 // Method 2: Check REDIRECT_HTTP_AUTHORIZATION (common with some PHP configs)

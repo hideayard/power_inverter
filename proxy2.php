@@ -10,14 +10,7 @@ ini_set('display_errors', 1);
 error_log("=== New Proxy Request ===");
 error_log("Request Method: " . $_SERVER['REQUEST_METHOD']);
 error_log("Request URI: " . $_SERVER['REQUEST_URI']);
-error_log("Headers received:");
-foreach ($_SERVER as $key => $value) {
-    if (strpos($key, 'HTTP_') === 0) {
-        error_log("  $key: $value");
-    }
-}
-error_log("POST Data: " . json_encode($_POST));
-error_log("GET Data: " . json_encode($_GET));
+error_log("Content-Type: " . ($_SERVER['CONTENT_TYPE'] ?? 'not set'));
 
 // CORS headers
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
@@ -26,25 +19,36 @@ header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-Action, Accept');
 
-
-// Parse JSON input if Content-Type is application/json
-$inputData = [];
-$contentType = $_SERVER['CONTENT_TYPE'] ?? '';
-if (strpos($contentType, 'application/json') !== false) {
-    $jsonInput = file_get_contents('php://input');
-    $inputData = json_decode($jsonInput, true);
-    if (json_last_error() === JSON_ERROR_NONE) {
-        // Merge JSON data with POST data (JSON takes precedence)
-        $_POST = array_merge($_POST, $inputData);
-    }
-}
-
 // Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     error_log("OPTIONS preflight handled");
     exit();
 }
+
+// Parse JSON input if Content-Type is application/json
+$rawInput = file_get_contents('php://input');
+error_log("Raw input: " . $rawInput);
+
+// Parse JSON if present
+$jsonData = [];
+$contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+if (strpos($contentType, 'application/json') !== false && !empty($rawInput)) {
+    $jsonData = json_decode($rawInput, true);
+    if (json_last_error() === JSON_ERROR_NONE) {
+        error_log("JSON parsed successfully: " . json_encode($jsonData));
+        // Merge JSON data with POST data
+        foreach ($jsonData as $key => $value) {
+            $_POST[$key] = $value;
+        }
+    } else {
+        error_log("JSON parse error: " . json_last_error_msg());
+    }
+}
+
+// Also check for form data
+error_log("POST Data after merge: " . json_encode($_POST));
+error_log("GET Data: " . json_encode($_GET));
 
 // Define API endpoints based on action
 $apiEndpoints = [
@@ -59,25 +63,33 @@ $apiEndpoints = [
     'delete_device' => 'https://itrust-tech.id/web/mobile/delete-device',
     'local_get_devices_with_data' => 'https://itrust.local/mobile/get-devices-with-data',
     'get_scrape_data' => 'https://itrust-tech.id/web/mobile/get-latest-scrape-data',
-    'get_scrape_data_v2' => 'https://itrust-tech.id/web/mobile/get-latest-scrape-data-v2', // Optional
-    // User management endpoints
+    'get_scrape_data_v2' => 'https://itrust-tech.id/web/mobile/get-latest-scrape-data-v2',
     'get_user_profile' => 'https://itrust-tech.id/web/mobile/get-user-profile',
     'update_user' => 'https://itrust-tech.id/web/mobile/update-user',
     'change_password' => 'https://itrust-tech.id/web/mobile/change-password',
     'update_photo' => 'https://itrust-tech.id/web/mobile/update-photo',
     'get_user_stats' => 'https://itrust-tech.id/web/mobile/get-user-stats',
     'get_users' => 'https://itrust-tech.id/web/mobile/get-users',
-
 ];
 
-// Get the action from POST or GET
-$action = $_POST['action'] ?? $_GET['action'] ?? 'login';
+// Get the action from POST or JSON
+$action = $_POST['action'] ?? $_GET['action'] ?? null;
+
+// If action not found in POST/GET, try from JSON
+if (!$action && !empty($jsonData) && isset($jsonData['action'])) {
+    $action = $jsonData['action'];
+}
+
+// Default action if none provided
+if (!$action) {
+    $action = 'login';
+}
 
 // Determine the API endpoint based on action
 $apiUrl = $apiEndpoints[$action] ?? $apiEndpoints['login'];
 
 // Check if action requires authentication
-$requiresAuth = in_array($action, ['get_devices', 'get_scrape_data']);
+$requiresAuth = in_array($action, ['get_devices', 'get_scrape_data', 'create_device', 'update_device', 'delete_device', 'get_user_profile', 'update_user', 'change_password', 'update_photo', 'get_user_stats', 'get_users']);
 
 // Get Authorization header
 $authHeader = null;
@@ -126,10 +138,7 @@ if ($requiresAuth && !$authHeader) {
         'action' => $action,
         'debug' => [
             'requires_auth' => true,
-            'auth_header_found' => false,
-            'headers_received' => array_filter($_SERVER, function ($key) {
-                return strpos($key, 'HTTP_') === 0;
-            }, ARRAY_FILTER_USE_KEY)
+            'auth_header_found' => false
         ]
     ]);
     error_log("401 Unauthorized - No auth header found for action: $action");
@@ -139,31 +148,16 @@ if ($requiresAuth && !$authHeader) {
 // Prepare data to send
 $postData = $_POST;
 unset($postData['action']);
-unset($postData['token']); // Remove token from POST data if it's in header
+unset($postData['token']);
 
 error_log("Prepared POST data: " . json_encode($postData));
 
 // Initialize cURL
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $apiUrl);
-
-// Set request method
-if (in_array($action, ['login', 'register', 'forgot_password', 'get_devices', 'get_scrape_data'])) {
-    curl_setopt($ch, CURLOPT_POST, true);
-
-    // Set POST data appropriately
-    if (in_array($action, ['get_scrape_data', 'get_devices']) && !empty($postData)) {
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData));
-    } else {
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-    }
-} else {
-    curl_setopt($ch, CURLOPT_HTTPGET, true);
-}
-
-// cURL options
+curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HEADER, true); // Get headers for debugging
+curl_setopt($ch, CURLOPT_HEADER, true);
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 curl_setopt($ch, CURLOPT_TIMEOUT, 30);
@@ -173,11 +167,20 @@ $headers = [
     'Accept: application/json',
 ];
 
-// Set Content-Type based on action
-if (in_array($action, ['get_scrape_data', 'get_devices']) && !empty($postData)) {
+// Determine if we should send as JSON or form data
+$isJsonRequest = (strpos($contentType, 'application/json') !== false) || !empty($jsonData);
+$shouldSendAsJson = $isJsonRequest || in_array($action, ['create_device', 'update_device', 'get_scrape_data', 'get_devices']);
+
+if ($shouldSendAsJson && !empty($postData)) {
     $headers[] = 'Content-Type: application/json';
+    $jsonPayload = json_encode($postData);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
+    error_log("Sending as JSON: " . $jsonPayload);
 } else {
-    $headers[] = 'Content-Type: multipart/form-data';
+    $headers[] = 'Content-Type: application/x-www-form-urlencoded';
+    $formData = http_build_query($postData);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $formData);
+    error_log("Sending as form data: " . $formData);
 }
 
 // Add Authorization header if we have one
@@ -203,8 +206,7 @@ curl_close($ch);
 // Log the response details
 error_log("Remote API Response Code: $httpCode");
 error_log("Remote API Error: $error");
-error_log("Remote API Headers: " . $responseHeaders);
-error_log("Remote API Body (first 500 chars): " . substr($responseBody, 0, 500));
+error_log("Remote API Body: " . substr($responseBody, 0, 1000));
 
 // Handle cURL errors
 if ($curlErrorNo) {
@@ -214,12 +216,7 @@ if ($curlErrorNo) {
         'success' => false,
         'message' => "cURL Error ($curlErrorNo): $error",
         'action' => $action,
-        'timestamp' => date('Y-m-d H:i:s'),
-        'debug' => [
-            'api_url' => $apiUrl,
-            'auth_header_sent' => $authHeader,
-            'curl_error' => $error
-        ]
+        'timestamp' => date('Y-m-d H:i:s')
     ]);
     exit();
 }
@@ -234,12 +231,18 @@ http_response_code($httpCode);
 $responseData = json_decode($responseBody, true);
 if (json_last_error() === JSON_ERROR_NONE) {
     // Add debug info if not in production
-    $responseData['action'] = $action;
-    $responseData['proxy_debug'] = [
-        'auth_header_received' => !empty($authHeader),
-        'action' => $action,
-        'requires_auth' => $requiresAuth
-    ];
+    if (!isset($responseData['action'])) {
+        $responseData['action'] = $action;
+    }
+    if (!isset($responseData['proxy_debug'])) {
+        $responseData['proxy_debug'] = [
+            'auth_header_received' => !empty($authHeader),
+            'action' => $action,
+            'requires_auth' => $requiresAuth,
+            'request_format' => $shouldSendAsJson ? 'json' : 'form',
+            'data_sent' => $postData
+        ];
+    }
     echo json_encode($responseData);
 } else {
     // Response is not JSON

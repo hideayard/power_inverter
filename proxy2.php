@@ -26,6 +26,19 @@ header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-Action, Accept');
 
+
+// Parse JSON input if Content-Type is application/json
+$inputData = [];
+$contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+if (strpos($contentType, 'application/json') !== false) {
+    $jsonInput = file_get_contents('php://input');
+    $inputData = json_decode($jsonInput, true);
+    if (json_last_error() === JSON_ERROR_NONE) {
+        // Merge JSON data with POST data (JSON takes precedence)
+        $_POST = array_merge($_POST, $inputData);
+    }
+}
+
 // Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -41,6 +54,9 @@ $apiEndpoints = [
     'forgot_password' => 'https://itrust-tech.id/web/mobile/forgot-password',
     'get_devices' => 'https://itrust-tech.id/web/mobile/get-devices',
     'get_devices_with_data' => 'https://itrust-tech.id/web/mobile/get-devices-with-data',
+    'create_device' => 'https://itrust-tech.id/web/mobile/create-device',
+    'update_device' => 'https://itrust-tech.id/web/mobile/update-device',
+    'delete_device' => 'https://itrust-tech.id/web/mobile/delete-device',
     'local_get_devices_with_data' => 'https://itrust.local/mobile/get-devices-with-data',
     'get_scrape_data' => 'https://itrust-tech.id/web/mobile/get-latest-scrape-data',
     'get_scrape_data_v2' => 'https://itrust-tech.id/web/mobile/get-latest-scrape-data-v2', // Optional
@@ -68,7 +84,7 @@ $authHeader = null;
 
 // Method 1: Check standard Authorization header
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-    $authHeader = $_SERVER['HTTP_AUTHORIZATION'];\
+    $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
     error_log("Found Authorization header (HTTP_AUTHORIZATION): " . $authHeader);
 }
 // Method 2: Check REDIRECT_HTTP_AUTHORIZATION (common with some PHP configs)

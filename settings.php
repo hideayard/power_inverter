@@ -73,13 +73,17 @@
             color: #ef4444;
         }
 
-        input, select, textarea {
+        input,
+        select,
+        textarea {
             background-color: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
         }
 
-        input:focus, select:focus, textarea:focus {
+        input:focus,
+        select:focus,
+        textarea:focus {
             border-color: #3b82f6;
             background-color: rgba(255, 255, 255, 0.08);
             outline: none;
@@ -102,8 +106,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .user-row:hover {
@@ -182,7 +191,7 @@
                             <i class="fas fa-user mr-3 text-blue-400 w-5"></i>
                             <span>Profile Settings</span>
                         </button>
-                        
+
                         <button onclick="switchTab('devices')" class="tab-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors flex items-center">
                             <i class="fas fa-microchip mr-3 text-green-400 w-5"></i>
                             <span>My Devices</span>
@@ -391,17 +400,17 @@
                         <div class="flex flex-col md:flex-row gap-4 mb-6">
                             <div class="flex-1 relative">
                                 <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                                <input type="text" id="device-search" placeholder="Search devices..." 
+                                <input type="text" id="device-search" placeholder="Search devices..."
                                     class="w-full bg-gray-800/50 border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-white focus:border-blue-500"
                                     onkeyup="filterDevices()">
                             </div>
-                            <select id="device-filter" onchange="filterDevices()" 
+                            <select id="device-filter" onchange="filterDevices()"
                                 class="w-full md:w-48 bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-blue-500">
                                 <option value="all">All Devices</option>
                                 <option value="1">Active</option>
                                 <option value="0">Inactive</option>
                             </select>
-                            <button onclick="syncDevicesWithServer()" 
+                            <button onclick="syncDevicesWithServer()"
                                 class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center">
                                 <i class="fas fa-sync-alt mr-2"></i>Sync
                             </button>
@@ -423,7 +432,7 @@
                             <i class="fas fa-microchip text-5xl text-gray-600 mb-4"></i>
                             <h3 class="text-xl font-medium text-white mb-2">No Devices Found</h3>
                             <p class="text-gray-400 mb-6">Get started by adding your first device</p>
-                            <button onclick="showAddDeviceModal()" 
+                            <button onclick="showAddDeviceModal()"
                                 class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors inline-flex items-center">
                                 <i class="fas fa-plus mr-2"></i>Add Device
                             </button>
@@ -441,14 +450,14 @@
                                 User Management
                             </h2>
                             <div class="flex space-x-2">
-                                <select id="user-info-filter" onchange="filterUsers()" 
+                                <select id="user-info-filter" onchange="filterUsers()"
                                     class="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500">
                                     <option value="all">All Users</option>
                                     <option value="missing_account">Missing Account</option>
                                     <option value="missing_license">Missing License</option>
                                     <option value="missing_both">Missing Both</option>
                                 </select>
-                                <button onclick="refreshUserList()" 
+                                <button onclick="refreshUserList()"
                                     class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center">
                                     <i class="fas fa-sync-alt mr-2"></i>Refresh
                                 </button>
@@ -479,17 +488,17 @@
                         <div class="flex flex-col md:flex-row gap-4 mb-6">
                             <div class="flex-1 relative">
                                 <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                                <input type="text" id="user-search" placeholder="Search users..." 
+                                <input type="text" id="user-search" placeholder="Search users..."
                                     class="w-full bg-gray-800/50 border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-white focus:border-blue-500"
                                     onkeyup="filterUsers()">
                             </div>
-                            <select id="user-type-filter" onchange="filterUsers()" 
+                            <select id="user-type-filter" onchange="filterUsers()"
                                 class="w-full md:w-48 bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-blue-500">
                                 <option value="all">All Types</option>
                                 <option value="ADMIN">Admin</option>
                                 <option value="USER">Regular User</option>
                             </select>
-                            <select id="user-status-filter" onchange="filterUsers()" 
+                            <select id="user-status-filter" onchange="filterUsers()"
                                 class="w-full md:w-48 bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-blue-500">
                                 <option value="all">All Status</option>
                                 <option value="1">Active</option>
@@ -707,7 +716,7 @@
                 <i class="fas fa-exclamation-triangle text-5xl text-red-500 mb-4"></i>
                 <h3 class="text-xl font-bold text-white mb-2">Confirm Delete</h3>
                 <p class="text-gray-400 mb-6" id="delete-message">Are you sure you want to delete this item?</p>
-                
+
                 <div class="flex justify-center space-x-4">
                     <button onclick="closeDeleteModal()"
                         class="px-4 py-2 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700 font-medium transition-colors">
@@ -732,7 +741,7 @@
         let currentUser = null;
         let isAdmin = false;
         let baseUrl = '';
-        
+
         // Pagination variables
         let currentPage = 1;
         let totalPages = 1;
@@ -742,7 +751,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Check authentication
             const token = localStorage.getItem('jwt');
-            
+
             // Try to decode JWT to get URL
             if (token) {
                 try {
@@ -767,10 +776,10 @@
 
             // Load user profile from server
             fetchUserProfile();
-            
+
             // Load devices from server
             fetchDevicesFromServer();
-            
+
             // Show admin menu if user is admin
             if (isAdmin) {
                 document.getElementById('user-management-tab-btn').classList.remove('hidden');
@@ -814,7 +823,7 @@
                     localStorage.setItem('user', JSON.stringify(userData));
                     currentUser = userData;
                     isAdmin = userData.user_tipe === 'ADMIN';
-                    
+
                     loadUserData(userData);
                 }
             } catch (error) {
@@ -828,7 +837,7 @@
             // Set initials
             const name = user.user_nama || user.name || user.username || 'User';
             const initials = name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2);
-            
+
             // Update sidebar
             document.getElementById('sidebar-initials').textContent = initials;
             document.getElementById('sidebar-name').textContent = name;
@@ -846,7 +855,7 @@
                 document.getElementById('sidebar-avatar').classList.add('hidden');
                 document.getElementById('sidebar-avatar-placeholder').classList.remove('hidden');
             }
-            
+
             // Update profile form
             document.getElementById('profile-initials').textContent = initials;
             document.getElementById('profile-username').value = user.user_name || user.username || '';
@@ -917,10 +926,13 @@
 
                 if (result.success) {
                     // Update localStorage
-                    const updatedUser = { ...currentUser, ...userData };
+                    const updatedUser = {
+                        ...currentUser,
+                        ...userData
+                    };
                     localStorage.setItem('user', JSON.stringify(updatedUser));
                     currentUser = updatedUser;
-                    
+
                     // Update UI
                     loadUserData(updatedUser);
 
@@ -936,9 +948,12 @@
                 }
             } catch (error) {
                 console.error('Error saving profile:', error);
-                
+
                 // Fallback to localStorage
-                const updatedUser = { ...currentUser, ...userData };
+                const updatedUser = {
+                    ...currentUser,
+                    ...userData
+                };
                 localStorage.setItem('user', JSON.stringify(updatedUser));
                 currentUser = updatedUser;
                 loadUserData(updatedUser);
@@ -990,7 +1005,7 @@
             }
 
             const authToken = localStorage.getItem("jwt");
-            
+
             try {
                 Swal.fire({
                     title: 'Updating...',
@@ -1174,12 +1189,12 @@
                 }
             } catch (error) {
                 console.error("Error fetching devices:", error);
-                
+
                 const savedDevices = localStorage.getItem('devices');
                 if (savedDevices) {
                     devices = JSON.parse(savedDevices);
                     renderDevices();
-                    
+
                     Swal.fire({
                         icon: 'warning',
                         title: 'Offline Mode',
@@ -1207,11 +1222,11 @@
 
             let filteredDevices = devices.filter(device => {
                 const matchesSearch = (device.device_name?.toLowerCase().includes(searchTerm) ||
-                                    device.device_alias?.toLowerCase().includes(searchTerm) ||
-                                    device.device_id?.toLowerCase().includes(searchTerm) || false);
-                
+                    device.device_alias?.toLowerCase().includes(searchTerm) ||
+                    device.device_id?.toLowerCase().includes(searchTerm) || false);
+
                 const matchesFilter = filterStatus === 'all' || device.is_active.toString() === filterStatus;
-                
+
                 return matchesSearch && matchesFilter;
             });
 
@@ -1302,7 +1317,7 @@
             document.getElementById('device-form').reset();
             document.getElementById('device-id').value = '';
             document.getElementById('device-record-id').value = '';
-            
+
             // Show user assignment for admin
             const userAssignment = document.getElementById('device-user-assignment');
             if (isAdmin) {
@@ -1311,7 +1326,7 @@
             } else {
                 userAssignment.classList.add('hidden');
             }
-            
+
             document.getElementById('device-modal').classList.remove('hidden');
         }
 
@@ -1393,14 +1408,15 @@
                 });
 
                 const endpoint = isEditing ? 'update_device' : 'create_device';
-                
+
+                // IMPORTANT: Send as JSON instead of form-urlencoded
                 const response = await fetch("/proxy2.php", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Content-Type": "application/json", // Changed to JSON
                         "Authorization": `Bearer ${authToken}`,
                     },
-                    body: new URLSearchParams({
+                    body: JSON.stringify({
                         action: endpoint,
                         ...deviceData
                     }),
@@ -1408,7 +1424,8 @@
 
                 const result = await response.json();
 
-                if (result.success) {
+                // Check if the API call was successful
+                if (result.success === true) {
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',
@@ -1420,39 +1437,20 @@
                     closeDeviceModal();
                     await fetchDevicesFromServer();
                 } else {
+                    // Display the error message from the API
                     throw new Error(result.message || `Failed to ${isEditing ? 'update' : 'add'} device`);
                 }
             } catch (error) {
                 console.error('Error saving device:', error);
-                
-                // Fallback to localStorage
-                if (isEditing) {
-                    const index = devices.findIndex(d => d.id == recordId);
-                    if (index !== -1) {
-                        devices[index] = { ...devices[index], ...deviceData, id: recordId };
-                    }
-                } else {
-                    const newDevice = {
-                        ...deviceData,
-                        id: Date.now().toString(),
-                        created_at: new Date().toISOString(),
-                        is_active: 1
-                    };
-                    devices.push(newDevice);
-                }
 
-                localStorage.setItem('devices', JSON.stringify(devices));
-                
-                closeDeviceModal();
-                renderDevices();
-
+                // Show the actual error message
                 Swal.fire({
-                    icon: 'warning',
-                    title: 'Offline Mode',
-                    text: `Device ${isEditing ? 'updated' : 'added'} locally.`,
-                    timer: 3000,
-                    showConfirmButton: false
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || `Failed to ${isEditing ? 'update' : 'add'} device. Please try again.`
                 });
+
+                // DO NOT fallback to localStorage - show the error instead
             }
         }
 
@@ -1463,7 +1461,7 @@
 
             try {
                 const authToken = localStorage.getItem("jwt");
-                
+
                 document.getElementById('loading-users').classList.remove('hidden');
                 document.getElementById('users-table-body').innerHTML = '';
                 document.getElementById('empty-users').classList.add('hidden');
@@ -1492,7 +1490,7 @@
                     totalUsers = result.data.pagination?.total || 0;
                     totalPages = result.data.pagination?.total_pages || 1;
                     currentPage = page;
-                    
+
                     filterUsers();
                     updatePagination();
                 } else {
@@ -1511,7 +1509,7 @@
 
             try {
                 const authToken = localStorage.getItem("jwt");
-                
+
                 const response = await fetch("/proxy2.php", {
                     method: "POST",
                     headers: {
@@ -1546,13 +1544,13 @@
 
             let filteredUsers = allUsers.filter(user => {
                 const matchesSearch = (user.user_nama?.toLowerCase().includes(searchTerm) ||
-                                    user.user_name?.toLowerCase().includes(searchTerm) ||
-                                    user.user_email?.toLowerCase().includes(searchTerm) ||
-                                    user.user_hp?.toLowerCase().includes(searchTerm) || false);
-                
+                    user.user_name?.toLowerCase().includes(searchTerm) ||
+                    user.user_email?.toLowerCase().includes(searchTerm) ||
+                    user.user_hp?.toLowerCase().includes(searchTerm) || false);
+
                 const matchesType = typeFilter === 'all' || user.user_tipe === typeFilter;
                 const matchesStatus = statusFilter === 'all' || user.user_status.toString() === statusFilter;
-                
+
                 // Info filter
                 let matchesInfo = true;
                 if (infoFilter === 'missing_account') {
@@ -1562,7 +1560,7 @@
                 } else if (infoFilter === 'missing_both') {
                     matchesInfo = !user.has_account && !user.has_license;
                 }
-                
+
                 return matchesSearch && matchesType && matchesStatus && matchesInfo;
             });
 
@@ -1582,13 +1580,13 @@
             emptyState.classList.add('hidden');
 
             tbody.innerHTML = usersToRender.map(user => {
-                const accountBadge = user.has_account 
-                    ? '<span class="text-green-400 text-xs">✓ Has Account</span>' 
-                    : '<span class="text-yellow-400 text-xs">⚠ No Account</span>';
-                
-                const licenseBadge = user.has_license 
-                    ? '<span class="text-green-400 text-xs">✓ Has License</span>' 
-                    : '<span class="text-yellow-400 text-xs">⚠ No License</span>';
+                const accountBadge = user.has_account ?
+                    '<span class="text-green-400 text-xs">✓ Has Account</span>' :
+                    '<span class="text-yellow-400 text-xs">⚠ No Account</span>';
+
+                const licenseBadge = user.has_license ?
+                    '<span class="text-green-400 text-xs">✓ Has License</span>' :
+                    '<span class="text-yellow-400 text-xs">⚠ No License</span>';
 
                 return `
                 <tr class="border-b border-gray-700 user-row">
@@ -1643,7 +1641,8 @@
                         </button>
                     </td>
                 </tr>
-            `}).join('');
+            `
+            }).join('');
         }
 
         function refreshUserList() {
@@ -1763,7 +1762,7 @@
         function populateUserSelect(selectedUserId = null) {
             const select = document.getElementById('device-user-id');
             select.innerHTML = '<option value="">Select User</option>';
-            
+
             allUsers.forEach(user => {
                 const option = document.createElement('option');
                 option.value = user.user_id;
@@ -1780,11 +1779,11 @@
         function showDeleteModal(type, id) {
             deleteType = type;
             deleteId = id;
-            
-            const message = type === 'device' 
-                ? 'Are you sure you want to delete this device? This action can be undone by reactivating.'
-                : 'Are you sure you want to delete this user? This will deactivate the user account.';
-            
+
+            const message = type === 'device' ?
+                'Are you sure you want to delete this device? This action can be undone by reactivating.' :
+                'Are you sure you want to delete this user? This will deactivate the user account.';
+
             document.getElementById('delete-message').textContent = message;
             document.getElementById('delete-modal').classList.remove('hidden');
         }
@@ -1799,7 +1798,7 @@
             if (!deleteId || !deleteType) return;
 
             const authToken = localStorage.getItem("jwt");
-            
+
             try {
                 Swal.fire({
                     title: 'Deleting...',
@@ -1812,7 +1811,7 @@
                 });
 
                 let endpoint = deleteType === 'device' ? 'delete_device' : 'delete_user';
-                
+
                 const response = await fetch("/proxy2.php", {
                     method: "POST",
                     headers: {
@@ -1837,7 +1836,7 @@
                     });
 
                     closeDeleteModal();
-                    
+
                     if (deleteType === 'device') {
                         await fetchDevicesFromServer();
                     } else {
@@ -1849,14 +1848,14 @@
                 }
             } catch (error) {
                 console.error(`Error deleting ${deleteType}:`, error);
-                
+
                 // Fallback
                 if (deleteType === 'device') {
                     devices = devices.filter(d => d.id != deleteId);
                     localStorage.setItem('devices', JSON.stringify(devices));
                     renderDevices();
                 }
-                
+
                 closeDeleteModal();
 
                 Swal.fire({
@@ -1875,7 +1874,7 @@
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active', 'tab-active');
             });
-            
+
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.add('hidden');
                 content.classList.remove('active');
@@ -1884,7 +1883,7 @@
             const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn =>
                 btn.textContent.toLowerCase().includes(tabName)
             );
-            
+
             if (activeBtn) {
                 activeBtn.classList.add('active', 'tab-active');
             }
@@ -1913,7 +1912,11 @@
         function formatDate(dateString) {
             if (!dateString) return 'N/A';
             const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
         }
     </script>
 </body>

@@ -1,0 +1,78 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Pasar Malam Hijau">
+  <div id="loading" style="
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 60px);
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    color: #e2e8f0;
+  ">
+    <div style="
+      width: 50px;
+      height: 50px;
+      border: 5px solid #334155;
+      border-top: 5px solid #22c55e;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    "></div>
+    <p>Checking authentication...</p>
+  </div>
+
+  <script>
+    (async () => {
+      try {
+        const token = localStorage.getItem("jwt");
+        const userStr = localStorage.getItem("user");
+
+        if (!token || !userStr) {
+          location.replace("/auth/login.php");
+          return;
+        }
+
+        let user;
+        try {
+          user = JSON.parse(userStr);
+        } catch (e) {
+          localStorage.clear();
+          location.replace("/auth/login.php");
+          return;
+        }
+
+        const tokenExpires = localStorage.getItem("jwt_expires");
+        if (tokenExpires) {
+          const expiresAt = parseInt(tokenExpires);
+          const now = Date.now();
+
+          if (now > expiresAt) {
+            localStorage.clear();
+            location.replace("/auth/login.php");
+            return;
+          }
+        }
+
+        redirectUser(user);
+      } catch (error) {
+        location.replace("/auth/login.php");
+      }
+
+      function redirectUser(user: any) {
+        let redirectUrl = "/dashboard-inverter";
+        if (user.user_tipe === "ADMIN") redirectUrl = "/dashboard-inverter";
+        if (user.user_tipe === "USER") redirectUrl = "/dashboard-inverter";
+        setTimeout(() => location.replace(redirectUrl), 250);
+      }
+    })();
+  </script>
+
+  <style>
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</BaseLayout>

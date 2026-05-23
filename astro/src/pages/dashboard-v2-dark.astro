@@ -1,0 +1,12 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AuthGuard from "../components/AuthGuard.astro";
+---
+<BaseLayout title="Dashboard V2 Dark">
+  <AuthGuard />
+  <iframe
+    src="/dashboard-v2-dark.php"
+    style="width:100%;height:calc(100vh - 60px);border:0;display:block;"
+    title="Dashboard V2 Dark Legacy"
+  ></iframe>
+</BaseLayout>

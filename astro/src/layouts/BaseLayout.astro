@@ -1,0 +1,70 @@
+---
+const { title = 'Inverter Dashboard' } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: #111827;
+        --border: #334155;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #22c55e;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .top-nav {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        background: #020617;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .top-nav a {
+        color: var(--text);
+        text-decoration: none;
+        font-size: 13px;
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+      .top-nav a:hover {
+        border-color: var(--accent);
+      }
+      .brand {
+        font-weight: bold;
+        color: var(--accent);
+        margin-right: 10px;
+      }
+      main { padding: 0; }
+    </style>
+  </head>
+  <body>
+    <nav class="top-nav">
+      <span class="brand">Astro Migration</span>
+      <a href="/">Loader</a>
+      <a href="/dashboard-inverter">Dashboard Inverter</a>
+      <a href="/dashboard-v2">Dashboard V2</a>
+      <a href="/dashboard-v2-dark">Dashboard V2 Dark</a>
+      <a href="/ma">MA Dashboard</a>
+    </nav>
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>

@@ -30,7 +30,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         const userStr = localStorage.getItem("user");
 
         if (!token || !userStr) {
-          location.replace("/auth/login.php");
+          location.replace("/auth/login");
           return;
         }
 
@@ -39,7 +39,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           user = JSON.parse(userStr);
         } catch (e) {
           localStorage.clear();
-          location.replace("/auth/login.php");
+          location.replace("/auth/login");
           return;
         }
 
@@ -50,20 +50,20 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
           if (now > expiresAt) {
             localStorage.clear();
-            location.replace("/auth/login.php");
+            location.replace("/auth/login");
             return;
           }
         }
 
         redirectUser(user);
       } catch (error) {
-        location.replace("/auth/login.php");
+        location.replace("/auth/login");
       }
 
       function redirectUser(user: any) {
-        let redirectUrl = "/dashboard-inverter";
-        if (user.user_tipe === "ADMIN") redirectUrl = "/dashboard-inverter";
-        if (user.user_tipe === "USER") redirectUrl = "/dashboard-inverter";
+        let redirectUrl = "/dashboard";
+        if (user.user_tipe === "ADMIN") redirectUrl = "/dashboard";
+        if (user.user_tipe === "USER") redirectUrl = "/dashboard";
         setTimeout(() => location.replace(redirectUrl), 250);
       }
     })();

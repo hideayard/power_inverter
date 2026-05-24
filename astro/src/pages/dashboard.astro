@@ -1,0 +1,105 @@
+---
+// src/pages/dashboard.astro
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+---
+<div>DASHBOARD LAYOUT</div><hr>
+<DashboardLayout>
+  <!-- Business Metrics Section -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    <!-- Total CO₂ Reduction -->
+    <div class="md:col-span-2 metric-card p-6 rounded-2xl" id="total-carbon-card">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-xl font-medium text-[#2C5282] dark:text-white light:text-[#2C5282]">
+          Total CO₂ Reduction
+        </h2>
+        <i class="fas fa-leaf text-[#FDA300] text-2xl"></i>
+      </div>
+      <div class="text-5xl md:text-6xl font-light tracking-tight text-[#2C5282] dark:text-white light:text-[#2C5282] mt-2">
+        8.212<span class="text-2xl text-[#FDA300] ml-2">kg</span>
+      </div>
+      <p class="text-sm text-[#2C5282] dark:text-[#EDF2F7] light:text-[#2C5282] mt-2 flex items-center gap-1">
+        <i class="fas fa-arrow-down text-[#FDA300]"></i>
+        <span>12.3% reduction from last month</span>
+      </p>
+    </div>
+
+    <!-- CO₂ Reduction Card -->
+    <div class="metric-card p-6 rounded-2xl" id="carbon-card">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-lg font-medium text-[#2C5282] dark:text-white light:text-[#2C5282]">
+          CO₂ Reduction
+        </h2>
+        <i class="fas fa-chart-line text-[#FDA300] text-xl"></i>
+      </div>
+      <div class="text-3xl md:text-4xl font-light tracking-tight text-[#2C5282] dark:text-white light:text-[#2C5282]" id="carbon-reduction-value">
+        3,657.85<span class="text-lg text-[#FDA300] ml-1">kg</span>
+      </div>
+      <p class="text-xs text-[#2C5282] dark:text-[#EDF2F7] light:text-[#2C5282] mt-2">Lifetime savings</p>
+    </div>
+  </section>
+
+  <!-- Two Column Layout for Map and Table -->
+  <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+    <!-- GPS Location (Map View) -->
+    <div id="map-container" class="content-card p-6 rounded-2xl relative">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-medium text-[#2C5282] dark:text-white light:text-[#2C5282]">
+          <i class="fas fa-map-marker-alt text-[#FDA300] mr-2"></i>
+          Inverter Locations (Johor, Malaysia)
+        </h2>
+        <button id="map-toggle" class="map-toggle-btn">
+          <svg id="maximize-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5h-4m4 0v-4m0 4l-5-5"></path>
+          </svg>
+          <svg id="minimize-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          <span id="map-toggle-text">Maximize</span>
+        </button>
+      </div>
+      <div id="map" class="w-full rounded-xl overflow-hidden" style="height: 400px;"></div>
+      <p class="text-sm text-[#2C5282] dark:text-[#EDF2F7] light:text-[#2C5282] mt-3 flex items-center gap-2" id="coordinates-text">
+        <i class="fas fa-info-circle text-[#FDA300]"></i>
+        Click on any inverter marker to view details
+      </p>
+    </div>
+
+    <!-- Nodes Table -->
+    <div class="content-card p-6 rounded-2xl">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-medium text-[#2C5282] dark:text-white light:text-[#2C5282]">
+          <i class="fas fa-microchip text-[#FDA300] mr-2"></i>
+          All Nodes Overview
+        </h2>
+        <div class="px-3 py-1 bg-[#FFF6E1] dark:bg-[#315492] rounded-full text-sm text-white">
+          <span id="total-nodes">5 Active</span>
+        </div>
+      </div>
+      <div class="node-table-container">
+        <table class="w-full text-sm text-left">
+          <thead class="text-xs uppercase tracking-wider">
+            <tr>
+              <th class="px-4 py-3 rounded-tl-lg">ID</th>
+              <th class="px-4 py-3">Name</th>
+              <th class="px-4 py-3">Status</th>
+              <th class="px-4 py-3">Power (W)</th>
+              <th class="px-4 py-3">Voltage (V)</th>
+              <th class="px-4 py-3 rounded-tr-lg">Current (A)</th>
+            </tr>
+          </thead>
+          <tbody id="nodes-table-body">
+            <!-- Table rows populated by dashboard.js -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</DashboardLayout>
+
+<script>
+  import { initDashboard } from '../scripts/dashboard';
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    initDashboard();
+  });
+</script>

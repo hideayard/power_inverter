@@ -1,0 +1,256 @@
+---
+// src/pages/profile.astro
+import ProfileLayout from '../layouts/ProfileLayout.astro';
+---
+
+<ProfileLayout title="My Profile - Energy Monitoring System">
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="stat-card bg-gray-800/50 p-4 rounded-lg">
+      <div class="flex items-center">
+        <div class="w-10 h-10 bg-green-900/30 rounded-lg flex items-center justify-center mr-3">
+          <i class="fas fa-calendar-check text-green-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-400">Devices</p>
+          <p class="text-xl font-bold" id="stat-devices">0</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="stat-card bg-gray-800/50 p-4 rounded-lg">
+      <div class="flex items-center">
+        <div class="w-10 h-10 bg-blue-900/30 rounded-lg flex items-center justify-center mr-3">
+          <i class="fas fa-chart-line text-blue-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-400">Active</p>
+          <p class="text-xl font-bold" id="stat-active">0</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="stat-card bg-gray-800/50 p-4 rounded-lg">
+      <div class="flex items-center">
+        <div class="w-10 h-10 bg-purple-900/30 rounded-lg flex items-center justify-center mr-3">
+          <i class="fas fa-bolt text-purple-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-400">Total kWh</p>
+          <p class="text-xl font-bold" id="stat-energy">0</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="stat-card bg-gray-800/50 p-4 rounded-lg">
+      <div class="flex items-center">
+        <div class="w-10 h-10 bg-yellow-900/30 rounded-lg flex items-center justify-center mr-3">
+          <i class="fas fa-leaf text-yellow-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-400">CO₂ Saved</p>
+          <p class="text-xl font-bold" id="stat-co2">0t</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="border-b border-gray-700 mb-6">
+    <nav class="flex space-x-8">
+      <button id="tab-personal" class="tab-active py-3 px-1 text-lg border-b-3 border-blue-500 text-blue-400 font-semibold">
+        Personal Info
+      </button>
+      <button id="tab-activity" class="tab-inactive py-3 px-1 text-lg text-gray-400 hover:text-white">
+        Activity
+      </button>
+      <button id="tab-security" class="tab-inactive py-3 px-1 text-lg text-gray-400 hover:text-white">
+        Security
+      </button>
+    </nav>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div id="profile-loading" class="hidden">
+    <div class="spinner"></div>
+    <p class="text-center text-gray-400 mt-4">Loading profile...</p>
+  </div>
+
+  <!-- Personal Info Tab -->
+  <div id="personal-info" class="glass-card p-6">
+    <h3 class="text-xl font-bold text-white mb-6">Personal Information</h3>
+    
+    <form id="profile-form">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+          <input type="text" id="full-name" disabled
+                 class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+                 placeholder="Enter your full name" />
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Username</label>
+          <input type="text" id="username" disabled readonly
+                 class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white opacity-50"
+                 placeholder="Username" />
+        </div>
+        
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+          <input type="email" id="email" disabled
+                 class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+                 placeholder="Enter email address" />
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
+          <input type="tel" id="phone" disabled
+                 class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+                 placeholder="+60 12-345 6789" />
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Timezone</label>
+          <select id="timezone" disabled
+                  class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50">
+            <option value="Asia/Kuala_Lumpur">Asia/Kuala Lumpur (GMT+8)</option>
+            <option value="Asia/Singapore">Asia/Singapore (GMT+8)</option>
+            <option value="Asia/Jakarta">Asia/Jakarta (GMT+7)</option>
+            <option value="UTC">UTC (GMT+0)</option>
+          </select>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Language</label>
+          <select id="language" disabled
+                  class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50">
+            <option value="en">English</option>
+            <option value="ms">Bahasa Malaysia</option>
+          </select>
+        </div>
+        
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-300 mb-2">Bio</label>
+          <textarea id="bio" rows="3" disabled
+                    class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none disabled:opacity-50"
+                    placeholder="Tell us about yourself..."></textarea>
+        </div>
+      </div>
+      
+      <div class="flex justify-end space-x-4 mt-8" id="form-actions" style="display: none;">
+        <button type="button" id="cancel-btn" 
+                class="px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-800 font-medium">
+          Cancel
+        </button>
+        <button type="submit" id="save-btn"
+                class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium">
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Activity Tab -->
+  <div id="activity-tab" class="hidden glass-card p-6">
+    <h3 class="text-xl font-bold text-white mb-6">Recent Activity</h3>
+    <div id="activity-loading" class="hidden">
+      <div class="spinner"></div>
+      <p class="text-center text-gray-400 mt-4">Loading activities...</p>
+    </div>
+    <div id="activity-list" class="space-y-4"></div>
+    <div id="no-activities" class="text-center py-8 hidden">
+      <i class="fas fa-history text-4xl text-gray-600 mb-3"></i>
+      <p class="text-gray-400">No recent activities found</p>
+    </div>
+  </div>
+
+  <!-- Security Tab -->
+  <div id="security-tab" class="hidden glass-card p-6">
+    <h3 class="text-xl font-bold text-white mb-6">Security Settings</h3>
+    <div class="space-y-6">
+      <div class="security-item p-4 rounded-lg">
+        <div class="flex justify-between items-center">
+          <div>
+            <h4 class="font-medium text-white">Change Password</h4>
+            <p class="text-sm text-gray-400">Update your password regularly</p>
+          </div>
+          <button onclick="window.showPasswordModal?.()" 
+                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm">
+            Change
+          </button>
+        </div>
+      </div>
+      <div class="security-item p-4 rounded-lg">
+        <div class="flex justify-between items-center">
+          <div>
+            <h4 class="font-medium text-white">Active Sessions</h4>
+            <p class="text-sm text-gray-400">Manage your logged-in devices</p>
+          </div>
+          <button onclick="window.showSessions?.()" 
+                  class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm">
+            View
+          </button>
+        </div>
+      </div>
+      <div class="security-item p-4 rounded-lg">
+        <div class="flex justify-between items-center">
+          <div>
+            <h4 class="font-medium text-white">Login History</h4>
+            <p class="text-sm text-gray-400">Review recent login activity</p>
+          </div>
+          <button onclick="window.showLoginHistory?.()" 
+                  class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm">
+            View
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Password Modal -->
+  <div id="password-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
+    <div class="bg-gray-800 rounded-lg w-full max-w-md p-6 m-4">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold text-white">Change Password</h3>
+        <button onclick="window.closePasswordModal?.()" class="text-gray-400 hover:text-white">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="password-form">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Current Password</label>
+            <input type="password" id="modal-current-password" required
+                   class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">New Password</label>
+            <input type="password" id="modal-new-password" required
+                   class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Confirm New Password</label>
+            <input type="password" id="modal-confirm-password" required
+                   class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500" />
+          </div>
+        </div>
+        <div class="flex justify-end space-x-3 mt-6">
+          <button type="button" onclick="window.closePasswordModal?.()"
+                  class="px-4 py-2 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700 font-medium">
+            Cancel
+          </button>
+          <button type="submit"
+                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium">
+            Update Password
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ProfileLayout>
+
+<script>
+  import { initProfile } from '../scripts/profile';
+  document.addEventListener('DOMContentLoaded', initProfile);
+</script>

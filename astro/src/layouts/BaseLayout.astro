@@ -1,12 +1,17 @@
 ---
-const { title = 'Inverter Dashboard' } = Astro.props;
+const { title = "Inverter Dashboard" } = Astro.props;
 ---
+
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
+    <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+    <link rel="apple-touch-icon" href="/assets/images/favicon.png" />
+    <link rel="shortcut icon" href="/assets/images/favicon.png" />
+
     <style>
       :root {
         --bg: #0f172a;
@@ -16,7 +21,9 @@ const { title = 'Inverter Dashboard' } = Astro.props;
         --muted: #94a3b8;
         --accent: #22c55e;
       }
-      * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
       body {
         margin: 0;
         font-family: Arial, sans-serif;
@@ -51,14 +58,16 @@ const { title = 'Inverter Dashboard' } = Astro.props;
         color: var(--accent);
         margin-right: 10px;
       }
-      main { padding: 0; }
+      main {
+        padding: 0;
+      }
     </style>
   </head>
   <body>
     <nav class="top-nav">
       <span class="brand">Astro Migration</span>
       <a href="/">Loader</a>
-      <a href="/dashboard-inverter">Dashboard Inverter</a>
+      <a href="/dashboard">Dashboard Inverter</a>
       <a href="/dashboard-v2">Dashboard V2</a>
       <a href="/dashboard-v2-dark">Dashboard V2 Dark</a>
       <a href="/ma">MA Dashboard</a>

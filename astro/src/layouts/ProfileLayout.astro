@@ -1,0 +1,348 @@
+---
+// src/layouts/ProfileLayout.astro
+const { title = "My Profile" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+    <link rel="apple-touch-icon" href="/assets/images/favicon.png" />
+    <link rel="shortcut icon" href="/assets/images/favicon.png" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+      * {
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+        min-height: 100vh;
+        color: #f3f4f6;
+      }
+
+      .glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+      }
+
+      .stat-card {
+        transition: all 0.3s ease;
+      }
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      input:disabled,
+      textarea:disabled,
+      select:disabled {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        cursor: not-allowed;
+      }
+
+      input,
+      textarea,
+      select {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+      input:focus,
+      textarea:focus,
+      select:focus {
+        border-color: #3b82f6;
+        background-color: rgba(255, 255, 255, 0.08);
+        outline: none;
+      }
+
+      .tab-active {
+        border-bottom: 3px solid #3b82f6;
+        color: #60a5fa;
+        font-weight: 600;
+      }
+      .tab-inactive {
+        border-bottom: 3px solid transparent;
+      }
+
+      .avatar-container {
+        position: relative;
+        width: 128px;
+        height: 128px;
+        flex-shrink: 0;
+      }
+      .avatar-image {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(59, 130, 246, 0.5);
+      }
+      .avatar-placeholder {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        font-weight: bold;
+        color: white;
+      }
+
+      .spinner {
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        border-top: 3px solid #3b82f6;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .activity-item {
+        transition: all 0.3s ease;
+      }
+      .activity-item:hover {
+        background: rgba(59, 130, 246, 0.1);
+      }
+
+      .security-item {
+        border-left: 3px solid transparent;
+        transition: all 0.3s ease;
+      }
+      .security-item:hover {
+        border-left-color: #3b82f6;
+        background: rgba(59, 130, 246, 0.05);
+      }
+
+      .edit-btn {
+        transition: all 0.3s ease;
+      }
+      .edit-btn:hover {
+        transform: scale(1.05);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="bg-gray-900 border-b border-gray-800 py-4">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center">
+          <a href="/dashboard" class="flex items-center">
+            <i class="fas fa-bolt text-2xl text-green-400 mr-2"></i>
+            <span class="text-xl font-bold">Energy Monitor</span>
+          </a>
+          <div class="flex items-center space-x-4">
+            <a
+              href="/dashboard"
+              class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+            >
+              <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
+            </a>
+            <a
+              href="/profile"
+              class="text-blue-400 hover:text-blue-300 px-3 py-2 rounded-md text-sm font-medium"
+            >
+              <i class="fas fa-user mr-1"></i> Profile
+            </a>
+            <a
+              href="/settings"
+              class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+            >
+              <i class="fas fa-cog mr-1"></i> Settings
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Page Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white">My Profile</h1>
+        <p class="text-gray-400 mt-2">
+          Manage your personal information and account settings
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column -->
+        <div class="lg:col-span-2">
+          <!-- Profile Header -->
+          <div class="glass-card p-6 mb-6">
+            <div
+              class="flex flex-col sm:flex-row items-center sm:items-start gap-6"
+            >
+              <!-- Avatar -->
+              <div class="avatar-container">
+                <img
+                  id="profile-avatar-img"
+                  src=""
+                  alt="Profile"
+                  class="avatar-image hidden"
+                />
+                <div id="profile-avatar-placeholder" class="avatar-placeholder">
+                  <span id="profile-initials">U</span>
+                </div>
+                <button
+                  id="change-photo-btn"
+                  class="absolute bottom-2 right-2 bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-full"
+                >
+                  <i class="fas fa-camera text-sm"></i>
+                </button>
+                <input
+                  type="file"
+                  id="photo-upload"
+                  class="hidden"
+                  accept="image/*"
+                />
+              </div>
+
+              <!-- User Info -->
+              <div class="flex-1 text-center sm:text-left">
+                <div
+                  class="flex flex-col sm:flex-row justify-between items-center sm:items-start"
+                >
+                  <div>
+                    <h2 id="profile-name" class="text-2xl font-bold text-white">
+                      Loading...
+                    </h2>
+                    <p id="profile-role" class="text-blue-400 font-medium">-</p>
+                    <p id="profile-email" class="text-gray-400 mt-2">-</p>
+                    <p id="profile-joined" class="text-gray-500 text-sm mt-1">
+                      -
+                    </p>
+                  </div>
+                  <button
+                    id="edit-profile-btn"
+                    class="edit-btn bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium mt-4 sm:mt-0"
+                  >
+                    <i class="fas fa-edit mr-2"></i> Edit Profile
+                  </button>
+                </div>
+
+                <!-- Slot for stats cards -->
+                <slot />
+              </div>
+            </div>
+          </div>
+
+          <!-- Slot for tabs content -->
+          <slot name="tabs" />
+        </div>
+
+        <!-- Right Column -->
+        <div class="lg:col-span-1">
+          <!-- Account Status -->
+          <div class="glass-card p-6 mb-6">
+            <h3 class="text-lg font-bold text-white mb-4">Account Status</h3>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-gray-400">Verification</span>
+                <span class="text-green-400 font-medium"
+                  ><i class="fas fa-check-circle mr-1"></i> Verified</span
+                >
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-gray-400">Account Type</span>
+                <span id="account-type" class="text-blue-400 font-medium"
+                  >Standard</span
+                >
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-gray-400">Account Status</span>
+                <span id="account-status" class="text-green-400 font-medium"
+                  >Active</span
+                >
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-gray-400">Last Login</span>
+                <span id="last-login" class="text-gray-300">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Links -->
+          <div class="glass-card p-6 mb-6">
+            <h3 class="text-lg font-bold text-white mb-4">Quick Links</h3>
+            <div class="space-y-3">
+              <a
+                href="/settings"
+                class="flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                <div
+                  class="w-10 h-10 bg-blue-900/30 rounded-lg flex items-center justify-center mr-3"
+                >
+                  <i class="fas fa-cog text-blue-400"></i>
+                </div>
+                <div>
+                  <p class="font-medium">Account Settings</p>
+                  <p class="text-sm text-gray-400">Manage your preferences</p>
+                </div>
+              </a>
+              <a
+                href="/dashboard"
+                class="flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                <div
+                  class="w-10 h-10 bg-green-900/30 rounded-lg flex items-center justify-center mr-3"
+                >
+                  <i class="fas fa-tachometer-alt text-green-400"></i>
+                </div>
+                <div>
+                  <p class="font-medium">Dashboard</p>
+                  <p class="text-sm text-gray-400">Back to monitoring</p>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <!-- Security Tips -->
+          <div class="glass-card p-6">
+            <h3 class="text-lg font-bold text-white mb-4">Security Tips</h3>
+            <div class="space-y-3">
+              <div class="flex items-start">
+                <i class="fas fa-check text-green-400 mt-1 mr-3"></i>
+                <p class="text-sm text-gray-300">
+                  Use a strong, unique password
+                </p>
+              </div>
+              <div class="flex items-start">
+                <i class="fas fa-exclamation-triangle text-yellow-400 mt-1 mr-3"
+                ></i>
+                <p class="text-sm text-gray-300">
+                  Review login activity regularly
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

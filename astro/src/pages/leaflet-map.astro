@@ -1,0 +1,200 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { Leaflet, Marker, Popup, CreateLeafletIcon } from "astro-leaflet";
+
+// Custom icon definitions
+const activeIcon = {
+  className: "leaflet-icon-active",
+  iconSize: [20, 20],
+  iconAnchor: [10, 10],
+};
+
+const warningIcon = {
+  className: "leaflet-icon-warning",
+  iconSize: [20, 20],
+  iconAnchor: [10, 10],
+};
+
+// Inverter sites data
+const inverterSites = [
+  {
+    name: "Inverter Utama",
+    status: "Active",
+    coordinates: [1.4927, 103.7414],
+  },
+  {
+    name: "Inverter Kedua",
+    status: "Active",
+    coordinates: [1.505, 103.752],
+  },
+  {
+    name: "Inverter Ketiga",
+    status: "Warning",
+    coordinates: [1.481, 103.733],
+  },
+];
+---
+
+<BaseLayout title="Leaflet Map Example">
+  <section class="map-page">
+    <div class="map-header">
+      <div>
+        <p class="eyebrow">Leaflet JS Example</p>
+        <h1>Inverter Location Map</h1>
+      </div>
+      <a class="back-link" href="/dashboard">Dashboard</a>
+    </div>
+
+    <div class="map-canvas">
+      <Leaflet
+        options={{
+          center: [1.4927, 103.7414],
+          zoom: 12,
+          tileByName: "OSM",
+          mapOptions: {
+            scrollWheelZoom: true,
+          },
+        }}
+      >
+        <CreateLeafletIcon name="activeIcon" options={activeIcon} />
+        <CreateLeafletIcon name="warningIcon" options={warningIcon} />
+
+        {inverterSites.map((site) => (
+          <Marker
+            latlng={site.coordinates}
+            options={{
+              icon: site.status === "Active" ? "activeIcon" : "warningIcon",
+            }}
+          >
+            <Popup>
+              <div class="popup-content">
+                <strong>{site.name}</strong><br />
+                Status: <span class={`status-${site.status.toLowerCase()}`}>{site.status}</span>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </Leaflet>
+    </div>
+  </section>
+</BaseLayout>
+
+<style is:global>
+  /* Custom marker icons */
+  .leaflet-icon-active {
+    background: #22c55e;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .leaflet-icon-warning {
+    background: #f59e0b;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Popup styling */
+  .popup-content {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .popup-content strong {
+    color: #1e293b;
+    font-size: 15px;
+  }
+
+  .status-active {
+    color: #16a34a;
+    font-weight: 600;
+  }
+
+  .status-warning {
+    color: #d97706;
+    font-weight: 600;
+  }
+</style>
+
+<style>
+  .map-page {
+    width: min(1120px, calc(100% - 32px));
+    margin: 32px auto;
+  }
+
+  .map-header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .eyebrow {
+    margin: 0 0 6px;
+    color: #22c55e;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  h1 {
+    margin: 0;
+    color: #f8fafc;
+    font-size: clamp(28px, 5vw, 44px);
+    line-height: 1.05;
+  }
+
+  .back-link {
+    flex: 0 0 auto;
+    color: #e2e8f0;
+    text-decoration: none;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+  }
+
+  .back-link:hover {
+    border-color: #22c55e;
+    color: #22c55e;
+  }
+
+  .map-canvas {
+    height: min(68vh, 620px);
+    min-height: 420px;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    background: #111827;
+  }
+
+  /* Make sure the Leaflet map fills its container */
+  .map-canvas :global(.leaflet-container) {
+    height: 100%;
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  @media (max-width: 640px) {
+    .map-page {
+      width: min(100% - 24px, 1120px);
+      margin: 20px auto;
+    }
+
+    .map-header {
+      align-items: start;
+      flex-direction: column;
+    }
+
+    .map-canvas {
+      min-height: 360px;
+      height: 66vh;
+    }
+  }
+</style>

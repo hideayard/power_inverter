@@ -69,17 +69,17 @@ function setLoading(isLoading: boolean) {
 }
 
 function storeSession(result: any, username: string) {
-  const token = result.token ?? result.data?.token ?? result.jwt ?? result.data?.jwt;
+  const token = result.token ?? result.data?.token ?? result.auth_token ?? result.data?.auth_token;
   const user = result.user ?? result.data?.user ?? { username };
 
   if (!token) {
     throw new Error("Login succeeded, but no token was returned.");
   }
 
-  localStorage.setItem("jwt", token);
+  localStorage.setItem("auth_token", token);
   localStorage.setItem("user", JSON.stringify(user));
   localStorage.setItem("lastLogin", new Date().toISOString());
-  localStorage.setItem("jwt_expires", String(Date.now() + 24 * 60 * 60 * 1000));
+  localStorage.setItem("auth_token_expires", String(Date.now() + 24 * 60 * 60 * 1000));
 }
 
 function bindPasswordToggle() {

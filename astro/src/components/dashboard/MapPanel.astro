@@ -1,53 +1,418 @@
 ---
+import { Leaflet, Marker, Popup, TileLayer, CreateLeafletIcon } from "astro-leaflet";
 import SelectedUnitPanel from "./SelectedUnitPanel.astro";
+
+// Unit locations data (keep your existing data)
+const unitLocations = [
+  { id: 1, status: 'online', name: 'Unit 1', lat: 1.4927, lng: 103.7414, pct: 78, power: 235, today: 4.32 },
+  { id: 2, status: 'online', name: 'Unit 2', lat: 1.4950, lng: 103.7430, pct: 65, power: 180, today: 3.21 },
+  { id: 3, status: 'online', name: 'Unit 3', lat: 1.4900, lng: 103.7440, pct: 92, power: 310, today: 5.20 },
+  { id: 4, status: 'online', name: 'Unit 4', lat: 1.4970, lng: 103.7450, pct: 81, power: 245, today: 4.15 },
+  { id: 5, status: 'warn', name: 'Unit 5', lat: 1.4930, lng: 103.7380, pct: 32, power: 120, today: 2.11 },
+  { id: 6, status: 'online', name: 'Unit 6', lat: 1.4960, lng: 103.7390, pct: 73, power: 210, today: 4.01 },
+  { id: 7, status: 'alert', name: 'Unit 7', lat: 1.4910, lng: 103.7400, pct: 18, power: 95, today: 1.02 },
+  { id: 8, status: 'online', name: 'Unit 8', lat: 1.4980, lng: 103.7420, pct: 67, power: 175, today: 3.10 },
+  { id: 9, status: 'online', name: 'Unit 9', lat: 1.4940, lng: 103.7460, pct: 90, power: 299, today: 5.05 },
+  { id: 10, status: 'online', name: 'Unit 10', lat: 1.4990, lng: 103.7440, pct: 76, power: 220, today: 4.00 },
+  { id: 11, status: 'online', name: 'Unit 11', lat: 1.4880, lng: 103.7410, pct: 83, power: 255, today: 4.55 },
+  { id: 12, status: 'warn', name: 'Unit 12', lat: 1.5000, lng: 103.7470, pct: 25, power: 110, today: 1.85 },
+  { id: 13, status: 'online', name: 'Unit 13', lat: 1.4870, lng: 103.7430, pct: 71, power: 205, today: 3.80 },
+  { id: 14, status: 'online', name: 'Unit 14', lat: 1.5010, lng: 103.7400, pct: 88, power: 265, today: 4.90 },
+  { id: 15, status: 'online', name: 'Unit 15', lat: 1.4890, lng: 103.7450, pct: 69, power: 190, today: 3.35 },
+];
+
+// Custom icon definitions
+const normalIcon = {
+  className: "leaflet-icon-normal",
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
+};
+
+const warningIcon = {
+  className: "leaflet-icon-warning",
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
+};
+
+const alertIcon = {
+  className: "leaflet-icon-alert",
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
+};
 ---
 
 <div class="map-panel">
   <div class="panel-header">
     <div class="panel-title">UNIT LOCATION (MAP VIEW)</div>
-    <a class="view-all-link" href="#">⛶ Full Screen</a>
+    <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">
+      ⛶ Full Screen
+    </button>
   </div>
-  <div class="map-container" style="height:220px">
-    <div class="map-grid"></div>
-    <!-- Buildings -->
-    <div class="map-building" style="left:10%;top:12%;width:18%;height:22%"></div>
-    <div class="map-building" style="left:32%;top:12%;width:18%;height:22%"></div>
-    <div class="map-building" style="left:54%;top:12%;width:18%;height:22%"></div>
-    <div class="map-building" style="left:76%;top:12%;width:16%;height:22%"></div>
-    <div class="map-building" style="left:10%;top:42%;width:18%;height:22%"></div>
-    <div class="map-building" style="left:32%;top:42%;width:18%;height:22%"></div>
-    <div class="map-building" style="left:54%;top:42%;width:18%;height:22%"></div>
-    <div class="map-building" style="left:76%;top:42%;width:16%;height:22%"></div>
-    <div class="map-building" style="left:10%;top:72%;width:18%;height:22%"></div>
-    <div class="map-building" style="left:32%;top:72%;width:18%;height:22%"></div>
-    <div class="map-building" style="left:54%;top:72%;width:18%;height:22%"></div>
-    <!-- Nodes -->
-    <div class="map-node mn-green" style="left:19%;top:23%">1</div>
-    <div class="map-node mn-green" style="left:41%;top:23%">2</div>
-    <div class="map-node mn-green" style="left:63%;top:23%">3</div>
-    <div class="map-node mn-green" style="left:84%;top:23%">4</div>
-    <div class="map-node mn-yellow" style="left:19%;top:53%">5</div>
-    <div class="map-node mn-green" style="left:41%;top:53%">6</div>
-    <div class="map-node mn-red" style="left:63%;top:53%">7</div>
-    <div class="map-node mn-green" style="left:84%;top:53%">8</div>
-    <div class="map-node mn-green" style="left:19%;top:83%">9</div>
-    <div class="map-node mn-green" style="left:41%;top:83%">10</div>
-    <div class="map-node mn-green" style="left:63%;top:83%">11</div>
-    <div class="map-node mn-yellow" style="left:84%;top:83%">12</div>
-    <div class="map-node mn-green" style="left:30%;top:93%">13</div>
-    <div class="map-node mn-green" style="left:52%;top:93%">15</div>
-    <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--text3);white-space:nowrap">
-      Jalan Dataran Niaga MBIP
+  
+  <div class="map-wrapper" id="mapWrapper">
+    <div class="map-container" id="mapContainer">
+      <Leaflet
+        options={{
+          center: [1.4927, 103.7414],
+          zoom: 15,
+          tileByName: "OSM",
+          mapOptions: {
+            scrollWheelZoom: true,
+            zoomControl: true,
+          },
+        }}
+      >
+        <!-- Custom Icons -->
+        <CreateLeafletIcon name="normalIcon" options={normalIcon} />
+        <CreateLeafletIcon name="warningIcon" options={warningIcon} />
+        <CreateLeafletIcon name="alertIcon" options={alertIcon} />
+
+        <!-- Unit Markers -->
+        {unitLocations.map((unit) => {
+          const iconName = unit.status === 'alert' ? 'alertIcon' : unit.status === 'warn' ? 'warningIcon' : 'normalIcon';
+          return (
+            <Marker
+              latlng={[unit.lat, unit.lng]}
+              options={{
+                icon: iconName,
+                title: unit.name,
+              }}
+            >
+              <Popup>
+                <div class="map-popup">
+                  <strong class="popup-title">{unit.name}</strong>
+                  <div class="popup-status" data-status={unit.status}>
+                    {unit.status === 'alert' ? '⚠️ Alert' : unit.status === 'warn' ? '⚡ Warning' : '✅ Normal'}
+                  </div>
+                  <div class="popup-stats">
+                    <div class="popup-stat">
+                      <span class="popup-label">Battery</span>
+                      <span class="popup-value">{unit.pct}%</span>
+                    </div>
+                    <div class="popup-stat">
+                      <span class="popup-label">Power</span>
+                      <span class="popup-value">{unit.power} W</span>
+                    </div>
+                    <div class="popup-stat">
+                      <span class="popup-label">Today</span>
+                      <span class="popup-value">{unit.today} kWh</span>
+                    </div>
+                  </div>
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
+      </Leaflet>
     </div>
   </div>
+  
   <div class="map-legend">
-    <div class="ml-item"><span class="s-dot sd-green" style="width:9px;height:9px"></span> Normal</div>
-    <div class="ml-item"><span class="s-dot sd-yellow" style="width:9px;height:9px"></span> Warning</div>
-    <div class="ml-item"><span class="s-dot sd-red" style="width:9px;height:9px"></span> Alert</div>
     <div class="ml-item">
-      <span style="width:9px;height:9px;border-radius:50%;background:transparent;border:2px solid var(--text3);display:inline-block"></span> 
-      Offline
+      <span class="map-legend-dot" style="background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.6)"></span> 
+      Normal ({unitLocations.filter(u => u.status === 'online').length})
+    </div>
+    <div class="ml-item">
+      <span class="map-legend-dot" style="background: #f59e0b; box-shadow: 0 0 6px rgba(245,158,11,0.6)"></span> 
+      Warning ({unitLocations.filter(u => u.status === 'warn').length})
+    </div>
+    <div class="ml-item">
+      <span class="map-legend-dot" style="background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,0.6)"></span> 
+      Alert ({unitLocations.filter(u => u.status === 'alert').length})
     </div>
   </div>
+  
   <SelectedUnitPanel />
 </div>
+
+<script>
+  // Fullscreen functionality
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  const mapWrapper = document.getElementById('mapWrapper');
+
+  fullscreenBtn?.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      mapWrapper?.requestFullscreen().catch(err => {
+        console.error('Error attempting to enable fullscreen:', err);
+      });
+      fullscreenBtn.textContent = '⛶ Exit Full Screen';
+    } else {
+      document.exitFullscreen();
+      fullscreenBtn.textContent = '⛶ Full Screen';
+    }
+  });
+
+  // Listen for fullscreen change events
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      fullscreenBtn.textContent = '⛶ Full Screen';
+    }
+  });
+
+  // Update selected unit when clicking map markers
+  document.addEventListener('click', (e) => {
+    const marker = (e.target as HTMLElement).closest('.leaflet-marker-icon');
+    if (marker) {
+      const title = marker.getAttribute('title');
+      if (title) {
+        const unitId = parseInt(title.replace('Unit ', ''));
+        const unit = unitLocations.find(u => u.id === unitId);
+        if (unit) {
+          updateSelectedUnit(unit);
+        }
+      }
+    }
+  });
+
+  function updateSelectedUnit(unit: typeof unitLocations[0]) {
+    const suName = document.querySelector('.su-name');
+    const suBadge = document.querySelector('.su-badge') as HTMLElement;
+    const suStatVals = document.querySelectorAll('.su-stat-val');
+    
+    if (suName) suName.textContent = unit.name;
+    if (suBadge) {
+      const statusLabel = unit.status === 'alert' ? 'Alert' : unit.status === 'warn' ? 'Warning' : 'Online';
+      suBadge.textContent = statusLabel;
+      suBadge.style.background = unit.status === 'alert' ? 'rgba(239,68,68,0.2)' : 
+                                 unit.status === 'warn' ? 'rgba(245,158,11,0.2)' : 
+                                 'rgba(34,197,94,0.2)';
+      suBadge.style.color = unit.status === 'alert' ? '#ef4444' : 
+                            unit.status === 'warn' ? '#f59e0b' : 
+                            '#22c55e';
+    }
+    if (suStatVals.length >= 3) {
+      suStatVals[0].textContent = unit.pct + '%';
+      suStatVals[1].textContent = unit.power + ' W';
+      suStatVals[2].textContent = unit.today + ' kWh';
+      const alertClass = unit.status === 'alert' ? ' alert-c' : '';
+      suStatVals.forEach((v) => {
+        v.className = 'su-stat-val' + alertClass;
+      });
+    }
+  }
+</script>
+
+<style is:global>
+  /* Custom Marker Icons */
+  .leaflet-icon-normal {
+    background: #22c55e;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(34,197,94,0.6);
+    transition: transform 0.2s;
+  }
+  
+  .leaflet-icon-warning {
+    background: #f59e0b;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(245,158,11,0.6);
+    transition: transform 0.2s;
+  }
+  
+  .leaflet-icon-alert {
+    background: #ef4444;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(239,68,68,0.6);
+    animation: pulse-alert 2s infinite;
+  }
+
+  @keyframes pulse-alert {
+    0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
+    100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+  }
+
+  .leaflet-icon-normal:hover,
+  .leaflet-icon-warning:hover,
+  .leaflet-icon-alert:hover {
+    transform: scale(1.2);
+  }
+
+  /* Map Popup Styling */
+  .map-popup {
+    font-family: var(--font, 'Exo 2', sans-serif);
+    min-width: 180px;
+    padding: 4px;
+  }
+
+  .popup-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .popup-status {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+
+  .popup-status[data-status="online"] {
+    background: rgba(34,197,94,0.15);
+    color: #16a34a;
+  }
+
+  .popup-status[data-status="warn"] {
+    background: rgba(245,158,11,0.15);
+    color: #d97706;
+  }
+
+  .popup-status[data-status="alert"] {
+    background: rgba(239,68,68,0.15);
+    color: #dc2626;
+  }
+
+  .popup-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .popup-stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .popup-label {
+    font-size: 9px;
+    color: #64748b;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .popup-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+    font-family: var(--mono, 'Share Tech Mono', monospace);
+  }
+
+  /* Leaflet container fixes */
+  .leaflet-container {
+    font-family: var(--font, 'Exo 2', sans-serif) !important;
+  }
+</style>
+
+<style>
+  .map-panel {
+    background: var(--card, #111827);
+    border: 1px solid var(--border, #1e2d47);
+    border-radius: var(--r, 10px);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .panel-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text, #e2e8f0);
+    letter-spacing: 0.01em;
+  }
+
+  .fullscreen-btn {
+    background: transparent;
+    border: 1px solid var(--border2, #243352);
+    color: var(--accent, #00d4ff);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: var(--r-sm, 6px);
+    font-family: var(--font, 'Exo 2', sans-serif);
+    transition: all 0.2s;
+  }
+
+  .fullscreen-btn:hover {
+    background: rgba(0,212,255,0.1);
+    border-color: var(--accent, #00d4ff);
+  }
+
+  /* Map wrapper - controls the size */
+  .map-wrapper {
+    position: relative;
+    width: 100%;
+    height: 280px; /* Fixed height - adjust this value as needed */
+    border-radius: var(--r-sm, 6px);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .map-container {
+    width: 100%;
+    height: 100%;
+    background: #1a2030;
+  }
+
+  /* Make Leaflet map fill the container */
+  .map-container :global(.leaflet-container) {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--r-sm, 6px);
+  }
+
+  /* Fullscreen styles */
+  .map-wrapper:fullscreen {
+    height: 100vh;
+    width: 100vw;
+    border-radius: 0;
+  }
+
+  .map-wrapper:fullscreen .map-container :global(.leaflet-container) {
+    border-radius: 0;
+  }
+
+  /* Legend */
+  .map-legend {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  .ml-item {
+    font-size: 10px;
+    color: var(--text2, #8fa3bf);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .map-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .map-wrapper {
+      height: 250px; /* Slightly smaller on mobile */
+    }
+  }
+
+  @media (max-width: 480px) {
+    .map-wrapper {
+      height: 220px; /* Even smaller on small screens */
+    }
+  }
+</style>

@@ -26,7 +26,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   <script>
     (async () => {
       try {
-        const token = localStorage.getItem("jwt");
+        const token = localStorage.getItem("auth_token");
         const userStr = localStorage.getItem("user");
 
         if (!token || !userStr) {
@@ -43,7 +43,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           return;
         }
 
-        const tokenExpires = localStorage.getItem("jwt_expires");
+        const tokenExpires = localStorage.getItem("auth_token_expires");
         if (tokenExpires) {
           const expiresAt = parseInt(tokenExpires);
           const now = Date.now();

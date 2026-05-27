@@ -1,0 +1,343 @@
+/* ============================================
+   RESPONSIVE GRID SYSTEM v1.0
+   A lightweight CSS Grid framework for dashboards
+   ============================================ */
+
+/* 
+ * TABLE OF CONTENTS:
+ * 1. Grid Container
+ * 2. Grid Items
+ * 3. Column Spans
+ * 4. Gap Utilities
+ * 5. Auto-fit Grids
+ * 6. Alignment
+ * 7. Responsive Breakpoints
+ * 8. Performance Utilities
+ * 9. Print Styles
+ * 10. Dark Mode Support
+ */
+
+/* ============================================
+   1. GRID CONTAINER
+   ============================================ */
+
+/* Base grid container */
+.dashboard-grid {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Grid with equal columns */
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+.grid-cols-5 { grid-template-columns: repeat(5, 1fr); }
+.grid-cols-6 { grid-template-columns: repeat(6, 1fr); }
+
+/* Fixed width columns */
+.grid-cols-fixed-250 { grid-template-columns: repeat(auto-fill, 250px); }
+.grid-cols-fixed-300 { grid-template-columns: repeat(auto-fill, 300px); }
+.grid-cols-fixed-350 { grid-template-columns: repeat(auto-fill, 350px); }
+
+/* ============================================
+   2. GRID ITEMS
+   ============================================ */
+
+/* Grid item that fills its container */
+.grid-item {
+  min-height: 0;
+  display: flex;
+}
+
+.grid-item > * {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Grid item with overflow handling */
+.grid-item-overflow {
+  min-height: 0;
+  overflow: auto;
+}
+
+/* ============================================
+   3. COLUMN SPANS
+   ============================================ */
+
+/* Span utilities */
+.col-span-1 { grid-column: span 1; }
+.col-span-2 { grid-column: span 2; }
+.col-span-3 { grid-column: span 3; }
+.col-span-4 { grid-column: span 4; }
+.col-span-5 { grid-column: span 5; }
+.col-span-full { grid-column: 1 / -1; }
+
+/* Row spans */
+.row-span-1 { grid-row: span 1; }
+.row-span-2 { grid-row: span 2; }
+.row-span-3 { grid-row: span 3; }
+
+/* ============================================
+   4. GAP UTILITIES
+   ============================================ */
+
+.gap-0 { gap: 0; }
+.gap-4 { gap: 4px; }
+.gap-6 { gap: 6px; }
+.gap-8 { gap: 8px; }
+.gap-10 { gap: 10px; }
+.gap-12 { gap: 12px; }
+.gap-16 { gap: 16px; }
+.gap-20 { gap: 20px; }
+.gap-24 { gap: 24px; }
+
+/* Row/Column specific gaps */
+.gap-x-12 { column-gap: 12px; }
+.gap-y-12 { row-gap: 12px; }
+
+/* ============================================
+   5. AUTO-FIT GRIDS
+   ============================================ */
+
+/* Auto-fit with minimum width */
+.grid-auto-xs { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.grid-auto-sm { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.grid-auto-md { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+.grid-auto-lg { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.grid-auto-xl { grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); }
+
+/* Auto-fill (creates empty tracks) */
+.grid-fill-sm { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.grid-fill-md { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+
+/* ============================================
+   6. ALIGNMENT
+   ============================================ */
+
+/* Container alignment */
+.justify-start { justify-content: start; }
+.justify-center { justify-content: center; }
+.justify-end { justify-content: end; }
+.justify-between { justify-content: space-between; }
+.justify-around { justify-content: space-around; }
+.justify-evenly { justify-content: space-evenly; }
+
+.align-start { align-content: start; }
+.align-center { align-content: center; }
+.align-end { align-content: end; }
+
+/* Item alignment */
+.items-start { align-items: start; }
+.items-center { align-items: center; }
+.items-end { align-items: end; }
+.items-stretch { align-items: stretch; }
+
+/* Self alignment */
+.self-start { align-self: start; }
+.self-center { align-self: center; }
+.self-end { align-self: end; }
+.self-stretch { align-self: stretch; }
+
+/* Place items (shorthand) */
+.place-center { place-items: center; }
+.place-start { place-items: start; }
+
+/* ============================================
+   7. RESPONSIVE BREAKPOINTS
+   ============================================ */
+
+/* 
+ * Breakpoint reference:
+ * xs: < 576px   (Mobile portrait)
+ * sm: ≥ 576px   (Mobile landscape)
+ * md: ≥ 768px   (Tablet)
+ * lg: ≥ 1024px  (Desktop)
+ * xl: ≥ 1200px  (Large desktop)
+ * 2xl: ≥ 1400px (Extra large desktop)
+ */
+
+/* Mobile-first responsive grid columns */
+@media (min-width: 576px) {
+  .sm\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .sm\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .sm\:col-span-2 { grid-column: span 2; }
+}
+
+@media (min-width: 768px) {
+  .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .md\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .md\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .md\:col-span-2 { grid-column: span 2; }
+  .md\:col-span-3 { grid-column: span 3; }
+}
+
+@media (min-width: 1024px) {
+  .lg\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .lg\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .lg\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .lg\:grid-cols-5 { grid-template-columns: repeat(5, 1fr); }
+  .lg\:col-span-2 { grid-column: span 2; }
+  .lg\:col-span-3 { grid-column: span 3; }
+  .lg\:col-span-4 { grid-column: span 4; }
+}
+
+@media (min-width: 1200px) {
+  .xl\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .xl\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .xl\:grid-cols-5 { grid-template-columns: repeat(5, 1fr); }
+  .xl\:grid-cols-6 { grid-template-columns: repeat(6, 1fr); }
+}
+
+@media (min-width: 1400px) {
+  .\32xl\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .\32xl\:grid-cols-5 { grid-template-columns: repeat(5, 1fr); }
+  .\32xl\:grid-cols-6 { grid-template-columns: repeat(6, 1fr); }
+}
+
+/* Desktop-first responsive (hide on mobile) */
+@media (max-width: 767px) {
+  .hide-mobile { display: none; }
+  .grid-stack-mobile { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 1023px) {
+  .hide-tablet { display: none; }
+}
+
+/* ============================================
+   8. PERFORMANCE UTILITIES
+   ============================================ */
+
+/* Contain paint and layout for better performance */
+.grid-contain {
+  contain: layout style paint;
+}
+
+/* GPU acceleration for animations */
+.grid-gpu {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Reduce layout shifts */
+.grid-stable {
+  contain: layout style;
+}
+
+/* ============================================
+   9. PRINT STYLES
+   ============================================ */
+
+@media print {
+  .no-print { display: none; }
+  
+  .print-grid {
+    display: grid;
+    gap: 12px;
+  }
+  
+  .print-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .print-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  
+  .print-break-inside { break-inside: avoid; }
+}
+
+/* ============================================
+   10. DARK MODE SUPPORT
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  .dark\:grid-border {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES FOR DASHBOARD
+   ============================================ */
+
+/* Card grid - auto-adjusting cards */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* Metric grid - for stat cards */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+/* Chart grid - for chart panels */
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 16px;
+}
+
+/* Two-column layout with sidebar */
+.layout-with-sidebar {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 0;
+}
+
+/* Holy grail layout */
+.layout-holy-grail {
+  display: grid;
+  grid-template-columns: 200px 1fr 200px;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+
+/* ============================================
+   FLEXBOX FALLBACKS
+   ============================================ */
+
+/* For browsers that don't support CSS Grid */
+@supports not (display: grid) {
+  .dashboard-grid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .grid-item {
+    flex: 1 1 300px;
+    margin: 6px;
+  }
+}
+
+/* ============================================
+   ANIMATIONS & TRANSITIONS
+   ============================================ */
+
+/* Smooth grid changes */
+.grid-animate {
+  transition: grid-template-columns 0.3s ease,
+              grid-template-rows 0.3s ease,
+              gap 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grid-animate {
+    transition: none;
+  }
+}
+
+ .units-map-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr; /* 60% 40% ratio */
+    gap: 12px;
+    width: 100%;
+  }
+
+  /* Responsive: Stack on smaller screens */
+  @media (max-width: 1023px) {
+    .units-map-grid {
+      grid-template-columns: 1fr; /* Full width stacked */
+    }
+  }

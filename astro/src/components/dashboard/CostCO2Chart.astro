@@ -1,46 +1,263 @@
-<div class="chart-card">
+---
+const chartData = {
+  week: {
+    labels: ['14 May', '15 May', '16 May', '17 May', '18 May', '19 May', '20 May'],
+    cost: [118.2, 124.5, 112.8, 122.3, 128.5, 121.7, 138.45],
+    co2: [65.2, 70.1, 62.3, 68.5, 72.8, 69.4, 78.45]
+  },
+  month: {
+    labels: Array.from({length: 30}, (_, i) => `${i + 1} May`),
+    cost: Array.from({length: 30}, () => +(Math.random() * 50 + 90).toFixed(2)),
+    co2: Array.from({length: 30}, () => +(Math.random() * 30 + 50).toFixed(1))
+  }
+};
+---
+
+<div class="chart-card" id="costCo2Chart">
   <div class="panel-header">
     <div class="panel-title">COST &amp; CO₂ TREND (ALL UNITS)</div>
     <div class="chart-tabs">
-      <button class="ctab active">7 Days</button>
-      <button class="ctab">30 Days</button>
+      <button class="ctab active" data-period="week">7 Days</button>
+      <button class="ctab" data-period="month">30 Days</button>
     </div>
   </div>
   <div class="chart-area">
-    <svg width="100%" height="130" viewBox="0 0 380 130" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="costg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#b44aff" stop-opacity="0.6"/>
-          <stop offset="100%" stop-color="#b44aff" stop-opacity="0.1"/>
-        </linearGradient>
-      </defs>
-      <!-- Grid -->
-      <line x1="0" y1="30" x2="380" y2="30" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-      <line x1="0" y1="60" x2="380" y2="60" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-      <line x1="0" y1="90" x2="380" y2="90" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-      <!-- Bars -->
-      <rect x="10" y="75" width="38" height="45" rx="3" fill="url(#costg)"/>
-      <rect x="64" y="60" width="38" height="60" rx="3" fill="url(#costg)"/>
-      <rect x="118" y="50" width="38" height="70" rx="3" fill="url(#costg)"/>
-      <rect x="172" y="65" width="38" height="55" rx="3" fill="url(#costg)"/>
-      <rect x="226" y="45" width="38" height="75" rx="3" fill="url(#costg)"/>
-      <rect x="280" y="55" width="38" height="65" rx="3" fill="url(#costg)"/>
-      <rect x="334" y="38" width="38" height="82" rx="3" fill="#b44aff" opacity="0.8"/>
-      <!-- CO2 line overlay -->
-      <path d="M29,70 C64,60 118,50 172,55 C226,50 280,45 353,42" fill="none" stroke="#00e676" stroke-width="2" stroke-linecap="round"/>
-      <circle cx="353" cy="42" r="4" fill="#00e676"/>
-      <!-- X labels -->
-      <text x="10" y="128" fill="rgba(255,255,255,0.3)" font-size="9">14 May</text>
-      <text x="64" y="128" fill="rgba(255,255,255,0.3)" font-size="9">15 May</text>
-      <text x="118" y="128" fill="rgba(255,255,255,0.3)" font-size="9">16 May</text>
-      <text x="172" y="128" fill="rgba(255,255,255,0.3)" font-size="9">17 May</text>
-      <text x="226" y="128" fill="rgba(255,255,255,0.3)" font-size="9">18 May</text>
-      <text x="280" y="128" fill="rgba(255,255,255,0.3)" font-size="9">19 May</text>
-      <text x="334" y="128" fill="rgba(255,255,255,0.3)" font-size="9">20 May</text>
-    </svg>
+    <canvas id="costCo2Canvas"></canvas>
   </div>
   <div class="chart-legend">
-    <div class="cl-item"><div style="width:14px;height:10px;background:rgba(180,74,255,0.6);border-radius:2px"></div> Cost (RM)</div>
-    <div class="cl-item"><div class="cl-line" style="background:#00e676"></div> CO₂ Reduced (kg)</div>
+    <div class="cl-item">
+      <div style="width:14px;height:10px;background:rgba(180,74,255,0.6);border-radius:2px"></div> 
+      Cost (RM)
+    </div>
+    <div class="cl-item">
+      <div class="cl-line" style="background:#00e676"></div> 
+      CO₂ Reduced (kg)
+    </div>
   </div>
 </div>
+
+<script>
+  import Chart from 'chart.js/auto';
+
+  const chartData = {
+    week: {
+      labels: ['14 May', '15 May', '16 May', '17 May', '18 May', '19 May', '20 May'],
+      cost: [118.2, 124.5, 112.8, 122.3, 128.5, 121.7, 138.45],
+      co2: [65.2, 70.1, 62.3, 68.5, 72.8, 69.4, 78.45]
+    },
+    month: {
+      labels: Array.from({length: 30}, (_, i) => `${i + 1} May`),
+      cost: Array.from({length: 30}, () => +(Math.random() * 50 + 90).toFixed(2)),
+      co2: Array.from({length: 30}, () => +(Math.random() * 30 + 50).toFixed(1))
+    }
+  };
+
+  const ctx = document.getElementById('costCo2Canvas');
+  let currentChart: Chart;
+
+  function createChart(period: 'week' | 'month') {
+    const data = chartData[period];
+    
+    if (currentChart) {
+      currentChart.destroy();
+    }
+
+    currentChart = new Chart(ctx as HTMLCanvasElement, {
+      type: 'bar',
+      data: {
+        labels: data.labels,
+        datasets: [
+          {
+            type: 'bar',
+            label: 'Cost (RM)',
+            data: data.cost,
+            backgroundColor: 'rgba(180, 74, 255, 0.6)',
+            borderColor: '#b44aff',
+            borderWidth: 1,
+            borderRadius: 4,
+            borderSkipped: false,
+            order: 2,
+          },
+          {
+            type: 'line',
+            label: 'CO₂ Reduced (kg)',
+            data: data.co2,
+            borderColor: '#00e676',
+            backgroundColor: 'rgba(0, 230, 118, 0.1)',
+            borderWidth: 2,
+            fill: false,
+            tension: 0.4,
+            pointRadius: 5,
+            pointBackgroundColor: '#00e676',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointHoverRadius: 7,
+            order: 1,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            backgroundColor: '#111827',
+            titleColor: '#00d4ff',
+            bodyColor: '#e2e8f0',
+            borderColor: '#243352',
+            borderWidth: 1,
+            padding: 12,
+            displayColors: true,
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                if (context.dataset.type === 'bar') {
+                  label += 'RM ' + context.parsed.y;
+                } else {
+                  label += context.parsed.y + ' kg';
+                }
+                return label;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.3)',
+              font: {
+                size: 9,
+                family: "'Exo 2', sans-serif"
+              },
+              maxRotation: 45,
+            }
+          },
+          y: {
+            grid: {
+              color: 'rgba(255, 255, 255, 0.05)',
+            },
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.3)',
+              font: {
+                size: 9,
+                family: "'Share Tech Mono', monospace"
+              }
+            },
+            beginAtZero: false,
+          }
+        }
+      }
+    });
+  }
+
+  // Initialize with week data
+  createChart('week');
+
+  // Tab switching
+  document.querySelectorAll('#costCo2Chart .ctab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const parent = tab.closest('#costCo2Chart');
+      parent?.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      
+      const period = tab.getAttribute('data-period') as 'week' | 'month';
+      createChart(period);
+    });
+  });
+</script>
+
+<style>
+  .chart-card {
+    background: var(--card, #111827);
+    border: 1px solid var(--border, #1e2d47);
+    border-radius: var(--r, 10px);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .panel-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text, #e2e8f0);
+    letter-spacing: 0.01em;
+  }
+
+  .chart-tabs {
+    display: flex;
+    gap: 4px;
+  }
+
+  .ctab {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: var(--r-sm, 6px);
+    border: 1px solid transparent;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text3, #4a6080);
+    font-family: var(--font, 'Exo 2', sans-serif);
+    transition: all 0.2s;
+  }
+
+  .ctab.active {
+    background: var(--blue, #4488ff);
+    color: #fff;
+    border-color: var(--blue, #4488ff);
+  }
+
+  .ctab:not(.active):hover {
+    color: var(--text2, #8fa3bf);
+    border-color: var(--border, #1e2d47);
+  }
+
+  .chart-area {
+    flex: 1;
+    min-height: 200px;
+    position: relative;
+  }
+
+  .chart-legend {
+    display: flex;
+    gap: 14px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .cl-item {
+    font-size: 10px;
+    color: var(--text2, #8fa3bf);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .cl-line {
+    width: 16px;
+    height: 2px;
+    border-radius: 2px;
+  }
+</style>

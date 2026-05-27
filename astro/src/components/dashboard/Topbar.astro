@@ -1,3 +1,33 @@
+<!-- In Topbar.astro, add before logo -->
+<button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+  <i class="fas fa-bars"></i>
+</button>
+
+<style>
+  .mobile-menu-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+  }
+
+  @media (max-width: 480px) {
+    .mobile-menu-btn {
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
+    document.querySelector('.sidebar')?.classList.toggle('open');
+    document.querySelector('.sidebar-overlay')?.classList.toggle('open');
+  });
+</script>
+
 <header class="topbar">
   <div class="logo-wrap">
     <div class="logo-bolt">⚡</div>

@@ -16,13 +16,22 @@ export default defineConfig({
       },
     },
     optimizeDeps: {
-      include: ["astro-leaflet > leaflet"],
+      include: [
+        "astro-leaflet > leaflet",
+        "chart.js",
+        "chart.js/auto",
+        "bootstrap",
+      ],
       // Exclude these from optimization to prevent stale cache errors
-      exclude: ["leaflet", "sweetalert2"],
+      exclude: [
+        "leaflet",
+        "sweetalert2",
+        "astro/runtime/client/dev-toolbar/entrypoint.js",
+      ],
     },
     ssr: {
       // These packages need to be bundled for SSR
-      noExternal: ["sweetalert2"],
+      noExternal: ["sweetalert2", "astro-leaflet"],
     },
     server: {
       fs: {
@@ -39,4 +48,7 @@ export default defineConfig({
   outDir: "./dist",
   // Public directory for static assets
   publicDir: "./public",
+  devToolbar: {
+    enabled: true, // Set to false if you want to disable it
+  },
 });

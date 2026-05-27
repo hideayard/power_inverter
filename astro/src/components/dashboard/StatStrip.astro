@@ -4,15 +4,8 @@ import StatCard from "./StatCard.astro";
 ---
 
 <div class="stat-strip">
-  <StatCard
-    icon="↻"
-    iconClass="si-blue"
-    label="TOTAL UNITS"
-  >
-    <Fragment slot="value">
-      15
-    </Fragment>
-
+  <StatCard icon="↻" iconClass="si-blue" label="TOTAL UNITS">
+    <Fragment slot="value">15</Fragment>
     <div slot="sub" class="stat-sub">
       <span>Online: 15</span>
       <span>Offline: 0</span>
@@ -29,10 +22,7 @@ import StatCard from "./StatCard.astro";
     <Fragment slot="value">
       78.62 <span class="unit">kWh</span>
     </Fragment>
-
-    <div slot="sub" class="stat-sub">
-      Yesterday: 72.31 kWh
-    </div>
+    <div slot="sub" class="stat-sub">Yesterday: 72.31 kWh</div>
   </StatCard>
 
   <StatCard
@@ -42,40 +32,59 @@ import StatCard from "./StatCard.astro";
     change="↑ 8.83%"
     changeClass="up"
   >
-    <Fragment slot="value">
-      RM 138.45
-    </Fragment>
-
-    <div slot="sub" class="stat-sub">
-      Yesterday: RM 127.20
-    </div>
+    <Fragment slot="value">RM 138.45</Fragment>
+    <div slot="sub" class="stat-sub">Yesterday: RM 127.20</div>
   </StatCard>
 
-  <StatCard
-    icon="🍃"
-    iconClass="si-purple"
-    label="TOTAL CO₂ REDUCED TODAY"
-  >
+  <StatCard icon="🍃" iconClass="si-purple" label="TOTAL CO₂ REDUCED TODAY">
     <Fragment slot="value">
       78.45 <span class="unit">kg</span>
     </Fragment>
-
-    <div slot="sub" class="stat-sub">
-      All Time: 1,562.34 kg
-    </div>
+    <div slot="sub" class="stat-sub">All Time: 1,562.34 kg</div>
   </StatCard>
 
-  <StatCard
-    icon="↗"
-    iconClass="si-cyan"
-    label="AVG. EFFICIENCY SCORE"
-  >
+  <StatCard icon="↗" iconClass="si-cyan" label="AVG. EFFICIENCY SCORE">
     <Fragment slot="value">
       86<span class="unit"> /100</span>
     </Fragment>
-
-    <div slot="sub" class="stat-sub stat-good">
-      Good
-    </div>
+    <div slot="sub" class="stat-sub stat-good">Good</div>
   </StatCard>
 </div>
+
+<style>
+  .stat-strip {
+    display: grid;
+    gap: 12px;
+    width: 100%;
+  }
+
+  /* Mobile: Stack vertically (like col-12) */
+  @media (max-width: 575px) {
+    .stat-strip {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Mobile landscape: 2 columns or auto-fit */
+  @media (min-width: 576px) and (max-width: 767px) {
+    .stat-strip {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Tablet and up: Auto-fit magic */
+  @media (min-width: 768px) {
+    .stat-strip {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+  }
+
+  /* Optional: Limit max columns on very large screens */
+  @media (min-width: 1600px) {
+    .stat-strip {
+      grid-template-columns: repeat(5, 1fr);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+  }
+</style>

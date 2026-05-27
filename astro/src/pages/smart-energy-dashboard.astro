@@ -1,3 +1,4 @@
+
 ---
 import Topbar from "../components/dashboard/Topbar.astro";
 import Sidebar from "../components/dashboard/Sidebar.astro";
@@ -11,126 +12,444 @@ import SmartInsightsCard from "../components/dashboard/SmartInsightsCard.astro";
 import AlertsTable from "../components/dashboard/AlertsTable.astro";
 import EfficiencyRanking from "../components/dashboard/EfficiencyRanking.astro";
 import "../styles/dashboard.css";
-
+import "../styles/responsive-grid.css";
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Energy Monitoring & CO₂ Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-</head>
-<body>
-  <Topbar />
-  
-  <div class="body-wrap">
-    <Sidebar />
-    
-    <main class="main">
-      <StatStrip />
-      
-      <!-- MID ROW: Units + Map -->
-      <div class="mid-row">
-        <UnitsPanel />
-        <MapPanel />
-      </div>
-      
-      <!-- BOTTOM ROW 1: Charts + CO2 + Insights -->
-      <div class="bottom-row">
-        <EnergyTrendChart />
-        <CostCO2Chart />
-        <CO2ImpactCard />
-        <SmartInsightsCard />
-      </div>
-      
-      <!-- BOTTOM ROW 2: Alerts + Efficiency -->
-      <div class="bottom-bot-row">
-        <AlertsTable />
-        <EfficiencyRanking />
-      </div>
-    </main>
-  </div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Energy Monitoring & CO₂ Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&family=Share+Tech+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <Topbar />
+
+    <div class="body-wrap">
+      <Sidebar />
+
+      <main class="main">
+        <!-- Stats Row - Auto-fit responsive grid -->
+        <div class="dashboard-grid">
+          <StatStrip />
+        </div>
+
+        <!-- Units + Map Row -->
+        <div class="dashboard-grid units-map-grid">
+          <div class="grid-item grid-item--units">
+            <UnitsPanel />
+          </div>
+          <div class="grid-item grid-item--map">
+            <MapPanel />
+          </div>
+        </div>
+
+        <!-- Charts Row - 4 columns desktop, 2 tablet, 1 mobile -->
+        <div class="dashboard-grid charts-grid">
+          <div class="grid-item">
+            <EnergyTrendChart />
+          </div>
+          <div class="grid-item">
+            <CostCO2Chart />
+          </div>
+          <div class="grid-item">
+            <CO2ImpactCard />
+          </div>
+          <div class="grid-item">
+            <SmartInsightsCard />
+          </div>
+        </div>
+
+        <!-- Alerts + Efficiency Row -->
+        <div class="dashboard-grid alerts-grid">
+          <div class="grid-item grid-item--alerts">
+            <AlertsTable />
+          </div>
+          <div class="grid-item grid-item--efficiency">
+            <EfficiencyRanking />
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
 </html>
 
 <script>
   // Tab interactions
-  document.querySelectorAll('.vtab').forEach((t) => {
-    t.addEventListener('click', () => {
-      const parent = t.closest('.view-toggle');
+  document.querySelectorAll(".vtab").forEach((t) => {
+    t.addEventListener("click", () => {
+      const parent = t.closest(".view-toggle");
       if (parent) {
-        parent.querySelectorAll('.vtab').forEach((x) => x.classList.remove('active'));
-        t.classList.add('active');
+        parent
+          .querySelectorAll(".vtab")
+          .forEach((x) => x.classList.remove("active"));
+        t.classList.add("active");
       }
     });
   });
 
-  document.querySelectorAll('.chart-tabs').forEach((tabs) => {
-    tabs.querySelectorAll('.ctab').forEach((t) => {
-      t.addEventListener('click', () => {
-        tabs.querySelectorAll('.ctab').forEach((x) => x.classList.remove('active'));
-        t.classList.add('active');
+  document.querySelectorAll(".chart-tabs").forEach((tabs) => {
+    tabs.querySelectorAll(".ctab").forEach((t) => {
+      t.addEventListener("click", () => {
+        tabs
+          .querySelectorAll(".ctab")
+          .forEach((x) => x.classList.remove("active"));
+        t.classList.add("active");
       });
     });
   });
 
   // Navigation
-  document.querySelectorAll('.nav-item').forEach((item) => {
-    item.addEventListener('click', () => {
-      document.querySelectorAll('.nav-item').forEach((i) => i.classList.remove('active'));
-      item.classList.add('active');
+  document.querySelectorAll(".nav-item").forEach((item) => {
+    item.addEventListener("click", () => {
+      document
+        .querySelectorAll(".nav-item")
+        .forEach((i) => i.classList.remove("active"));
+      item.classList.add("active");
     });
   });
 
   // Map node click
   const units = [
-    { id: 1, status: 'online', pct: 78, power: 235, today: 4.32 },
-    { id: 2, status: 'online', pct: 65, power: 180, today: 3.21 },
-    { id: 3, status: 'online', pct: 92, power: 310, today: 5.20 },
-    { id: 4, status: 'online', pct: 81, power: 245, today: 4.15 },
-    { id: 5, status: 'warn', pct: 32, power: 120, today: 2.11 },
-    { id: 6, status: 'online', pct: 73, power: 210, today: 4.01 },
-    { id: 7, status: 'alert', pct: 18, power: 95, today: 1.02 },
-    { id: 8, status: 'online', pct: 67, power: 175, today: 3.10 },
-    { id: 9, status: 'online', pct: 90, power: 299, today: 5.05 },
-    { id: 10, status: 'online', pct: 76, power: 220, today: 4.00 },
-    { id: 11, status: 'online', pct: 83, power: 255, today: 4.55 },
-    { id: 12, status: 'warn', pct: 25, power: 110, today: 1.85 },
-    { id: 13, status: 'online', pct: 71, power: 205, today: 3.80 },
-    { id: 14, status: 'online', pct: 88, power: 265, today: 4.90 },
-    { id: 15, status: 'online', pct: 69, power: 190, today: 3.35 },
+    { id: 1, status: "online", pct: 78, power: 235, today: 4.32 },
+    { id: 2, status: "online", pct: 65, power: 180, today: 3.21 },
+    { id: 3, status: "online", pct: 92, power: 310, today: 5.2 },
+    { id: 4, status: "online", pct: 81, power: 245, today: 4.15 },
+    { id: 5, status: "warn", pct: 32, power: 120, today: 2.11 },
+    { id: 6, status: "online", pct: 73, power: 210, today: 4.01 },
+    { id: 7, status: "alert", pct: 18, power: 95, today: 1.02 },
+    { id: 8, status: "online", pct: 67, power: 175, today: 3.1 },
+    { id: 9, status: "online", pct: 90, power: 299, today: 5.05 },
+    { id: 10, status: "online", pct: 76, power: 220, today: 4.0 },
+    { id: 11, status: "online", pct: 83, power: 255, today: 4.55 },
+    { id: 12, status: "warn", pct: 25, power: 110, today: 1.85 },
+    { id: 13, status: "online", pct: 71, power: 205, today: 3.8 },
+    { id: 14, status: "online", pct: 88, power: 265, today: 4.9 },
+    { id: 15, status: "online", pct: 69, power: 190, today: 3.35 },
   ];
 
-  document.querySelectorAll('.map-node').forEach((node) => {
-    node.addEventListener('click', () => {
-      const id = parseInt(node.textContent || '0');
+  document.querySelectorAll(".map-node").forEach((node) => {
+    node.addEventListener("click", () => {
+      const id = parseInt(node.textContent || "0");
       const u = units.find((x) => x.id === id);
       if (!u) return;
-      
-      const suName = document.querySelector('.su-name');
-      const suBadge = document.querySelector('.su-badge');
-      const suStatVals = document.querySelectorAll('.su-stat-val');
-      
-      if (suName) suName.textContent = 'Unit ' + u.id;
+
+      const suName = document.querySelector(".su-name");
+      const suBadge = document.querySelector(".su-badge");
+      const suStatVals = document.querySelectorAll(".su-stat-val");
+
+      if (suName) suName.textContent = "Unit " + u.id;
       if (suBadge) {
         const badge = suBadge as HTMLElement;
-        const statusLabel = u.status === 'alert' ? 'Alert' : u.status === 'warn' ? 'Warning' : 'Online';
+        const statusLabel =
+          u.status === "alert"
+            ? "Alert"
+            : u.status === "warn"
+              ? "Warning"
+              : "Online";
         badge.textContent = statusLabel;
-        badge.style.background = u.status === 'alert' ? 'rgba(255,61,113,0.2)' : u.status === 'warn' ? 'rgba(255,215,64,0.2)' : 'rgba(0,230,118,0.2)';
-        badge.style.color = u.status === 'alert' ? 'var(--red)' : u.status === 'warn' ? 'var(--yellow)' : 'var(--green)';
+        badge.style.background =
+          u.status === "alert"
+            ? "rgba(255,61,113,0.2)"
+            : u.status === "warn"
+              ? "rgba(255,215,64,0.2)"
+              : "rgba(0,230,118,0.2)";
+        badge.style.color =
+          u.status === "alert"
+            ? "var(--red)"
+            : u.status === "warn"
+              ? "var(--yellow)"
+              : "var(--green)";
       }
       if (suStatVals.length >= 3) {
-        suStatVals[0].textContent = u.pct + '%';
-        suStatVals[1].textContent = u.power + ' W';
-        suStatVals[2].textContent = u.today + ' kWh';
-        const ac = u.status === 'alert' ? 'alert-c' : '';
+        suStatVals[0].textContent = u.pct + "%";
+        suStatVals[1].textContent = u.power + " W";
+        suStatVals[2].textContent = u.today + " kWh";
+        const ac = u.status === "alert" ? "alert-c" : "";
         suStatVals.forEach((v) => {
-          v.className = 'su-stat-val' + (ac ? ' ' + ac : '');
+          v.className = "su-stat-val" + (ac ? " " + ac : "");
         });
       }
     });
   });
 </script>
 
+<style>
+  /* ============================================
+     RESPONSIVE GRID SYSTEM
+     Lightweight, no-framework grid system
+     ============================================ */
+
+  .dashboard-grid {
+    display: grid;
+    gap: 12px;
+    width: 100%;
+  }
+
+  /* Grid items full height within their row */
+  .grid-item {
+    min-height: 0;
+    display: flex;
+  }
+
+  .grid-item > * {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* ============================================
+     STAT STRIP - 5 columns desktop, auto-fit
+     ============================================ */
+  .stat-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  /* ============================================
+     UNITS + MAP ROW
+     ============================================ */
+  .units-map-grid {
+    grid-template-columns: 1fr 380px;
+  }
+
+  /* ============================================
+     CHARTS ROW - 4 columns desktop
+     ============================================ */
+  .charts-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* ============================================
+     ALERTS + EFFICIENCY ROW
+     ============================================ */
+  .alerts-grid {
+    grid-template-columns: 1fr 300px;
+  }
+
+  /* ============================================
+     RESPONSIVE BREAKPOINTS
+     Mobile-first approach
+     ============================================ */
+
+  /* Large Desktop (1400px+) - Keep default layouts */
+  @media (min-width: 1400px) {
+    .main {
+      padding: 16px 20px;
+    }
+  }
+
+  /* Desktop (1200px - 1399px) */
+  @media (max-width: 1399px) {
+    .units-map-grid {
+      grid-template-columns: 1fr 350px;
+    }
+
+    .charts-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .alerts-grid {
+      grid-template-columns: 1fr 280px;
+    }
+  }
+
+  /* Small Desktop / Large Tablet (1024px - 1199px) */
+  @media (max-width: 1199px) {
+    .stat-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .units-map-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .charts-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .alerts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Tablet (768px - 1023px) */
+  @media (max-width: 1023px) {
+    .sidebar {
+      width: 80px;
+    }
+
+    .nav-item {
+      font-size: 9px;
+      padding: 8px 4px;
+    }
+
+    .nav-icon {
+      font-size: 16px;
+    }
+
+    .stat-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .charts-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .main {
+      padding: 10px;
+    }
+
+    .dashboard-grid {
+      gap: 10px;
+    }
+  }
+
+  /* Mobile Landscape (576px - 767px) */
+  @media (max-width: 767px) {
+    .stat-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .charts-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .units-map-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .alerts-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .main {
+      padding: 8px;
+    }
+
+    .dashboard-grid {
+      gap: 8px;
+    }
+  }
+
+  /* Mobile Portrait (320px - 575px) */
+  @media (max-width: 575px) {
+    .sidebar {
+      width: 60px;
+    }
+
+    .nav-item {
+      font-size: 8px;
+      padding: 6px 2px;
+    }
+
+    .nav-icon {
+      font-size: 14px;
+    }
+
+    .stat-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .topbar {
+      padding: 0 10px;
+      height: 48px;
+    }
+
+    .topbar-title h1 {
+      font-size: 14px;
+    }
+
+    .main {
+      padding: 6px;
+    }
+
+    .dashboard-grid {
+      gap: 6px;
+    }
+  }
+
+  /* ============================================
+     COLLAPSIBLE SIDEBAR (Optional)
+     ============================================ */
+  @media (max-width: 480px) {
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 58px;
+      bottom: 0;
+      z-index: 100;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 99;
+    }
+
+    .sidebar-overlay.open {
+      display: block;
+    }
+  }
+
+  /* ============================================
+     PRINT STYLES
+     ============================================ */
+  @media print {
+    .sidebar,
+    .topbar {
+      display: none;
+    }
+
+    .body-wrap {
+      display: block;
+    }
+
+    .main {
+      overflow: visible;
+    }
+
+    .dashboard-grid {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  }
+
+  /* ============================================
+     PERFORMANCE OPTIMIZATIONS
+     ============================================ */
+
+  /* Use contain for better paint performance */
+  .grid-item {
+    contain: layout style;
+  }
+
+  /* Smooth transitions for responsive changes */
+  .dashboard-grid {
+    transition: grid-template-columns 0.3s ease;
+  }
+
+  /* Reduce motion if user prefers */
+  @media (prefers-reduced-motion: reduce) {
+    .dashboard-grid {
+      transition: none;
+    }
+  }
+</style>

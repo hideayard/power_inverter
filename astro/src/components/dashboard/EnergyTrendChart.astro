@@ -1,57 +1,278 @@
-<div class="chart-card">
+---
+// Data for different time periods
+const chartData = {
+  today: {
+    labels: ['12AM', '2AM', '4AM', '6AM', '8AM', '10AM', '12PM', '2PM', '4PM', '6PM', '8PM', '10PM'],
+    energy: [3.2, 2.8, 2.1, 2.5, 4.2, 5.8, 6.5, 7.2, 6.8, 7.5, 8.1, 6.2],
+    cost: [5.5, 4.8, 3.6, 4.3, 7.2, 9.9, 11.1, 12.3, 11.6, 12.8, 13.9, 10.6]
+  },
+  week: {
+    labels: ['14 May', '15 May', '16 May', '17 May', '18 May', '19 May', '20 May'],
+    energy: [68.5, 72.3, 65.8, 71.2, 74.6, 70.9, 78.62],
+    cost: [118.2, 124.5, 112.8, 122.3, 128.5, 121.7, 138.45]
+  },
+  month: {
+    labels: Array.from({length: 30}, (_, i) => `${i + 1} May`),
+    energy: Array.from({length: 30}, () => Math.random() * 30 + 50),
+    cost: Array.from({length: 30}, () => Math.random() * 50 + 90)
+  }
+};
+---
+
+<div class="chart-card" id="energyTrendChart">
   <div class="panel-header">
     <div class="panel-title">ENERGY TREND (ALL UNITS)</div>
     <div class="chart-tabs">
-      <button class="ctab">Today</button>
-      <button class="ctab active">7 Days</button>
-      <button class="ctab">30 Days</button>
+      <button class="ctab" data-period="today">Today</button>
+      <button class="ctab active" data-period="week">7 Days</button>
+      <button class="ctab" data-period="month">30 Days</button>
     </div>
   </div>
   <div class="chart-area">
-    <div class="tooltip-box">
-      <div class="tdate">20 May</div>
-      <div class="tval">Energy: <span>78.62 kWh</span></div>
-      <div class="tval">Cost: <span>RM 138.45</span></div>
-    </div>
-    <svg width="100%" height="130" viewBox="0 0 380 130" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="eg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#4488ff" stop-opacity="0.2"/>
-          <stop offset="100%" stop-color="#4488ff" stop-opacity="0"/>
-        </linearGradient>
-        <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#00e676" stop-opacity="0.15"/>
-          <stop offset="100%" stop-color="#00e676" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <!-- Grid lines -->
-      <line x1="0" y1="30" x2="380" y2="30" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-      <line x1="0" y1="60" x2="380" y2="60" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-      <line x1="0" y1="90" x2="380" y2="90" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-      <line x1="0" y1="120" x2="380" y2="120" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-      <!-- Energy area -->
-      <path d="M0,80 C30,75 60,65 95,55 C130,45 160,42 190,38 C220,34 250,50 285,45 C320,40 350,35 380,28 L380,130 L0,130 Z" fill="url(#eg)"/>
-      <!-- Energy line -->
-      <path d="M0,80 C30,75 60,65 95,55 C130,45 160,42 190,38 C220,34 250,50 285,45 C320,40 350,35 380,28" fill="none" stroke="#4488ff" stroke-width="2" stroke-linecap="round"/>
-      <!-- Cost area -->
-      <path d="M0,100 C30,95 60,88 95,82 C130,76 160,72 190,68 C220,64 250,70 285,66 C320,62 350,58 380,52 L380,130 L0,130 Z" fill="url(#cg)"/>
-      <!-- Cost line -->
-      <path d="M0,100 C30,95 60,88 95,82 C130,76 160,72 190,68 C220,64 250,70 285,66 C320,62 350,58 380,52" fill="none" stroke="#00e676" stroke-width="2" stroke-linecap="round" stroke-dasharray="5,3"/>
-      <!-- X labels -->
-      <text x="0" y="128" fill="rgba(255,255,255,0.3)" font-size="9">14 May</text>
-      <text x="54" y="128" fill="rgba(255,255,255,0.3)" font-size="9">15 May</text>
-      <text x="110" y="128" fill="rgba(255,255,255,0.3)" font-size="9">16 May</text>
-      <text x="166" y="128" fill="rgba(255,255,255,0.3)" font-size="9">17 May</text>
-      <text x="222" y="128" fill="rgba(255,255,255,0.3)" font-size="9">18 May</text>
-      <text x="278" y="128" fill="rgba(255,255,255,0.3)" font-size="9">19 May</text>
-      <text x="334" y="128" fill="rgba(255,255,255,0.3)" font-size="9">20 May</text>
-      <!-- Highlight dots -->
-      <circle cx="380" cy="28" r="5" fill="#4488ff" opacity="0.8"/>
-      <circle cx="380" cy="52" r="5" fill="#00e676" opacity="0.8"/>
-    </svg>
+    <canvas id="energyChart"></canvas>
   </div>
   <div class="chart-legend">
-    <div class="cl-item"><div class="cl-line" style="background:#4488ff"></div> Total Energy (kWh)</div>
-    <div class="cl-item"><div class="cl-line" style="background:#00e676;border-top:2px dashed #00e676;height:0;margin-top:1px"></div> Total Cost (RM)</div>
+    <div class="cl-item">
+      <div class="cl-line" style="background:#4488ff"></div> 
+      Total Energy (kWh)
+    </div>
+    <div class="cl-item">
+      <div class="cl-line" style="background:#00e676;height:0;border-top:2px dashed #00e676"></div> 
+      Total Cost (RM)
+    </div>
   </div>
 </div>
+
+<script>
+  import Chart from 'chart.js/auto';
+
+  const chartData = {
+    today: {
+      labels: ['12AM', '2AM', '4AM', '6AM', '8AM', '10AM', '12PM', '2PM', '4PM', '6PM', '8PM', '10PM'],
+      energy: [3.2, 2.8, 2.1, 2.5, 4.2, 5.8, 6.5, 7.2, 6.8, 7.5, 8.1, 6.2],
+      cost: [5.5, 4.8, 3.6, 4.3, 7.2, 9.9, 11.1, 12.3, 11.6, 12.8, 13.9, 10.6]
+    },
+    week: {
+      labels: ['14 May', '15 May', '16 May', '17 May', '18 May', '19 May', '20 May'],
+      energy: [68.5, 72.3, 65.8, 71.2, 74.6, 70.9, 78.62],
+      cost: [118.2, 124.5, 112.8, 122.3, 128.5, 121.7, 138.45]
+    },
+    month: {
+      labels: Array.from({length: 30}, (_, i) => `${i + 1} May`),
+      energy: Array.from({length: 30}, () => +(Math.random() * 30 + 50).toFixed(1)),
+      cost: Array.from({length: 30}, () => +(Math.random() * 50 + 90).toFixed(2))
+    }
+  };
+
+  const ctx = document.getElementById('energyChart');
+  let currentChart: Chart;
+
+  function createChart(period: 'today' | 'week' | 'month') {
+    const data = chartData[period];
+    
+    if (currentChart) {
+      currentChart.destroy();
+    }
+
+    currentChart = new Chart(ctx as HTMLCanvasElement, {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: [
+          {
+            label: 'Total Energy (kWh)',
+            data: data.energy,
+            borderColor: '#4488ff',
+            backgroundColor: 'rgba(68, 136, 255, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#4488ff',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointHoverRadius: 6,
+          },
+          {
+            label: 'Total Cost (RM)',
+            data: data.cost,
+            borderColor: '#00e676',
+            backgroundColor: 'rgba(0, 230, 118, 0.05)',
+            borderWidth: 2,
+            borderDash: [5, 5],
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#00e676',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointHoverRadius: 6,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        plugins: {
+          legend: {
+            display: false, // We use custom legend
+          },
+          tooltip: {
+            backgroundColor: '#111827',
+            titleColor: '#00d4ff',
+            bodyColor: '#e2e8f0',
+            borderColor: '#243352',
+            borderWidth: 1,
+            padding: 12,
+            displayColors: true,
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                if (context.datasetIndex === 0) {
+                  label += context.parsed.y + ' kWh';
+                } else {
+                  label += 'RM ' + context.parsed.y;
+                }
+                return label;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              color: 'rgba(255, 255, 255, 0.05)',
+            },
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.3)',
+              font: {
+                size: 9,
+                family: "'Exo 2', sans-serif"
+              }
+            }
+          },
+          y: {
+            grid: {
+              color: 'rgba(255, 255, 255, 0.05)',
+            },
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.3)',
+              font: {
+                size: 9,
+                family: "'Share Tech Mono', monospace"
+              },
+              callback: function(value) {
+                return value + (this as any).chart.data.datasets[0].label?.includes('kWh') ? '' : '';
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // Initialize with week data
+  createChart('week');
+
+  // Tab switching
+  document.querySelectorAll('#energyTrendChart .ctab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const parent = tab.closest('#energyTrendChart');
+      parent?.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      
+      const period = tab.getAttribute('data-period') as 'today' | 'week' | 'month';
+      createChart(period);
+    });
+  });
+</script>
+
+<style>
+  .chart-card {
+    background: var(--card, #111827);
+    border: 1px solid var(--border, #1e2d47);
+    border-radius: var(--r, 10px);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .panel-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text, #e2e8f0);
+    letter-spacing: 0.01em;
+  }
+
+  .chart-tabs {
+    display: flex;
+    gap: 4px;
+  }
+
+  .ctab {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: var(--r-sm, 6px);
+    border: 1px solid transparent;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text3, #4a6080);
+    font-family: var(--font, 'Exo 2', sans-serif);
+    transition: all 0.2s;
+  }
+
+  .ctab.active {
+    background: var(--blue, #4488ff);
+    color: #fff;
+    border-color: var(--blue, #4488ff);
+  }
+
+  .ctab:not(.active):hover {
+    color: var(--text2, #8fa3bf);
+    border-color: var(--border, #1e2d47);
+  }
+
+  .chart-area {
+    flex: 1;
+    min-height: 200px;
+    position: relative;
+  }
+
+  .chart-legend {
+    display: flex;
+    gap: 14px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .cl-item {
+    font-size: 10px;
+    color: var(--text2, #8fa3bf);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .cl-line {
+    width: 16px;
+    height: 2px;
+    border-radius: 2px;
+  }
+</style>

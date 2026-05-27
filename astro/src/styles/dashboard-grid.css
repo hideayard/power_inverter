@@ -1,0 +1,77 @@
+/* src/styles/dashboard-grid.css */
+
+.dashboard-grid {
+  display: grid;
+
+  gap: clamp(12px, 1vw, 20px);
+}
+
+.grid-item {
+  min-width: 0;
+
+  min-height: 0;
+
+  display: flex;
+}
+
+.grid-item > * {
+  flex: 1;
+
+  min-width: 0;
+}
+
+/* ========================================= */
+/* STAT GRID */
+/* ========================================= */
+
+.stat-grid {
+  grid-template-columns:
+    repeat(auto-fit, minmax(220px, 1fr));
+}
+
+/* ========================================= */
+/* UNITS + MAP */
+/* ========================================= */
+
+.units-map-grid {
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(320px, 420px);
+}
+
+/* ========================================= */
+/* CHARTS */
+/* ========================================= */
+
+.charts-grid {
+  grid-template-columns:
+    repeat(auto-fit, minmax(320px, 1fr));
+}
+
+/* ========================================= */
+/* ALERTS */
+/* ========================================= */
+
+.alerts-grid {
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(280px, 340px);
+}
+
+/* ========================================= */
+/* RESPONSIVE */
+/* ========================================= */
+
+@media (max-width: 1024px) {
+  .units-map-grid,
+  .alerts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .charts-grid,
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+}

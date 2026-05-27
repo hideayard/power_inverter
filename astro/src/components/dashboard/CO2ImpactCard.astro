@@ -1,50 +1,492 @@
+---
+// Data
+const co2Today = 78.45;
+const co2AllTime = 1562.34;
+const co2Target = 100; // Daily target in kg
+const percentage = (co2Today / co2Target) * 100;
+
+const equivalents = [
+  {
+    icon: 'fa-tree',
+    emoji: '🌳',
+    name: 'Trees Planted',
+    value: '33 Trees',
+    color: '#22c55e'
+  },
+  {
+    icon: 'fa-car',
+    emoji: '🚗',
+    name: 'Car Not Driven',
+    value: '345 km',
+    color: '#4488ff'
+  },
+  {
+    icon: 'fa-gas-pump',
+    emoji: '⛽',
+    name: 'Fuel Saved',
+    value: '28.7 Litres',
+    color: '#f59e0b'
+  }
+];
+---
+
 <div class="co2-card">
   <div class="panel-header">
-    <div class="panel-title">CO₂ IMPACT SUMMARY</div>
+    <div class="panel-title">
+      <i class="fas fa-leaf panel-icon"></i>
+      CO₂ IMPACT SUMMARY
+    </div>
+    <div class="panel-badge">
+      <span class="badge-dot"></span>
+      Live
+    </div>
   </div>
-  <div class="co2-donut-center">
-    <div class="big-donut-wrap">
-      <svg class="big-donut-svg" viewBox="0 0 90 90">
-        <circle cx="45" cy="45" r="36" fill="none" stroke="var(--border2)" stroke-width="10"/>
-        <circle cx="45" cy="45" r="36" fill="none" stroke="var(--green)" stroke-width="10"
-          stroke-dasharray="200 226" stroke-linecap="round"
-          style="filter:drop-shadow(0 0 6px rgba(0,230,118,0.5))"/>
-      </svg>
-      <div class="big-donut-label">
-        <div class="big-donut-val">78.45</div>
-        <div class="big-donut-unit">kg</div>
+
+  <div class="co2-content">
+    <!-- Left: Donut Chart -->
+    <div class="co2-chart-section">
+      <div class="chart-container">
+        <canvas id="co2DonutChart"></canvas>
+        <div class="chart-center">
+          <div class="center-value">{co2Today.toFixed(1)}</div>
+          <div class="center-unit">kg</div>
+          <div class="center-label">of {co2Target} kg goal</div>
+        </div>
+      </div>
+      <div class="chart-subtitle">
+        <span class="subtitle-badge">
+          <i class="fas fa-arrow-up"></i> 8.5%
+        </span>
+        <span class="subtitle-text">vs yesterday</span>
       </div>
     </div>
-    <div>
-      <div style="font-size:12px;font-weight:700;color:var(--text)">CO₂ Reduced<br>Today</div>
-    </div>
-  </div>
-  <div class="equiv-label">Equivalent To:</div>
-  <div class="equiv-row">
-    <div class="equiv-icon">🌳</div>
-    <div class="equiv-text">
-      <div class="equiv-name">Trees Planted</div>
-      <div class="equiv-val">33 Trees</div>
-    </div>
-  </div>
-  <div class="equiv-row">
-    <div class="equiv-icon">🚗</div>
-    <div class="equiv-text">
-      <div class="equiv-name">Car Not Driven</div>
-      <div class="equiv-val">345 km</div>
-    </div>
-  </div>
-  <div class="equiv-row">
-    <div class="equiv-icon">⛽</div>
-    <div class="equiv-text">
-      <div class="equiv-name">Fuel Saved</div>
-      <div class="equiv-val">28.7 Litres</div>
-    </div>
-  </div>
-  <div class="co2-lifetime">
-    <div class="co2-lt-row">
-      <div class="co2-lt-label">All Time CO₂ Reduced</div>
-      <div class="co2-lt-val">1,562.34 kg</div>
+
+    <!-- Right: Equivalents -->
+    <div class="co2-equivalents">
+      <div class="equiv-header">
+        <i class="fas fa-balance-scale"></i>
+        Equivalent To
+      </div>
+      
+      <div class="equiv-list">
+        {equivalents.map((item) => (
+          <div class="equiv-item">
+            <div class="equiv-icon-wrapper" style={`--icon-color: ${item.color}`}>
+              <span class="equiv-emoji">{item.emoji}</span>
+            </div>
+            <div class="equiv-info">
+              <div class="equiv-name">{item.name}</div>
+              <div class="equiv-value">{item.value}</div>
+            </div>
+            <div class="equiv-arrow">
+              <i class="fas fa-chevron-right"></i>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="co2-lifetime">
+        <div class="lifetime-icon">
+          <i class="fas fa-globe-americas"></i>
+        </div>
+        <div class="lifetime-info">
+          <div class="lifetime-label">All Time CO₂ Reduced</div>
+          <div class="lifetime-value">{co2AllTime.toLocaleString()} kg</div>
+        </div>
+        <div class="lifetime-trend">
+          <i class="fas fa-chart-line"></i>
+          <span>+12.3%</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<script>
+  import Chart from 'chart.js/auto';
+
+  const ctx = document.getElementById('co2DonutChart');
+  
+  if (ctx) {
+    new Chart(ctx as HTMLCanvasElement, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: [78.45, 21.55],
+          backgroundColor: [
+            'rgba(0, 230, 118, 0.8)',
+            'rgba(255, 255, 255, 0.05)'
+          ],
+          borderColor: [
+            '#00e676',
+            'rgba(255, 255, 255, 0.1)'
+          ],
+          borderWidth: 2,
+          borderRadius: 5,
+          hoverBorderWidth: 3,
+          hoverBorderColor: '#00e676'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        cutout: '80%',
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            enabled: false
+          }
+        },
+        animation: {
+          animateScale: true,
+          animateRotate: true,
+          duration: 2000,
+          easing: 'easeInOutQuart'
+        }
+      }
+    });
+  }
+</script>
+
+<style>
+  .co2-card {
+    background: linear-gradient(135deg, #111827 0%, #0f1729 100%);
+    border: 1px solid var(--border, #1e2d47);
+    border-radius: var(--r, 10px);
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle gradient overlay */
+  .co2-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(0, 230, 118, 0.03) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .panel-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text, #e2e8f0);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .panel-icon {
+    color: #22c55e;
+    font-size: 14px;
+    filter: drop-shadow(0 0 4px rgba(34, 197, 94, 0.5));
+  }
+
+  .panel-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+  }
+
+  .co2-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Left Section - Chart */
+  .co2-chart-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .chart-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin-bottom: 12px;
+  }
+
+  .chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .chart-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .center-value {
+    font-size: 28px;
+    font-weight: 800;
+    font-family: var(--mono, 'Share Tech Mono', monospace);
+    color: #00e676;
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(0, 230, 118, 0.5);
+  }
+
+  .center-unit {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6ee7b7;
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .center-label {
+    font-size: 9px;
+    color: var(--text3, #4a6080);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  .chart-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--text2, #8fa3bf);
+  }
+
+  .subtitle-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 11px;
+  }
+
+  .subtitle-text {
+    font-size: 10px;
+    color: var(--text3, #4a6080);
+  }
+
+  /* Right Section - Equivalents */
+  .co2-equivalents {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .equiv-header {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text3, #4a6080);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .equiv-header i {
+    font-size: 11px;
+    color: var(--accent, #00d4ff);
+  }
+
+  .equiv-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+
+  .equiv-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: all 0.2s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .equiv-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--icon-color);
+    border-radius: 0 2px 2px 0;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .equiv-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(2px);
+  }
+
+  .equiv-item:hover::before {
+    opacity: 1;
+  }
+
+  .equiv-icon-wrapper {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    background: color-mix(in srgb, var(--icon-color) 15%, transparent);
+    border: 1px solid color-mix(in srgb, var(--icon-color) 30%, transparent);
+    position: relative;
+  }
+
+  .equiv-emoji {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+
+  .equiv-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .equiv-name {
+    font-size: 10px;
+    color: var(--text3, #4a6080);
+    margin-bottom: 2px;
+    font-weight: 500;
+  }
+
+  .equiv-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text, #e2e8f0);
+    font-family: var(--mono, 'Share Tech Mono', monospace);
+    letter-spacing: -0.02em;
+  }
+
+  .equiv-arrow {
+    color: var(--text3, #4a6080);
+    font-size: 10px;
+    transition: all 0.2s;
+    opacity: 0;
+  }
+
+  .equiv-item:hover .equiv-arrow {
+    opacity: 1;
+    color: var(--accent, #00d4ff);
+  }
+
+  .co2-lifetime {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(0, 230, 118, 0.05));
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    border-radius: 8px;
+  }
+
+  .lifetime-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(0, 212, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--accent, #00d4ff);
+    flex-shrink: 0;
+  }
+
+  .lifetime-info {
+    flex: 1;
+  }
+
+  .lifetime-label {
+    font-size: 10px;
+    color: var(--text3, #4a6080);
+    margin-bottom: 2px;
+  }
+
+  .lifetime-value {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--accent, #00d4ff);
+    font-family: var(--mono, 'Share Tech Mono', monospace);
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+  }
+
+  .lifetime-trend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .co2-content {
+      grid-template-columns: 1fr;
+    }
+
+    .co2-chart-section {
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+  }
+</style>

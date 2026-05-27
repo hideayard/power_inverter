@@ -10,8 +10,12 @@
     "preview": "astro preview"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.2.0",
+    "@popperjs/core": "^2.11.8",
     "astro": "^6.3.7",
     "astro-leaflet": "^1.12.0",
+    "bootstrap": "^5.3.8",
+    "chart.js": "^4.5.1",
     "leaflet": "^1.9.4",
     "sweetalert2": "^11.26.25"
   },

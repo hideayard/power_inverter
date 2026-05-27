@@ -1,0 +1,42 @@
+---
+import StatCard from "./StatCard.astro";
+---
+
+<div class="stat-strip">
+  <StatCard icon="⚡" iconClass="si-blue" label="Total Units">
+    <Fragment slot="value">15</Fragment>
+    <div slot="sub" class="stat-sub">Online: 15 &nbsp; Offline: 0</div>
+  </StatCard>
+  
+  <StatCard 
+    icon="⚡" 
+    iconClass="si-yellow" 
+    label="Total Energy Today"
+    change="▲ 8.72%"
+    changeClass="up"
+  >
+    <Fragment slot="value">78.62<span class="unit"> kWh</span></Fragment>
+    <div slot="sub" class="stat-sub">Yesterday: 72.31 kWh</div>
+  </StatCard>
+  
+  <StatCard 
+    icon="💰" 
+    iconClass="si-orange" 
+    label="Total Cost Saved Today"
+    change="▲ 8.83%"
+    changeClass="up"
+  >
+    <Fragment slot="value">RM <span style="font-size:18px">138.45</span></Fragment>
+    <div slot="sub" class="stat-sub">Yesterday: RM 127.20</div>
+  </StatCard>
+  
+  <StatCard icon="🌿" iconClass="si-purple" label="Total CO₂ Reduced Today">
+    <Fragment slot="value">78.45<span class="unit"> kg</span></Fragment>
+    <div slot="sub" class="stat-sub">All Time: 1,562.34 kg</div>
+  </StatCard>
+  
+  <StatCard icon="📊" iconClass="si-green" label="Avg. Efficiency Score">
+    <Fragment slot="value">86<span class="unit">/100</span></Fragment>
+    <div slot="sub" class="stat-sub">✅ Good</div>
+  </StatCard>
+</div>

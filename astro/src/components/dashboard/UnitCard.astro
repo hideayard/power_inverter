@@ -1,0 +1,53 @@
+---
+export interface Props {
+  id: number;
+  status: string;
+  pct: number;
+  power: number;
+  today: number;
+}
+
+const { id, status, pct, power, today } = Astro.props;
+
+const getColor = (status: string) => {
+  if (status === 'alert') return { stroke: '#ff3d71', text: '#ff3d71' };
+  if (status === 'warn') return { stroke: '#ffd740', text: '#ffd740' };
+  return { stroke: '#00e676', text: '#00e676' };
+};
+
+const col = getColor(status);
+const statusClass = status === 'alert' ? 'st-alert' : status === 'warn' ? 'st-warn' : 'st-online';
+const statusLabel = status === 'alert' ? 'Alert' : status === 'warn' ? 'Warning' : 'Online';
+const cardClass = status === 'alert' ? 'unit-card alert' : status === 'warn' ? 'unit-card warn' : 'unit-card';
+const powerClass = status === 'alert' ? 'uc-stat-val alert-val' : 'uc-stat-val';
+
+const r = 17;
+const c = 22;
+const circ = 2 * Math.PI * r;
+const dash = (pct / 100) * circ;
+---
+
+<div class={cardClass}>
+  <div class="uc-header">
+    <div class="uc-name"><span class="uc-icon">🔋</span>Unit {id}</div>
+    <span class={`uc-status ${statusClass}`}>{statusLabel}</span>
+  </div>
+  <div class="uc-donut-row">
+    <div class="donut-wrap">
+      <svg class="donut-svg" viewBox="0 0 44 44">
+        <circle cx={c} cy={c} r={r} fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="5"/>
+        <circle cx={c} cy={c} r={r} fill="none" stroke={col.stroke} stroke-width="5"
+          stroke-dasharray={`${dash.toFixed(1)} ${circ.toFixed(1)}`} stroke-linecap="round"
+          style={`filter:drop-shadow(0 0 4px ${col.stroke}66)`}/>
+      </svg>
+      <div class="donut-pct" style={`color:${col.text}`}>{pct}%</div>
+    </div>
+    <div class="uc-stats">
+      <div class="uc-stat-row">
+        <span class="uc-stat-label">Power</span>
+        <span class={powerClass}>{power} W</span>
+      </div>
+      <div class="uc-today">Today: {today} kWh</div>
+    </div>
+  </div>
+</div>

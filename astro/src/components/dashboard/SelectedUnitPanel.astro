@@ -1,0 +1,41 @@
+---
+export interface Props {
+  unitId?: number;
+  status?: string;
+  pct?: number;
+  power?: number;
+  today?: number;
+}
+
+const { unitId = 7, status = 'alert', pct = 18, power = 95, today = 1.02 } = Astro.props;
+const badgeColor = status === 'alert' ? 'var(--red)' : status === 'warn' ? 'var(--yellow)' : 'var(--green)';
+const badgeBg = status === 'alert' ? 'rgba(255,61,113,0.2)' : status === 'warn' ? 'rgba(255,215,64,0.2)' : 'rgba(0,230,118,0.2)';
+const alertClass = status === 'alert' ? 'alert-c' : '';
+---
+
+<div class="selected-unit-panel">
+  <div class="su-header">
+    <div>
+      <div class="su-title">Selected Unit</div>
+      <div class="su-name" style="color: var(--red)">Unit {unitId}</div>
+    </div>
+    <span class="su-badge" style={`background: ${badgeBg}; color: ${badgeColor}`}>
+      {status === 'alert' ? 'Alert' : status === 'warn' ? 'Warning' : 'Online'}
+    </span>
+  </div>
+  <div class="su-grid">
+    <div class="su-stat">
+      <div class="su-stat-label">Battery</div>
+      <div class={`su-stat-val ${alertClass}`}>{pct}<span class="su-stat-unit">%</span></div>
+    </div>
+    <div class="su-stat">
+      <div class="su-stat-label">Power</div>
+      <div class={`su-stat-val ${alertClass}`}>{power}<span class="su-stat-unit"> W</span></div>
+    </div>
+    <div class="su-stat">
+      <div class="su-stat-label">Today</div>
+      <div class={`su-stat-val ${alertClass}`}>{today}<span class="su-stat-unit"> kWh</span></div>
+    </div>
+  </div>
+  <button class="view-details-btn">View Details</button>
+</div>

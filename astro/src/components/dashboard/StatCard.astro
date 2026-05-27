@@ -1,0 +1,23 @@
+---
+export interface Props {
+  icon: string;
+  iconClass: string;
+  label: string;
+  change?: string;
+  changeClass?: string;
+}
+
+const { icon, iconClass, label, change, changeClass } = Astro.props;
+---
+
+<div class="stat-card">
+  <div class={`stat-icon ${iconClass}`}>{icon}</div>
+  <div class="stat-content">
+    <div class="stat-label">{label}</div>
+    <div class="stat-value">
+      <slot name="value" />
+    </div>
+    <slot name="sub" />
+    {change && <div class={`stat-change ${changeClass || ''}`}>{change}</div>}
+  </div>
+</div>

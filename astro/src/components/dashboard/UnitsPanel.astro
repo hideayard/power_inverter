@@ -1,0 +1,19 @@
+---
+import UnitsGrid from "./UnitsGrid.astro";
+---
+
+<div class="units-panel">
+  <div class="panel-header">
+    <div class="panel-title">ALL UNITS (15)</div>
+    <div class="status-pills">
+      <span class="s-pill"><span class="s-dot sd-green"></span>Normal (12)</span>
+      <span class="s-pill"><span class="s-dot sd-yellow"></span>Warning (2)</span>
+      <span class="s-pill"><span class="s-dot sd-red"></span>Alert (1)</span>
+    </div>
+    <div class="view-toggle">
+      <button class="vtab active">Grid View</button>
+      <button class="vtab">Table View</button>
+    </div>
+  </div>
+  <UnitsGrid />
+</div>

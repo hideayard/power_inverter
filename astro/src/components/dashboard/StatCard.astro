@@ -1,23 +1,52 @@
 ---
+// StatCard.astro
 export interface Props {
-  icon: string;
-  iconClass: string;
+  icon?: string;
+  iconClass?: string;
   label: string;
   change?: string;
   changeClass?: string;
+  iconImage?: string;
 }
 
-const { icon, iconClass, label, change, changeClass } = Astro.props;
+const {
+  icon,
+  iconClass = "",
+  label,
+  change,
+  changeClass = "",
+  iconImage
+} = Astro.props;
 ---
 
 <div class="stat-card">
-  <div class={`stat-icon ${iconClass}`}>{icon}</div>
+  <div class={`stat-icon ${iconClass}`}>
+    {
+      iconImage ? (
+        <img src={iconImage} alt={label} class="stat-icon-img" />
+      ) : (
+        <span>{icon}</span>
+      )
+    }
+  </div>
+
   <div class="stat-content">
     <div class="stat-label">{label}</div>
+
     <div class="stat-value">
       <slot name="value" />
     </div>
-    <slot name="sub" />
-    {change && <div class={`stat-change ${changeClass || ''}`}>{change}</div>}
+
+    <div class="stat-bottom">
+      <slot name="sub" />
+
+      {
+        change && (
+          <div class={`stat-change ${changeClass}`}>
+            {change}
+          </div>
+        )
+      }
+    </div>
   </div>
 </div>

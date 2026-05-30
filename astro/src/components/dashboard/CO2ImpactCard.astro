@@ -30,8 +30,8 @@ const equivalents = [
 ];
 ---
 
-<div class="co2-card">
-  <div class="panel-header">
+<div class="co2-card card h-100">
+  <div class="card-header">
     <div class="panel-title">
       <i class="fas fa-leaf panel-icon"></i>
       CO₂ IMPACT SUMMARY
@@ -42,9 +42,9 @@ const equivalents = [
     </div>
   </div>
 
-  <div class="co2-content">
+  <div class="card-body"><div class="co2-content row">
     <!-- Left: Donut Chart -->
-    <div class="co2-chart-section">
+    <div class="co2-chart-section col-md-5">
       <div class="chart-container">
         <canvas id="co2DonutChart"></canvas>
         <div class="chart-center">
@@ -62,7 +62,7 @@ const equivalents = [
     </div>
 
     <!-- Right: Equivalents -->
-    <div class="co2-equivalents">
+    </div><div class="co2-equivalents col-md-7">
       <div class="equiv-header">
         <i class="fas fa-balance-scale"></i>
         Equivalent To

@@ -19,13 +19,13 @@ const chartData = {
 };
 ---
 
-<div class="chart-card" id="energyTrendChart">
-  <div class="panel-header">
+<div class="chart-card card h-100" id="energyTrendChart">
+  <div class="card-header"
     <div class="panel-title">ENERGY TREND (ALL UNITS)</div>
-    <div class="chart-tabs">
-      <button class="ctab" data-period="today">Today</button>
-      <button class="ctab active" data-period="week">7 Days</button>
-      <button class="ctab" data-period="month">30 Days</button>
+    <div class="chart-tabs btn-group btn-group-sm" role="group">
+      <button type="button" class="ctab btn btn-outline-secondary" data-period="today">Today</button>
+      <button type="button" class="ctab btn btn-dark active" data-period="week">7 Days</button>
+      <button type="button" class="ctab btn btn-outline-secondary" data-period="month">30 Days</button>
     </div>
   </div>
   <div class="chart-area">

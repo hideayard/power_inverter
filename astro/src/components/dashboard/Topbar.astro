@@ -1,57 +1,32 @@
-<!-- In Topbar.astro, add before logo -->
-<button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
-  <i class="fas fa-bars"></i>
-</button>
-
-<style>
-  .mobile-menu-btn {
-    display: none;
-    background: transparent;
-    border: none;
-    color: var(--text);
-    font-size: 20px;
-    cursor: pointer;
-    padding: 8px;
-  }
-
-  @media (max-width: 480px) {
-    .mobile-menu-btn {
-      display: block;
-    }
-  }
-</style>
-
-<script>
-  document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
-    document.querySelector('.sidebar')?.classList.toggle('open');
-    document.querySelector('.sidebar-overlay')?.classList.toggle('open');
-  });
-</script>
-
-<header class="topbar">
-  <div class="logo-wrap">
+<header class="topbar navbar navbar-expand-lg navbar-dark bg-dark px-3">
+  <div class="logo-wrap navbar-brand">
     <div class="logo-bolt">⚡</div>
   </div>
-  <div class="topbar-title">
-    <h1>SMART ENERGY MONITORING &amp; CO<sub style="font-size:10px">₂</sub> DASHBOARD</h1>
-    <p>15 Portable Power Stations – Dataran Niaga MBIP</p>
+  <button class="mobile-menu-btn navbar-toggler" id="mobileMenuBtn" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarNav" aria-controls="sidebarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <i class="fas fa-bars"></i>
+  </button>
+  <div class="topbar-title navbar-text">
+    <h1 class="h5 mb-0">SMART ENERGY MONITORING & CO₂ DASHBOARD</h1>
+    <p class="small mb-0 d-none d-md-block">15 Portable Power Stations – Dataran Niaga MBIP</p>
   </div>
-  <div class="topbar-right">
-    <div class="topbar-meta">
-      <span class="icon">🔄</span>
+  <div class="topbar-right d-flex align-items-center gap-2 gap-lg-3 ms-auto">
+    <div class="topbar-meta d-none d-md-flex align-items-center">
+      <span class="icon me-1">🔄</span>
       <div>
         <div style="font-size:9px;color:var(--text3)">Last Updated</div>
         <strong>20 May 2025, 10:30:45 PM</strong>
       </div>
     </div>
-    <button class="notif-btn">🔔<span class="notif-dot">5</span></button>
-    <div class="topbar-meta">
-      <span class="icon">📅</span>
+    <button class="notif-btn btn btn-link position-relative p-1">
+      🔔<span class="notif-dot badge bg-danger rounded-pill position-absolute top-0 end-0 translate-middle">5</span>
+    </button>
+    <div class="topbar-meta d-none d-lg-flex align-items-center">
+      <span class="icon me-1">📅</span>
       <strong>20 May 2025</strong>
     </div>
-    <div class="admin-pill">
+    <div class="admin-pill d-flex align-items-center gap-2">
       <div class="admin-avatar">A</div>
-      <div>
+      <div class="d-none d-md-block">
         <div class="admin-name">Admin</div>
         <div class="admin-role">MBIP</div>
       </div>

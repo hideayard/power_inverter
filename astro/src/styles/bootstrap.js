@@ -1,5 +1,5 @@
 // Import Bootstrap JS
-import 'bootstrap';
+import "bootstrap";
 
 // Import Bootstrap CSS
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";

@@ -2,18 +2,20 @@
 import UnitsGrid from "./UnitsGrid.astro";
 ---
 
-<div class="units-panel">
-  <div class="panel-header">
-    <div class="panel-title">ALL UNITS (15)</div>
-    <div class="status-pills">
-      <span class="s-pill"><span class="s-dot sd-green"></span>Normal (12)</span>
-      <span class="s-pill"><span class="s-dot sd-yellow"></span>Warning (2)</span>
-      <span class="s-pill"><span class="s-dot sd-red"></span>Alert (1)</span>
+<div class="units-panel card h-100">
+  <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <div class="panel-title fw-bold">ALL UNITS (15)</div>
+    <div class="status-pills d-flex flex-wrap gap-2">
+      <span class="s-pill badge bg-success-subtle text-success"><span class="s-dot sd-green"></span> Normal (12)</span>
+      <span class="s-pill badge bg-warning-subtle text-warning"><span class="s-dot sd-yellow"></span> Warning (2)</span>
+      <span class="s-pill badge bg-danger-subtle text-danger"><span class="s-dot sd-red"></span> Alert (1)</span>
     </div>
-    <div class="view-toggle">
-      <button class="vtab active">Grid View</button>
-      <button class="vtab">Table View</button>
+    <div class="view-toggle btn-group btn-group-sm" role="group">
+      <button type="button" class="vtab btn btn-primary active">Grid View</button>
+      <button type="button" class="vtab btn btn-outline-primary">Table View</button>
     </div>
   </div>
-  <UnitsGrid />
+  <div class="card-body p-2 overflow-auto">
+    <UnitsGrid />
+  </div>
 </div>

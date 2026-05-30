@@ -41,8 +41,9 @@ const alertIcon = {
 };
 ---
 
-<div class="map-panel">
-  <div class="panel-header">
+<div class="map-panel card">
+  <div class="card-body p-0">
+  <div class="card-header">
     <div class="panel-title">UNIT LOCATION (MAP VIEW)</div>
     <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">
       ⛶ Full Screen
@@ -105,9 +106,7 @@ const alertIcon = {
         })}
       </Leaflet>
     </div>
-  </div>
-  
-  <div class="map-legend">
+  </div><div class="card-footer bg-transparent">
     <div class="ml-item">
       <span class="map-legend-dot" style="background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.6)"></span> 
       Normal ({unitLocations.filter(u => u.status === 'online').length})

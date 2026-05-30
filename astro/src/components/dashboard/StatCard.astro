@@ -19,34 +19,36 @@ const {
 } = Astro.props;
 ---
 
-<div class="stat-card">
-  <div class={`stat-icon ${iconClass}`}>
-    {
-      iconImage ? (
-        <img src={iconImage} alt={label} class="stat-icon-img" />
-      ) : (
-        <span>{icon}</span>
-      )
-    }
-  </div>
-
-  <div class="stat-content">
-    <div class="stat-label">{label}</div>
-
-    <div class="stat-value">
-      <slot name="value" />
-    </div>
-
-    <div class="stat-bottom">
-      <slot name="sub" />
-
+<div class="stat-card card h-100">
+  <div class="card-body d-flex align-items-start gap-3">
+    <div class={`stat-icon ${iconClass} d-flex align-items-center justify-content-center rounded-3`}>
       {
-        change && (
-          <div class={`stat-change ${changeClass}`}>
-            {change}
-          </div>
+        iconImage ? (
+          <img src={iconImage} alt={label} class="stat-icon-img" />
+        ) : (
+          <span>{icon}</span>
         )
       }
+    </div>
+
+    <div class="stat-content flex-grow-1">
+      <div class="stat-label small text-muted text-uppercase fw-bold">{label}</div>
+
+      <div class="stat-value fs-5 fw-bold">
+        <slot name="value" />
+      </div>
+
+      <div class="stat-bottom small">
+        <slot name="sub" />
+
+        {
+          change && (
+            <div class={`stat-change ${changeClass} badge bg-success-subtle text-success`}>
+              {change}
+            </div>
+          )
+        }
+      </div>
     </div>
   </div>
 </div>
